@@ -1,0 +1,20 @@
+.ROOMLIST{
+	margin: 5px;
+}
+
+.ROOMLIST > a{
+	color: black;
+	text-decoration: none;
+}
+
+.ROOMITEM{
+	padding: 5px;
+}
+
+.ROOMITEM:hover{
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ROOMITEM[data-ack="false"]{
+	color: red;
+}

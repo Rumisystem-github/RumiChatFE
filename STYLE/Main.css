@@ -1,0 +1,118 @@
+:root{
+	--GROUPLIST_HEIGHT: 50px;
+	--SIDEMENU_WIDTH: 200px;
+
+	--CHATINPUT_HEIGHT: 32px
+}
+
+body{
+	background-color: rgb(229, 255, 246);
+}
+
+.DIALOG_BG{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+
+	width: 100vw;
+	height: 100vh;
+
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.HEADER{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+
+	width: 100vw;
+	height: var(--GROUPLIST_HEIGHT);
+
+	display: flex;
+
+	border-bottom: solid 1px;
+}
+
+.SIDEMENU{
+	position: fixed;
+	top: var(--GROUPLIST_HEIGHT);
+	left: 0px;
+
+	width: var(--SIDEMENU_WIDTH);
+	height: 100vh;
+
+	border-right: solid 1px;
+}
+
+.CONTENTS{
+	position: fixed;
+	top: var(--GROUPLIST_HEIGHT);
+	left: var(--SIDEMENU_WIDTH);
+
+	width: calc(100vw - var(--SIDEMENU_WIDTH));
+	height: calc(100vh - var(--GROUPLIST_HEIGHT));
+}
+
+.WELCOME{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+
+	width: 100vw;
+	height: 100vh;
+
+	z-index: 10;
+
+	background-color: white;
+}
+
+.CONTENTS > .DISPLAY{
+	padding: 10px;
+}
+
+.CONTENTS > .DISPLAY, .CONTENTS > .CHATROOM{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+
+	width: calc(100vw - var(--SIDEMENU_WIDTH));
+	height: calc(100vh - var(--GROUPLIST_HEIGHT));
+}
+
+.PGPMENU, .SETTING_DIALOG{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	width: 50vw;
+	height: 50vh;
+
+	padding: 20px;
+}
+
+.PGPMENU > div, .SETTING_DIALOG > div{
+	background-color: white;
+
+	width: 100%;
+	height: 100%;
+
+	padding: 10px;
+
+	overflow: auto;
+}
+
+.CREATE_DM_LIST{
+	width: 100%;
+}
+
+.CREATE_DM_LIST > div > img{
+	width: 45px;
+	height: 45px;
+}
+
+.CREATE_DM_LIST > div > span{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

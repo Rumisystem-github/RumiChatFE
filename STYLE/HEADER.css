@@ -1,0 +1,69 @@
+.GROUPLIST{
+	flex: 3;
+
+	width: 50%;
+
+	display: flex;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.GROUPITEM{
+	position: relative;
+
+	flex: 0 0 auto;
+	width: 40px;
+	height: 40px;
+
+	margin: 5px;
+
+	border-radius: 50px;
+
+	background-color: white;
+}
+
+.GROUPITEM > div{
+	border-radius: 50px;
+
+	width: 100%;
+	height: 100%;
+
+	overflow: hidden;
+}
+
+.GROUPITEM[data-ack="false"]::after{
+	content: "";
+
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+
+	width: 10px;
+	height: 10px;
+
+	border-radius: 10px;
+
+	background-color: red;
+}
+
+.ACCOUNT_INFO{
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-basis: auto;
+
+	padding: 5px;
+}
+
+.ACCOUNT_INFO > button{
+	width: 40px;
+	height: 40px;
+
+	vertical-align: middle;
+}
+
+.ACCOUNT_INFO > .ICON{
+	width: 40px;
+	height: 40px;
+
+	vertical-align: middle;
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE>るみチャット</TITLE>
+
+		<!--るみ鯖のデフォ-->
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/reset.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/font.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/DEFAULT.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/icon.css">
+
+		<!--CSS-->
+		<LINK REL="stylesheet" HREF="/STYLE/Main.css">
+		<LINK REL="stylesheet" HREF="/STYLE/HEADER.css">
+		<LINK REL="stylesheet" HREF="/STYLE/ROOMLIST.css">
+		<LINK REL="stylesheet" HREF="/STYLE/CHATROOM.css">
+		<LINK REL="stylesheet" HREF="/STYLE/FileViewer.css">
+		<LINK REL="stylesheet" HREF="/STYLE/PGPMenu.css">
+
+		<!--スマホ(iOSを除く)にスマホアプリで対応できたら消す-->
+		<META NAME="viewport" CONTENT="width=device-width, initial-scale=1" />
+	</HEAD>
+
+	<BODY>
+		<DIV STYLE="position: fixed; bottom: 0px; left: 0px; pointer-events: none; color: gray; z-index: 100;">
+			ベータ版なのでバグまみれですわ！<BR>
+			バグを見つけたら報告してくださいまし！
+		</DIV>
+
+		<!--読み込み画面-->
+		<DIV ID="LOADING_DISPLAY"
+			STYLE="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: white; z-index: 1;">
+			<PRE ID="LOADING_DISPLAY_LOG"></PRE>
+		</DIV>
+
+		<!--初回画面-->
+		<DIV CLASS="WELCOME" ID="WELCOME" STYLE="display: none;">
+			<H1>るみチャットへようこそ</H1>
+			<DIV>
+				ここに説明を書けばいいな
+			</DIV>
+			<BUTTON onclick="StartUse();">利用を開始する</BUTTON>
+		</DIV>
+
+		<DIV CLASS="HEADER">
+			<DIV CLASS="GROUPLIST" ID="GROUPLIST"></DIV>
+			<BUTTON onclick="ClickNewGroupButton();">+</BUTTON>
+
+			<DIV CLASS="ACCOUNT_INFO">
+				<BUTTON onclick="OpenPGPMenu();">暗号</BUTTON>
+				<BUTTON onclick="OpenSettingDialog();">設定</BUTTON>
+				<BUTTON onclick="window.open('https:\/\/account.rumiserver.com/SETTING/');">垢設定</BUTTON>
+				<IMG CLASS="ICON" ID="SELF_ICON">
+			</DIV>
+		</DIV>
+
+		<DIV CLASS="SIDEMENU">
+			<DIV ID="GROUP_ROOM" STYLE="display: none;">
+				<DIV ID="GROUP_TOOLBAR">
+					<SPAN ID="GROUP_NAME"></SPAN>
+					<BUTTON
+						onclick="OpenGroupMenu(this.getBoundingClientRect().x, this.getBoundingClientRect().y);">︙</BUTTON>
+				</DIV>
+				<DIV CLASS="ROOMLIST" ID="ROOMLIST"></DIV>
+			</DIV>
+			<DIV ID="DM" STYLE="display: none;">
+				<DIV CLASS="ROOMLIST" ID="DMLIST"></DIV>
+			</DIV>
+		</DIV>
+
+		<DIV CLASS="CONTENTS">
+			<DIV CLASS="DISPLAY" ID="DISPLAY" STYLE="display: none;"></DIV>
+			<DIV CLASS="DISPLAY" ID="GROUP_INFO" STYLE="display: none;"></DIV>
+			<DIV CLASS="DISPLAY" ID="DM_DISPLAY" STYLE="display: none;">
+				暫定デザイン↓<BR>
+				<INPUT TYPE="TEXT" ID="CREATE_DM_UID" PLACEHOLDER="ユーザーを検索">
+				<DIV CLASS="CREATE_DM_LIST" ID="CREATE_DM_LIST"></DIV>
+			</DIV>
+
+			<DIV CLASS="CHATROOM" ID="CHATROOM" STYLE="display: none;">
+				<DIV CLASS="CONTAINER">
+					<DIV CLASS="MESSAGELIST" ID="MESSAGELIST"></DIV>
+					<DIV CLASS="CHATINPUTFIELD">
+						<DIV CLASS="CHATINPUT" ID="CHATINPUT">
+							<BUTTON onclick="SendMenuOC();">+</BUTTON>
+							<TEXTAREA ID="MSGINPUT_TEXT"></TEXTAREA>
+							<BUTTON onclick="SendMessageButton(document.getElementById('MSGINPUT_TEXT'));" ID="MESSAGE_SEND_BUTTON">↑</BUTTON>
+						</DIV>
+					</DIV>
+				</DIV>
+			</DIV>
+		</DIV>
+
+		<!--ファイルビュワー-->
+		<DIV CLASS="FILE_VIEWER_BG DIALOG_BG" ID="FILE_VIEWER_BG" onclick="CloseFileView()" STYLE="display: none;"></DIV>
+		<DIV CLASS="FILE_VIEWER" ID="FILE_VIEWER" STYLE="display: none;"></DIV>
+
+		<!--PGPメニュー-->
+		<DIV CLASS="DIALOG_BG" ID="PGPMENU_BG" onclick="ClosePGPMenu()" STYLE="display: none;"></DIV>
+		<DIV CLASS="PGPMENU PLATE" ID="PGPMENU" STYLE="display: none;">
+			<DIV>
+				<DIV ID="PGPMENU_NEW_KEY" STYLE="display: block;">
+					<BUTTON onclick="GenPGPKey();" ID="PGPMENU_GENKEY">鍵を作成する</BUTTON>
+					<BUTTON onclick="ImportSelfPGPKey();">鍵をインポート</BUTTON>
+				</DIV>
+
+				<DIV ID="PGPMENU_EXITS_KEY" STYLE="display: none;">
+					<BUTTON onclick="DeletePGPKey();" CLASS="DELETE_SELFKEY" ID="PGPMENU_DELKEY">鍵を削除する</BUTTON>
+					<BUTTON onclick="DownloadSelfPGPKey();">鍵をエクスポート</BUTTON>
+					<DETAILS>
+						<SUMMARY>ﾟ+.ヽ(≧▽≦)ﾉ.+ﾟ</SUMMARY>
+						<PRE ID="PGPMENU_KIRAKIRA"></PRE>
+					</DETAILS>
+				</DIV>
+
+				<HR>
+				インポート済みの鍵<BR>
+
+				<TABLE CLASS="KEYLIST" ID="PGPMENU_KEYLIST">
+					<TR>
+						<TH>ユーザー</TH>
+						<TH>操作</TH>
+					</TR>
+				</TABLE>
+			</DIV>
+		</DIV>
+
+		<!--設定画面-->
+		<DIV CLASS="DIALOG_BG" ID="SETTING_DIALOG_BG" onclick="CloseSettingDialog()" STYLE="display: none;"></DIV>
+		<DIV CLASS="SETTING_DIALOG PLATE" ID="SETTING_DIALOG" STYLE="display: none;">
+			<DIV>
+				設定はありませんゴミ
+			</DIV>
+		</DIV>
+
+		<!--送信メニュー-->
+		<DIV CLASS="MENU" ID="SEND_MENU" style="display: none;">
+			<BUTTON onclick="SendMenuOC(); EL.CONTENTS.FILE_SELECT.click();">ファイル</BUTTON>
+			<BUTTON onclick="SendMenuOC(); SendPublicKeyToRoom();">公開鍵を添付</BUTTON>
+		</DIV>
+		<DIV CLASS="SEND_FILE_LIST" ID="SEND_FILE_LIST"></DIV>
+		<INPUT TYPE="FILE" ID="FILE_SELECT" STYLE="display: none;" multiple>
+	</BODY>
+
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/RSPA.js?V=1.0" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/DIALOG.js?V=LATEST" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/COOKIE.js?V=LATEST" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/LOADING.js?V=LATEST" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/Login.js?V=LATEST" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/htmlspecialchars.js" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/RMD.js?V=LATEST" defer></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/xz.js?V=LATEST"></SCRIPT>
+	<SCRIPT SRC="https://unpkg.com/openpgp@5.10.0/dist/openpgp.min.js" defer></SCRIPT>
+
+	<SCRIPT SRC="/SCRIPT/LOADING.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/API.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/UI_ITEM.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/PAGE.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/StreamingAPI.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/PGP.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/Main.js" defer></SCRIPT>
+</HTML>
