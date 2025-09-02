@@ -62,7 +62,8 @@ async function GenMessageItem(Message, User) {
 	}
 
 	//本文をRMD変換
-	Text = RMD_CONV(Text);
+	//TODO:るみスクリプトで、HTMLタグの置換を防止する仕組みを実装してから再実装しよう。
+	//Text = RMD_CONV(Text);
 
 	//URLをAタグに変換(既にAタグ化しているURLは除外)
 	Text = LinkifyHTML(Text);
