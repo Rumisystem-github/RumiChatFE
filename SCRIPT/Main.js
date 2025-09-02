@@ -485,12 +485,12 @@ async function InviteACKButton(ID, E) {
 	E.parentNode.parentNode.remove();
 }
 
-function ConvertDATETIMEToDate(D) {
+/*function ConvertDATETIMEToDate(D) {
 	const [DatePart, TimePart] = D.split(" ");
 	const [Y, M, Day] = DatePart.split("-").map(Number);
 	const [H, Min, S] = TimePart.split(":").map(Number);
 	return new Date(Y, M - 1, Day, H, Min, S);
-}
+}*/
 
 EL.CONTENTS.FILE_SELECT.addEventListener("change", (e) => {
 	SelectFileList = EL.CONTENTS.FILE_SELECT.files;
