@@ -462,3 +462,54 @@ async function RegistPGPPublicKey(Key) {
 		throw new Error(RESULT.ERR);
 	}
 }
+//--------------------------------------------------設定
+async function GetSetting() {
+	let AJAX = await fetch("/api/Setting", {
+		method: "GET",
+		headers: {
+			TOKEN: SESSION
+		},
+		cache: "no-store"
+	});
+
+	const RESULT = await AJAX.json();
+	if (RESULT.STATUS) {
+		return RESULT.SETTING;
+	} else {
+		throw new Error(RESULT.ERR);
+	}
+}
+async function RegistSetting(body) {
+	let AJAX = await fetch("/api/Setting", {
+		method: "POST",
+		headers: {
+			TOKEN: SESSION
+		},
+		cache: "no-store",
+		body: JSON.stringify(body)
+	});
+
+	const RESULT = await AJAX.json();
+	if (RESULT.STATUS) {
+		return;
+	} else {
+		throw new Error(RESULT.ERR);
+	}
+}
+
+async function ClearSetting() {
+	let AJAX = await fetch("/api/Setting", {
+		method: "DELETE",
+		headers: {
+			TOKEN: SESSION
+		},
+		cache: "no-store"
+	});
+
+	const RESULT = await AJAX.json();
+	if (RESULT.STATUS) {
+		return;
+	} else {
+		throw new Error(RESULT.ERR);
+	}
+}

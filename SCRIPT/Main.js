@@ -15,6 +15,9 @@ let ChatMessageListScrollBottom = false;			//←チャットのメッセージ�
 let ChatMessagePage = {};
 let ChatMessageLoading = false;
 let SelectFileList = [];
+let setting = {
+	enter_send: true
+};
 let EL = {
 	SELF: {
 		ICON: document.getElementById("SELF_ICON")
@@ -139,6 +142,21 @@ async function main() {
 		//グループ一覧を初期化
 		L = LOAD_WAIT_PRINT("グループ一覧を初期化中");
 		await RefreshGroupList();
+		LOAD_WAIT_STOP(L, "OK");
+
+		//設定をロード
+		L = LOAD_WAIT_PRINT("設定を読み込んでいます");
+		let server_setting = await GetSetting();
+		const setting_key_list = Object.keys(server_setting);
+		for (let i = 0; i < setting_key_list.length; i++) {
+			const key = setting_key_list[i];
+			setting[key] = server_setting[key];
+		}
+		LOAD_WAIT_STOP(L, "OK");
+
+		//設定を同期
+		L = LOAD_WAIT_PRINT("設定を同期しています");
+		await RegistSetting(setting);
 		LOAD_WAIT_STOP(L, "OK");
 
 		//鍵をロード
