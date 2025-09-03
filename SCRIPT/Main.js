@@ -16,7 +16,8 @@ let ChatMessagePage = {};
 let ChatMessageLoading = false;
 let SelectFileList = [];
 let setting = {
-	rc_enter_send: true
+	rc_enter_send: true,
+	rc_url_cleaner: true
 };
 let EL = {
 	SELF: {
@@ -64,7 +65,8 @@ let EL = {
 		DIALOG: document.getElementById("SETTING_DIALOG"),
 		CONTENTS: {
 			CHAT: {
-				CTRL_SEND: document.getElementById("SETTING_CTRL_SEND")
+				CTRL_SEND: document.getElementById("SETTING_CTRL_SEND"),
+				URLCLEANER: document.getElementById("SETTING_URLC")
 			}
 		}
 	}
@@ -283,6 +285,28 @@ async function SendMessageButton(E) {
 
 	//送信
 	ChatInputFieldDisable(true);
+
+	//URLクリーナー
+	if (setting["rc_url_cleaner"]) {
+		const regex = /\bhttps?:\/\/[^\s]+/g;
+		const mtc = Text.match(regex);
+		if (mtc != null) {
+			for (let i = 0; i < mtc.length; i++) {
+				const url = mtc[i];
+				let ajax = await fetch("https://urlclean.rumiserver.com/api/Cleaner", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						"URL": url
+					})
+				});
+				let result = await ajax.json();
+				Text = Text.replace(url, result.URL);
+			}
+		}
+	}
 
 	const DM = DMList.find(Row => Row.ID == OpenRoomID);
 	if (DM != null) {
@@ -572,6 +596,7 @@ async function OpenSettingDialog() {
 	EL.SETTING.DIALOG.style.display = "block";
 
 	EL.SETTING.CONTENTS.CHAT.CTRL_SEND.checked = !setting["rc_enter_send"];
+	EL.SETTING.CONTENTS.CHAT.URLCLEANER.checked = setting["rc_url_cleaner"];
 }
 
 async function apply_setting() {
