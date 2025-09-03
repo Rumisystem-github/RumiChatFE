@@ -16,7 +16,7 @@ let ChatMessagePage = {};
 let ChatMessageLoading = false;
 let SelectFileList = [];
 let setting = {
-	enter_send: true
+	rc_enter_send: true
 };
 let EL = {
 	SELF: {
@@ -61,7 +61,12 @@ let EL = {
 	},
 	SETTING: {
 		BG: document.getElementById("SETTING_DIALOG_BG"),
-		DIALOG: document.getElementById("SETTING_DIALOG")
+		DIALOG: document.getElementById("SETTING_DIALOG"),
+		CONTENTS: {
+			CHAT: {
+				CTRL_SEND: document.getElementById("SETTING_CTRL_SEND")
+			}
+		}
 	}
 };
 
@@ -242,7 +247,7 @@ async function RefreshDMList() {
 }
 
 EL.CONTENTS.CHATINPUT.addEventListener("keydown", (e) => {
-	if (setting["enter_send"]) {
+	if (setting["rc_enter_send"]) {
 		//Enter送信(Shiftキー押しでキャンセル)
 		if (e.shiftKey == false && e.key == "Enter") {
 			e.preventDefault();
@@ -565,6 +570,12 @@ function CloseFileView() {
 async function OpenSettingDialog() {
 	EL.SETTING.BG.style.display = "block";
 	EL.SETTING.DIALOG.style.display = "block";
+
+	EL.SETTING.CONTENTS.CHAT.CTRL_SEND.checked = !setting["rc_enter_send"];
+}
+
+async function apply_setting() {
+	await RegistSetting(setting);
 }
 
 async function CloseSettingDialog() {

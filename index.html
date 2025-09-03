@@ -129,7 +129,7 @@
 		<DIV CLASS="DIALOG_BG" ID="SETTING_DIALOG_BG" onclick="CloseSettingDialog()" STYLE="display: none;"></DIV>
 		<DIV CLASS="SETTING_DIALOG PLATE" ID="SETTING_DIALOG" STYLE="display: none;">
 			<DIV>
-				設定はありませんゴミ
+				<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_CTRL_SEND" onchange="setting['rc_enter_send'] = !this.checked; apply_setting();"><LABEL FOR="SETTING_CTRL_SEND">Ctrl+Enterで送信する</LABEL>
 			</DIV>
 		</DIV>
 
