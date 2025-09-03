@@ -242,9 +242,18 @@ async function RefreshDMList() {
 }
 
 EL.CONTENTS.CHATINPUT.addEventListener("keydown", (e) => {
-	if (e.shiftKey == false && e.key == "Enter") {
-		e.preventDefault();
-		SendMessageButton(e.target);
+	if (setting["enter_send"]) {
+		//Enter送信(Shiftキー押しでキャンセル)
+		if (e.shiftKey == false && e.key == "Enter") {
+			e.preventDefault();
+			SendMessageButton(e.target);
+		}
+	} else {
+		//Ctrl + Enter 送信
+		if (e.ctrlKey && e.key == "Enter") {
+			e.preventDefault();
+			SendMessageButton(e.target);
+		}
 	}
 });
 
