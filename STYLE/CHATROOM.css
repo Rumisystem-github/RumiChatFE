@@ -113,7 +113,7 @@
 .MESSAGEITEM > .FILE {
 	margin-left: 45px;
 
-	height: 100px;
+	height: fit-content;
 
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
@@ -121,8 +121,8 @@
 }
 
 .MESSAGEITEM > .FILE>* {
-	width: auto;
-	height: 100px;
+	width: 400px;
+	height: auto;
 	object-fit: cover;
 }
 

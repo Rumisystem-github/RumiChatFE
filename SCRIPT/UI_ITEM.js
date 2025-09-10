@@ -77,19 +77,27 @@ async function GenMessageItem(Message, User) {
 		<DIV CLASS="TEXT">
 			${Text.replaceAll("\n", "<BR>")}
 		</DIV>
-		${(function () {
+		${await (async function () {
 			if (Message.FILE.length != 0) {
 				let Body = `<DIV CLASS="FILE">`;
 				for (let I = 0; I < Message.FILE.length; I++) {
 					const File = Message.FILE[I];
-					if (File.TYPE.startsWith("image/")) {
-						Body += `
-							<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');">
-						`;
-					} else if (File.TYPE.startsWith("video/")) {
-						Body += `
-							<VIDEO SRC="${File.URL}" controls></VIDEO>
-						`;
+					if (File.TYPE.startsWith("image/") || File.TYPE.startsWith("video/")) {
+						if (File.TYPE.startsWith("image/")) {
+							const img = await get_image_from_url(File.URL);
+							const new_height = img.height * (400 / img.width);
+
+							Body += `
+								<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">
+							`;
+							img.remove();
+						} else {
+							//const video = await get_video_from_url(File.URL);
+							Body += `
+								<VIDEO SRC="${File.URL}" controls></VIDEO>
+							`;
+							//video.remove();
+						}
 					} else {
 						Body += `
 							<A HREF="${File.URL}" download>添付ファイル</A>
@@ -104,6 +112,28 @@ async function GenMessageItem(Message, User) {
 		})()}
 	</DIV>`;
 }
+
+async function get_image_from_url(url) {
+	return new Promise((resolve, reject) => {
+		let img = new Image();
+		img.src = url;
+
+		img.onload = () => resolve(img);
+		img.onerror = reject;
+	});
+}
+
+async function get_video_from_url(url) {
+	return new Promise((resolve, reject) => {
+		let video = document.createElement("VIDEO");
+		video.src = url;
+		video.preload = "metadata";
+
+		video.onloadedmetadata = () => resolve(video);
+		video.onerror = reject;
+	});
+}
+
 
 function LinkifyHTML(Data) {
 	const Parser = new DOMParser();
