@@ -142,7 +142,7 @@ function LinkifyHTML(Data) {
 	function ProcessNode(node) {
 		if (node.nodeType === Node.TEXT_NODE) {
 			const replaced = node.textContent.replace(
-				/(https?:\/\/[^\s<]+)/gi,
+				/\b([a-zA-Z][a-zA-Z0-9+\-.]*:[^\s<]+)/g,
 				url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
 			);
 			if (replaced !== node.textContent) {
