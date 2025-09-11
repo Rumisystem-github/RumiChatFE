@@ -15,7 +15,7 @@
 		<LINK REL="stylesheet" HREF="/STYLE/ROOMLIST.css">
 		<LINK REL="stylesheet" HREF="/STYLE/CHATROOM.css">
 		<LINK REL="stylesheet" HREF="/STYLE/FileViewer.css">
-		<LINK REL="stylesheet" HREF="/STYLE/PGPMenu.css">
+		<LINK REL="stylesheet" HREF="/STYLE/Setting.css">
 
 		<!--スマホ(iOSを除く)にスマホアプリで対応できたら消す-->
 		<META NAME="viewport" CONTENT="width=device-width, initial-scale=1" />
@@ -47,7 +47,6 @@
 			<BUTTON onclick="ClickNewGroupButton();">+</BUTTON>
 
 			<DIV CLASS="ACCOUNT_INFO">
-				<BUTTON onclick="OpenPGPMenu();"><IMG SRC="/Asset/MdiSecurity.svg"></BUTTON>
 				<BUTTON onclick="OpenSettingDialog();"><IMG SRC="/Asset/MdiCogOutline.svg"></BUTTON>
 				<BUTTON onclick="window.open('https:\/\/account.rumiserver.com/SETTING/');"><IMG SRC="/Asset/MdiAccountSettingsVariant.svg"></BUTTON>
 				<IMG CLASS="ICON" ID="SELF_ICON">
@@ -95,43 +94,53 @@
 		<DIV CLASS="FILE_VIEWER_BG DIALOG_BG" ID="FILE_VIEWER_BG" onclick="CloseFileView()" STYLE="display: none;"></DIV>
 		<DIV CLASS="FILE_VIEWER" ID="FILE_VIEWER" STYLE="display: none;"></DIV>
 
-		<!--PGPメニュー-->
-		<DIV CLASS="DIALOG_BG" ID="PGPMENU_BG" onclick="ClosePGPMenu()" STYLE="display: none;"></DIV>
-		<DIV CLASS="PGPMENU PLATE" ID="PGPMENU" STYLE="display: none;">
-			<DIV>
-				<DIV ID="PGPMENU_NEW_KEY" STYLE="display: block;">
-					<BUTTON onclick="GenPGPKey();" ID="PGPMENU_GENKEY">鍵を作成する</BUTTON>
-					<BUTTON onclick="ImportSelfPGPKey();">鍵をインポート</BUTTON>
-				</DIV>
-
-				<DIV ID="PGPMENU_EXITS_KEY" STYLE="display: none;">
-					<BUTTON onclick="DeletePGPKey();" CLASS="DELETE_SELFKEY" ID="PGPMENU_DELKEY">鍵を削除する</BUTTON>
-					<BUTTON onclick="DownloadSelfPGPKey();">鍵をエクスポート</BUTTON>
-					<DETAILS>
-						<SUMMARY>ﾟ+.ヽ(≧▽≦)ﾉ.+ﾟ</SUMMARY>
-						<PRE ID="PGPMENU_KIRAKIRA"></PRE>
-					</DETAILS>
-				</DIV>
-
-				<HR>
-				インポート済みの鍵<BR>
-
-				<TABLE CLASS="KEYLIST" ID="PGPMENU_KEYLIST">
-					<TR>
-						<TH>ユーザー</TH>
-						<TH>操作</TH>
-					</TR>
-				</TABLE>
-			</DIV>
-		</DIV>
-
 		<!--設定画面-->
 		<DIV CLASS="DIALOG_BG" ID="SETTING_DIALOG_BG" onclick="CloseSettingDialog()" STYLE="display: none;"></DIV>
 		<DIV CLASS="SETTING_DIALOG PLATE" ID="SETTING_DIALOG" STYLE="display: none;">
 			<DIV>
-				<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_CTRL_SEND" onchange="setting['rc_enter_send'] = !this.checked; apply_setting();"><LABEL FOR="SETTING_CTRL_SEND">Ctrl+Enterで送信する</LABEL>
-				<BR>
-				<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_URLC" onchange="setting['rc_url_cleaner'] = !this.checked; apply_setting();"><LABEL FOR="SETTING_URLC">URLクリーナー</LABEL>
+				<DIV CLASS="TABVIEW" data-tabviewid="setting">
+					<DIV CLASS="TABVIEW_BTN">
+						<BUTTON ID="TABVIEW_BTN_ITEM" on="true" onclick="TABVIEW_CH('chat', this);" data-name="chat" data-tabviewid="setting">チャット</BUTTON>
+						<BUTTON ID="TABVIEW_BTN_ITEM" on="false" onclick="TABVIEW_CH('encrypt', this); OpenPGPMenu();" data-name="encrypt" data-tabviewid="setting" data-promode="true">暗号通信</BUTTON>
+						<BUTTON ID="TABVIEW_BTN_ITEM" on="false" onclick="TABVIEW_CH('info', this);" data-name="info" data-tabviewid="setting">情報</BUTTON>
+					</DIV>
+					<DIV CLASS="TABVIEW_ITEM_PARENT">
+						<!--チャット-->
+						<DIV CLASS="TABVIEW_ITEM_ON" ID="TABVIEW_ITEM" data-name="chat" data-tabviewid="setting">
+							<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_CTRL_SEND" onchange="setting['rc_enter_send'] = !this.checked; apply_setting();"><LABEL FOR="SETTING_CTRL_SEND">Ctrl+Enterで送信する</LABEL>
+							<BR>
+							<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_URLC" onchange="setting['rc_url_cleaner'] = !this.checked; apply_setting();" data-promode="true"><LABEL FOR="SETTING_URLC" data-promode="true">URLクリーナー</LABEL>
+						</DIV>
+						<!--暗号通信-->
+						<DIV CLASS="TABVIEW_ITEM_OFF" ID="TABVIEW_ITEM" data-name="encrypt" data-tabviewid="setting" data-promode="true">
+							<DIV ID="PGPMENU_NEW_KEY" STYLE="display: block;">
+								<BUTTON onclick="GenPGPKey();" ID="PGPMENU_GENKEY">鍵を作成する</BUTTON>
+								<BUTTON onclick="ImportSelfPGPKey();">鍵をインポート</BUTTON>
+							</DIV>
+							<DIV ID="PGPMENU_EXITS_KEY" STYLE="display: none;">
+								<BUTTON onclick="DeletePGPKey();" CLASS="DELETE_SELFKEY" ID="PGPMENU_DELKEY">鍵を削除する</BUTTON>
+								<BUTTON onclick="DownloadSelfPGPKey();">鍵をエクスポート</BUTTON>
+								<DETAILS>
+									<SUMMARY>ﾟ+.ヽ(≧▽≦)ﾉ.+ﾟ</SUMMARY>
+									<PRE ID="PGPMENU_KIRAKIRA"></PRE>
+								</DETAILS>
+							</DIV>
+							<HR>
+							インポート済みの鍵<BR>
+							<TABLE CLASS="KEYLIST" ID="PGPMENU_KEYLIST">
+								<TR>
+									<TH>ユーザー</TH>
+									<TH>操作</TH>
+								</TR>
+							</TABLE>
+						</DIV>
+						<!--情報-->
+						<DIV CLASS="TABVIEW_ITEM_OFF" ID="TABVIEW_ITEM" data-name="info" data-tabviewid="setting">
+							<DIV onclick="switch_promode();">BEバージョン：書くのが面倒くさい</DIV>
+							<DIV>FEバージョン：書くのが面倒くさい</DIV>
+						</DIV>
+					</DIV>
+				</DIV>
 			</DIV>
 		</DIV>
 
@@ -152,6 +161,7 @@
 	<SCRIPT SRC="https://cdn.rumia.me/LIB/htmlspecialchars.js" defer></SCRIPT>
 	<SCRIPT SRC="https://cdn.rumia.me/LIB/RMD.js?V=LATEST" defer></SCRIPT>
 	<SCRIPT SRC="https://cdn.rumia.me/LIB/xz.js?V=LATEST"></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/TABVIEW.js?V=LATEST" defer></SCRIPT>
 	<SCRIPT SRC="https://unpkg.com/openpgp@5.10.0/dist/openpgp.min.js" defer></SCRIPT>
 
 	<SCRIPT SRC="/SCRIPT/LOADING.js" defer></SCRIPT>

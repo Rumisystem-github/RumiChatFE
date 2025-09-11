@@ -17,7 +17,8 @@ let ChatMessageLoading = false;
 let SelectFileList = [];
 let setting = {
 	rc_enter_send: true,
-	rc_url_cleaner: true
+	rc_url_cleaner: true,
+	pro_mode: false
 };
 let EL = {
 	SELF: {
@@ -55,10 +56,6 @@ let EL = {
 	FILE_VIWER: {
 		BG: document.getElementById("FILE_VIEWER_BG"),
 		VIEWER: document.getElementById("FILE_VIEWER")
-	},
-	PGPMENU: {
-		BG: document.getElementById("PGPMENU_BG"),
-		MAIN: document.getElementById("PGPMENU")
 	},
 	SETTING: {
 		BG: document.getElementById("SETTING_DIALOG_BG"),
@@ -165,6 +162,15 @@ async function main() {
 		L = LOAD_WAIT_PRINT("設定を同期しています");
 		await RegistSetting(setting);
 		LOAD_WAIT_STOP(L, "OK");
+
+		//プロモード
+		if (setting["pro_mode"] == false) {
+			const promode_el = document.querySelectorAll("[data-promode=\"true\"]");
+			for (let i = 0; i < promode_el.length; i++) {
+				const element = promode_el[i];
+				element.style.display = "none";
+			}
+		}
 
 		//鍵をロード
 		L = LOAD_WAIT_PRINT("鍵を読み込んでいます");
@@ -606,6 +612,21 @@ async function apply_setting() {
 async function CloseSettingDialog() {
 	EL.SETTING.BG.style.display = "none";
 	EL.SETTING.DIALOG.style.display = "none";
+}
+
+let promode_click_count = 0;
+async function switch_promode() {
+	if (setting["pro_mode"]) return;
+
+	promode_click_count++;
+
+	if (promode_click_count > 5) {
+		setting["pro_mode"] = true;
+		await RegistSetting(setting);
+
+		await dialog.DIALOG("Η λειτουργία Pro είναι ενεργοποιημένη");
+		window.reload();
+	}
 }
 
 async function CreateDMUI(UID) {

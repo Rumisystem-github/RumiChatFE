@@ -37,14 +37,6 @@ async function OpenPGPMenu() {
 			}
 		}
 	}
-
-	EL.PGPMENU.BG.style.display = "block";
-	EL.PGPMENU.MAIN.style.display = "block";
-}
-
-async function ClosePGPMenu() {
-	EL.PGPMENU.BG.style.display = "none";
-	EL.PGPMENU.MAIN.style.display = "none";
 }
 
 async function DownloadSelfPGPKey() {
