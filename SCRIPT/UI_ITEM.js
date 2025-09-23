@@ -80,30 +80,39 @@ async function GenMessageItem(Message, User) {
 		${await (async function () {
 			if (Message.FILE.length != 0) {
 				let Body = `<DIV CLASS="FILE">`;
+
+				//ファイルを順番にチェックする
 				for (let I = 0; I < Message.FILE.length; I++) {
 					const File = Message.FILE[I];
-					if (File.TYPE.startsWith("image/") || File.TYPE.startsWith("video/")) {
-						if (File.TYPE.startsWith("image/")) {
-							const img = await get_image_from_url(File.URL);
-							const new_height = img.height * (400 / img.width);
+					try {
+						if (File.TYPE.startsWith("image/") || File.TYPE.startsWith("video/")) {
+							if (File.TYPE.startsWith("image/")) {
+								const img = await get_image_from_url(File.URL);
+								const new_height = img.height * (400 / img.width);
 
-							Body += `
-								<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">
-							`;
-							img.remove();
+								Body += `
+									<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">
+								`;
+								img.remove();
+							} else {
+								//const video = await get_video_from_url(File.URL);
+								Body += `
+									<VIDEO SRC="${File.URL}" controls></VIDEO>
+								`;
+								//video.remove();
+							}
 						} else {
-							//const video = await get_video_from_url(File.URL);
 							Body += `
-								<VIDEO SRC="${File.URL}" controls></VIDEO>
+								<A HREF="${File.URL}" download>添付ファイル</A>
 							`;
-							//video.remove();
 						}
-					} else {
+					} catch(ex) {
 						Body += `
 							<A HREF="${File.URL}" download>添付ファイル</A>
 						`;
 					}
 				}
+
 				Body += `</DIV>`;
 				return Body;
 			} else {
