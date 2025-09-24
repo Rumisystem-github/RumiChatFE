@@ -40,10 +40,41 @@
 	padding: 5px;
 }
 
-.SEND_FILE_LIST > * {
-	width: 100px;
-	height: auto;
-	object-fit: cover;
+.SEND_FILE_LIST{
+	width: 500px;
+	height: fit-content;
+
+	margin: 10px;
+	padding: 10px;
+
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(1px);
+}
+
+.SEND_FILE_ITEM{
+	width: 100%;
+	height: 100px;
+
+	flex-direction: row;
+
+	overflow: hidden;
+
+	vertical-align: middle;
+}
+
+.SEND_FILE_ITEM > .THUMBNAIL{
+	height: 100%;
+	vertical-align: middle;
+}
+
+.SEND_FILE_ITEM > .THUMBNAIL > *{
+	vertical-align: middle;
+}
+
+.SEND_FILE_ITEM > .NAME{
+	vertical-align: middle;
+
+	color: white;
 }
 
 .CHATROOM > .CONTAINER > .CHATINPUTFIELD > .CHATINPUT {

@@ -85,28 +85,15 @@ async function GenMessageItem(Message, User) {
 				for (let I = 0; I < Message.FILE.length; I++) {
 					const File = Message.FILE[I];
 					try {
-						switch(File.TYPE) {
-							case "image/png":
-							case "image/jpeg":
-							case "image/avif":
-							case "image/bmp":
-							case "image/webp":
-							case "image/svg+xml":
-							case "image/apng":
-							case "image/gif":
+						switch(detect_file_type(File.TYPE)) {
+							case file_type_group.Image:
 								const img = await get_image_from_url(File.URL);
 								const new_height = img.height * (400 / img.width);
 								Body += `<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">`;
 								img.remove();
 								break;
 
-							case "video/mp4":
-							case "video/mpeg":
-							case "video/ogg":
-							case "video/mp2t":
-							case "video/webm":
-							case "video/3gpp":
-							case "video/x-msvideo":
+							case file_type_group.Video:
 								Body += `<VIDEO SRC="${File.URL}" controls></VIDEO>`;
 								break;
 
@@ -149,4 +136,40 @@ async function get_video_from_url(url) {
 		video.onloadedmetadata = () => resolve(video);
 		video.onerror = reject;
 	});
+}
+
+async function get_dataurl_from_file(file) {
+	return new Promise((resolve, reject) => {
+		const r = new FileReader();
+		r.onload = function (e) {
+			resolve(e.target.result);
+		};
+		r.onerror = reject;
+		r.readAsDataURL(file);
+	});
+}
+
+async function gen_file_item(file) {
+	return `
+		<DIV ID="SEND_FILE_ITEM" CLASS="SEND_FILE_ITEM">
+			<SPAN CLASS="THUMBNAIL">
+			${await (async function(){
+				switch(detect_file_type(file.type)) {
+					case file_type_group.Image:
+						const dataurl = await get_dataurl_from_file(file);
+						return `<IMG SRC="${dataurl}">`;
+
+					case file_type_group.Video:
+						return "動画";
+
+					default:
+						return "?";
+				}
+			})()}
+			</SPAN>
+			<SPAN CLASS="NAME">
+				${file.name}
+			</SPAN>
+		</DIV>
+	`;
 }

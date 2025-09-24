@@ -149,7 +149,7 @@
 			<BUTTON onclick="SendMenuOC(); EL.CONTENTS.FILE_SELECT.click();">ファイル</BUTTON>
 			<BUTTON onclick="SendMenuOC(); SendPublicKeyToRoom();">公開鍵を添付</BUTTON>
 		</DIV>
-		<DIV CLASS="SEND_FILE_LIST" ID="SEND_FILE_LIST"></DIV>
+		<DIV CLASS="SEND_FILE_LIST" ID="SEND_FILE_LIST" STYLE="display: none;"></DIV>
 		<INPUT TYPE="FILE" ID="FILE_SELECT" STYLE="display: none;" multiple>
 	</BODY>
 
@@ -166,6 +166,7 @@
 
 	<SCRIPT SRC="/SCRIPT/LOADING.js" defer></SCRIPT>
 	<SCRIPT SRC="/SCRIPT/Linkify.js" defer></SCRIPT>
+	<SCRIPT SRC="/SCRIPT/MimeType.js" defer></SCRIPT>
 	<SCRIPT SRC="/SCRIPT/DateFormat.js" defer></SCRIPT>
 	<SCRIPT SRC="/SCRIPT/API.js" defer></SCRIPT>
 	<SCRIPT SRC="/SCRIPT/UI_ITEM.js" defer></SCRIPT>

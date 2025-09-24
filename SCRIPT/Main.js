@@ -270,7 +270,7 @@ EL.CONTENTS.CHATINPUT.addEventListener("keydown", (e) => {
 	}
 });
 
-EL.CONTENTS.CHATINPUT.addEventListener("paste", (e) => {
+EL.CONTENTS.CHATINPUT.addEventListener("paste", async (e) => {
 	const ItemList = e.clipboardData.items;
 
 	for (let I = 0; I < ItemList.length; I++) {
@@ -279,7 +279,7 @@ EL.CONTENTS.CHATINPUT.addEventListener("paste", (e) => {
 			const File = Item.getAsFile();
 
 			SelectFileList.push(File);
-			UpdateSendFileList();
+			await UpdateSendFileList();
 		}
 	}
 });
@@ -380,7 +380,7 @@ async function SendMessageButton(E) {
 			}
 
 			SelectFileList = [];
-			UpdateSendFileList();
+			await UpdateSendFileList();
 		}
 	} catch (EX) {
 		console.log(EX);
@@ -554,9 +554,9 @@ async function InviteACKButton(ID, E) {
 	return new Date(Y, M - 1, Day, H, Min, S);
 }*/
 
-EL.CONTENTS.FILE_SELECT.addEventListener("change", (e) => {
+EL.CONTENTS.FILE_SELECT.addEventListener("change", async (e) => {
 	SelectFileList = EL.CONTENTS.FILE_SELECT.files;
-	UpdateSendFileList();
+	await UpdateSendFileList();
 });
 
 function SendMenuOC() {
@@ -567,21 +567,19 @@ function SendMenuOC() {
 	}
 }
 
-function UpdateSendFileList() {
+async function UpdateSendFileList() {
 	//クリアー
 	EL.CONTENTS.EXTEND.FILE_LIST.innerHTML = "";
 
 	for (let I = 0; I < SelectFileList.length; I++) {
-		const F = SelectFileList[I];
-		let IMG = document.createElement("IMG");
-		EL.CONTENTS.EXTEND.FILE_LIST.appendChild(IMG);
+		const file = SelectFileList[I];
+		EL.CONTENTS.EXTEND.FILE_LIST.innerHTML += await gen_file_item(file);
+	}
 
-		const Reader = new FileReader();
-		Reader.onload = function (e) {
-			IMG.src = e.target.result;
-			//EL.CONTENTS.EXTEND.FILE_LIST.style.right = EL.CONTENTS.EXTEND.FILE_LIST.offsetWidth + "px";
-		};
-		Reader.readAsDataURL(F);
+	if (SelectFileList.length == 0) {
+		EL.CONTENTS.EXTEND.FILE_LIST.style.display = "none";
+	} else {
+		EL.CONTENTS.EXTEND.FILE_LIST.style.display = "block";
 	}
 }
 
