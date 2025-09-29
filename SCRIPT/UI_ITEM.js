@@ -79,7 +79,7 @@ async function GenMessageItem(Message, User) {
 		</DIV>
 		${await (async function () {
 			if (Message.FILE.length != 0) {
-				let Body = `<DIV CLASS="FILE">`;
+				let Body = `<DIV CLASS="FILE_LIST">`;
 
 				//ファイルを順番にチェックする
 				for (let I = 0; I < Message.FILE.length; I++) {
@@ -89,12 +89,12 @@ async function GenMessageItem(Message, User) {
 							case file_type_group.Image:
 								const img = await get_image_from_url(File.URL);
 								const new_height = img.height * (400 / img.width);
-								Body += `<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">`;
+								Body += gen_message_file_item(File.URL, `<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">`);
 								img.remove();
 								break;
 
 							case file_type_group.Video:
-								Body += `<VIDEO SRC="${File.URL}" controls></VIDEO>`;
+								Body += gen_message_file_item(File.URL, `<VIDEO SRC="${File.URL}" controls></VIDEO>`);
 								break;
 
 							default:
@@ -102,14 +102,14 @@ async function GenMessageItem(Message, User) {
 
 								//テキストファイルか？
 								if (is_textfile(data)) {
-									Body += `<TEXTAREA>${new TextDecoder("UTF-8").decode(data)}</TEXTAREA>`;
+									Body += gen_message_file_item(File.URL, `<TEXTAREA STYLE="widht: 100%; height: 500px" readonly>${new TextDecoder("UTF-8").decode(data)}</TEXTAREA>`);
 								} else {
-									Body += `<A HREF="${File.URL}" download>添付ファイル</A>`;
+									Body += gen_message_file_item(File.URL, `バイナリ`);
 								}
 								break;
 						}
 					} catch(ex) {
-						Body += `<A HREF="${File.URL}" download>添付ファイル</A>`;
+						Body += gen_message_file_item(File.URL, `添付ファイル`);
 					}
 				}
 
@@ -119,6 +119,18 @@ async function GenMessageItem(Message, User) {
 				return "";
 			}
 		})()}
+	</DIV>`;
+}
+
+function gen_message_file_item(url, contents) {
+	return `
+	<DIV CLASS="FILE_ITEM">
+		<DIV CLASS="FILE">
+			${contents}
+		</DIV>
+		<DIV CLASS="CONTROLE">
+			<A HREF="${url}" download><BUTTON>DL</BUTTON></A>
+		</DIV>
 	</DIV>`;
 }
 
