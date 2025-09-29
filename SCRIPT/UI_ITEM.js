@@ -194,6 +194,13 @@ async function gen_message_file_item(file) {
 					contents.appendChild(video_el);
 					break;
 
+				case file_type_group.Audio:
+					let audio_el = document.createElement("AUDIO");
+					audio_el.src = f.URL;
+					audio_el.setAttribute("controls", "");
+					contents.appendChild(audio_el);
+					break;
+
 				default:
 					const data = await get_byte_from_url(f.URL);
 
