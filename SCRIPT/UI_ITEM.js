@@ -98,13 +98,18 @@ async function GenMessageItem(Message, User) {
 								break;
 
 							default:
-								Body += `<A HREF="${File.URL}" download>添付ファイル</A>`;
+								const data = await get_byte_from_url(File.URL);
+
+								//テキストファイルか？
+								if (is_textfile(data)) {
+									Body += `<TEXTAREA>${new TextDecoder("UTF-8").decode(data)}</TEXTAREA>`;
+								} else {
+									Body += `<A HREF="${File.URL}" download>添付ファイル</A>`;
+								}
 								break;
 						}
 					} catch(ex) {
-						Body += `
-							<A HREF="${File.URL}" download>添付ファイル</A>
-						`;
+						Body += `<A HREF="${File.URL}" download>添付ファイル</A>`;
 					}
 				}
 
@@ -117,10 +122,60 @@ async function GenMessageItem(Message, User) {
 	</DIV>`;
 }
 
+function is_textfile(data) {
+	try {
+		new TextDecoder("UTF-8", {fatal: true}).decode(data);
+		return true;
+	} catch(ex) {
+		return false;
+	}
+}
+
+function unit8array_to_dataurl(data, type) {
+	const blob = new Blob([data], {type: type});
+	const url = URL.createObjectURL(blob);
+
+	return url;
+}
+
+async function get_byte_from_url(url) {
+	let ajax = await fetch(url);
+	if (!ajax.body) throw new Error("ストリーミング非対応");
+
+	const reader = ajax.body.getReader();
+	let total = 0;
+	let chunks = [];
+	while (true) {
+		const {done, value} = await reader.read();
+		if (done) break;
+		chunks.push(value);
+		total += value.length;
+
+		//100MB超えたら死ぬ
+		if (total > 100 * 1024 * 1024) {
+			reader.cancel();
+			throw new Error("既定サイズを越えた");
+		}
+	}
+
+	const result = new Uint8Array(total);
+	let offset = 0;
+	for (let i = 0; i < chunks.length; i++) {
+		const chunk = chunks[i];
+		result.set(chunk, offset);
+		offset += chunk.length;
+	}
+
+	return result;
+}
+
 async function get_image_from_url(url) {
+	const data = await get_byte_from_url(url);
+	const dataurl = unit8array_to_dataurl(data, "");
+
 	return new Promise((resolve, reject) => {
 		let img = new Image();
-		img.src = url;
+		img.src = dataurl;
 
 		img.onload = () => resolve(img);
 		img.onerror = reject;
@@ -128,9 +183,12 @@ async function get_image_from_url(url) {
 }
 
 async function get_video_from_url(url) {
+	const data = await get_byte_from_url(url);
+	const dataurl = unit8array_to_dataurl(data, "");
+
 	return new Promise((resolve, reject) => {
 		let video = document.createElement("VIDEO");
-		video.src = url;
+		video.src = dataurl;
 		video.preload = "metadata";
 
 		video.onloadedmetadata = () => resolve(video);
