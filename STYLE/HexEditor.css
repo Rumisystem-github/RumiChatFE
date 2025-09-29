@@ -1,0 +1,23 @@
+.HEX_EDITOR{
+	display: flex;
+	flex-direction: row;
+
+	background-color: rgb(255, 255, 255);
+
+	padding: 10px;
+}
+
+.HEX_LIST{
+	border-collapse: separate;
+	border-spacing: 5px 5px;
+}
+
+.HEX_LIST > tbody > .HEX_HEADER{
+	background-color: rgb(216, 216, 216);
+
+	text-align: center;
+}
+
+.HEX_LIST > tbody > .HEX_ITEM > .HEX_ROW{
+	background-color: rgb(216, 216, 216);
+}

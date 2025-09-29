@@ -104,11 +104,12 @@ async function GenMessageItem(Message, User) {
 								if (is_textfile(data)) {
 									Body += gen_message_file_item(File.URL, `<TEXTAREA STYLE="widht: 100%; height: 500px" readonly>${new TextDecoder("UTF-8").decode(data)}</TEXTAREA>`);
 								} else {
-									Body += gen_message_file_item(File.URL, `バイナリ`);
+									Body += gen_message_file_item(File.URL, gen_hex_editor(data));
 								}
 								break;
 						}
 					} catch(ex) {
+						console.error(ex);
 						Body += gen_message_file_item(File.URL, `添付ファイル`);
 					}
 				}
@@ -132,6 +133,95 @@ function gen_message_file_item(url, contents) {
 			<A HREF="${url}" download><BUTTON>DL</BUTTON></A>
 		</DIV>
 	</DIV>`;
+}
+
+function gen_hex_editor(data) {
+	let length = data.length;
+	if (length > 100) {
+		length = 300;
+	}
+
+	const header = `<TH>0</TH><TH>1</TH><TH>2</TH><TH>3</TH><TH>4</TH><TH>5</TH><TH>6</TH><TH>7</TH><TH>8</TH><TH>9</TH><TH>A</TH><TH>B</TH><TH>C</TH><TH>D</TH><TH>E</TH><TH>F</TH>`;
+	let hex_map = [[]];
+	let col = 0;
+	let row = 0;
+	for (let i = 0; i < length; i++) {
+		const hex = data[i].toString(16).padStart(2, "0");
+		hex_map[row][col] = hex;
+		col += 1;
+
+		//Fまで来たら次の行へ
+		if (col == 16) {
+			col = 0;
+			row += 1;
+			hex_map[row] = [];
+		}
+	}
+
+	//<DIV CLASS="HEX_EDITOR">
+	let parent = document.createElement("DIV");
+	parent.className = "HEX_EDITOR";
+
+	//<TABLE CLASS="HEX_LIST">
+	let hex_list = document.createElement("TABLE");
+	hex_list.className = "HEX_LIST";
+	hex_list.innerHTML = `
+		<TR CLASS="HEX_HEADER">
+			<TH></TH>${header}
+		</TR>
+	`;
+
+	//<TABLE CLASS="ASCII_LIST">
+	let ascii_list = document.createElement("TABLE");
+	ascii_list.className = "ASCII_LIST";
+	ascii_list.innerHTML = `<TR CLASS="HEX_HEADER">${header}</TR>`;
+
+	//親に入れる
+	parent.appendChild(hex_list);
+	parent.appendChild(ascii_list);
+
+	for (let i = 0; i < hex_map.length; i++) {
+		//HEX
+		let hex_row = document.createElement("TR");
+		hex_row.className = "HEX_ITEM";
+		hex_row.innerHTML = `<TH CLASS="HEX_ROW">${(i*16).toString(16).padStart(6, "0").toUpperCase()}</TH>`;
+		//ASCII
+		let ascii_row = document.createElement("TR");
+
+		for (let j = 0; j < hex_map[i].length; j++) {
+			const hex = hex_map[i][j].toUpperCase();
+			//HEX
+			let hex_col = document.createElement("TD");
+			hex_col.className = "HEX_CONTENTS";
+			hex_col.innerText = hex;
+			hex_row.appendChild(hex_col);
+
+			//ASCII
+			let ascii_col = document.createElement("TD");
+			ascii_col.className = "ASCII_CONTENTS";
+			ascii_col.dataset["hex"] = hex;
+			ascii_col.innerText = hex_to_ascii(hex);
+			ascii_row.appendChild(ascii_col);
+		}
+
+		//リストへ追加
+		hex_list.appendChild(hex_row);
+		ascii_list.appendChild(ascii_row);
+	}
+
+	const html = parent.outerHTML;
+	parent.remove();
+	return html;
+}
+
+function hex_to_ascii(hex) {
+	const byte = parseInt(hex, 16);
+
+	if (byte >= 0x20 && byte <= 0x7E) {
+		return String.fromCharCode(byte);
+	} else {
+		return ".";
+	}
 }
 
 /**
