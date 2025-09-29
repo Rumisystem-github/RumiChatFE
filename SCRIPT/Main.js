@@ -97,10 +97,7 @@ EL.CONTENTS.MESSAGELIST.addEventListener("scroll", async (e) => {
 		const PrevScrollHeight = EL.CONTENTS.MESSAGELIST.scrollHeight;
 		for (let I = 0; I < MessageList.length; I++) {
 			const ROW = MessageList[I];
-			const DOMP = new DOMParser();
-			const Doc = DOMP.parseFromString(await GenMessageItem(ROW.MESSAGE, ROW.USER), "text/html");
-			const Element = Doc.body.firstElementChild;
-			EL.CONTENTS.MESSAGELIST.prepend(Element);
+			EL.CONTENTS.MESSAGELIST.prepend(await GenMessageItem(ROW.MESSAGE, ROW.USER));
 
 			EL.CONTENTS.MESSAGELIST.scrollTop = EL.CONTENTS.MESSAGELIST.scrollHeight - PrevScrollHeight;
 		}
@@ -224,7 +221,7 @@ async function RefreshGroupList() {
 		const Group = GroupList[I];
 		let ACK = await GetGuildACK(Group.ID);
 
-		EL.GROUPLIST.innerHTML += GenGroupItem(Group, ACK);
+		EL.GROUPLIST.appendChild(GenGroupItem(Group, ACK));
 	}
 }
 
@@ -237,7 +234,7 @@ async function RefreshRoomList(ID) {
 	for (let I = 0; I < RoomList.length; I++) {
 		const Room = RoomList[I];
 
-		EL.SIDEMENU.ROOMLIST.innerHTML += GenRoomItem(Room, ACKList[Room.ID]);
+		EL.SIDEMENU.ROOMLIST.appendChild(GenRoomItem(Room, ACKList[Room.ID]));
 	}
 }
 
@@ -248,7 +245,7 @@ async function RefreshDMList() {
 	for (let I = 0; I < DMList.length; I++) {
 		const DM = DMList[I];
 
-		EL.SIDEMENU.DMLIST.innerHTML += GenDMItem(DM);
+		EL.SIDEMENU.DMLIST.appendChild(GenDMItem(DM));
 	}
 
 	DMShow();
@@ -573,7 +570,7 @@ async function UpdateSendFileList() {
 
 	for (let I = 0; I < SelectFileList.length; I++) {
 		const file = SelectFileList[I];
-		EL.CONTENTS.EXTEND.FILE_LIST.innerHTML += await gen_file_item(file);
+		EL.CONTENTS.EXTEND.FILE_LIST.appendChild(await gen_file_item(file));
 	}
 
 	if (SelectFileList.length == 0) {

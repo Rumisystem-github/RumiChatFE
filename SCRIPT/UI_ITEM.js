@@ -1,51 +1,82 @@
 function GenGroupItem(Group, ACK) {
+	let item = document.createElement("DIV");
+	item.className = "GROUPITEM";
+	item.dataset["id"] = Group.ID;
+	item.addEventListener("click", (e)=>{
+		ClickGroupItem(Group.ID);
+	});
+
+	let icon = document.createElement("DIV");
+	icon.innerText = Group.NAME;
+
+	item.appendChild(icon);
+
 	if (ACK) {
-		ACK = "true";
+		item.dataset["ack"] = "true";
 	} else {
-		ACK = "false";
+		item.dataset["ack"] = "false";
 	}
 
-	return `
-		<DIV CLASS="GROUPITEM" data-id="${Group.ID}" data-ack="${ACK}" onclick="ClickGroupItem('${Group.ID}');">
-			<DIV>${htmlspecialchars(Group.NAME)}</DIV>
-		</DIV>
-	`;
+	return item;
 }
 
 function GenRoomItem(Room, ACK) {
+	let parent = document.createElement("A");
+	parent.href = `/chat/${Room.GID}/${Room.ID}`;
+	parent.addEventListener("click", (e)=>{
+		ChatMessagePage[Room.ID] = 0;
+	});
+
+	let item = document.createElement("DIV");
+	item.className = "ROOMITEM";
+	item.dataset["id"] = Room.ID;
+	item.innerText = Room.NAME;
+	parent.appendChild(item);
+
 	if (ACK) {
-		ACK = "true";
+		item.dataset["ack"] = "true";
 	} else {
-		ACK = "false";
+		item.dataset["ack"] = "false";
 	}
 
-	return `
-		<A HREF="/chat/${Room.GID}/${Room.ID}" onclick="ChatMessagePage['${Room.ID}'] = 0;">
-			<DIV CLASS="ROOMITEM" data-id="${Room.ID}" data-ack="${ACK}">${htmlspecialchars(Room.NAME)}</DIV>
-		</A>
-	`;
+	return parent;
 }
 
 function GenDMItem(DM) {
-	let ACK = "";
+	let parent = document.createElement("A");
+	parent.href = `/dm/${DM.ID}`;
+	parent.addEventListener("click", (e)=>{
+		ChatMessagePage[DM.ID] = 0;
+	});
+
+	let icon = document.createElement("IMG");
+	icon.className = "ICON_CIRCLE";
+	icon.src = `https://account.rumiserver.com/api/Icon?ID=${DM.UID}`;
+	icon.style.width = "35px";
+	icon.style.height = "35px";
+
+	let name = document.createElement("SPAN");
+	name.innerText = DM.NAME;
+
+	let item = document.createElement("DIV");
+	item.className = "ROOMITEM";
+	item.dataset["id"] = DM.ID;
+	item.dataset["uid"] = DM.UID;
+	item.appendChild(icon);
+	item.appendChild(name);
+	parent.appendChild(item);
+
 	if (DM.ACK) {
-		ACK = "true";
+		item.dataset["ack"] = "true";
 	} else {
-		ACK = "false";
+		item.dataset["ack"] = "false";
 	}
 
-	return `
-		<A HREF="/dm/${DM.ID}" onclick="ChatMessagePage['${DM.ID}'] = 0;">
-			<DIV CLASS="ROOMITEM" data-id="${DM.ID}" data-uid="${DM.UID}" data-ack="${ACK}">
-				<IMG CLASS="ICON_CIRCLE" SRC="https://account.rumiserver.com/api/Icon?ID=${DM.UID}" STYLE="width: 35px; height; 35px;">
-				${htmlspecialchars(DM.NAME)}
-			</DIV>
-		</A>
-	`;
+	return parent;
 }
 
 async function GenMessageItem(Message, User) {
-	let UserName = htmlspecialchars(User.NAME);
+	let UserName = User.NAME;
 	let Text = Message.TEXT;
 
 	//暗号なら解読
@@ -67,52 +98,51 @@ async function GenMessageItem(Message, User) {
 	//URLをAタグに変換(既にAタグ化しているURLは除外)
 	Text = LinkifyHTML(Text);
 
-	return `
-	<DIV CLASS="MESSAGEITEM">
-		<DIV CLASS="USER">
-			<IMG CLASS="ICON" SRC="https://account.rumiserver.com/api/Icon?ID=${User.ID}">
-			<SPAN CLASS="NAME">${UserName}</SPAN>
-			<SPAN CLASS="DATE">${format_datetime(Message.DATE)}秒</SPAN>
-		</DIV>
-		<DIV CLASS="TEXT">
-			${Text.replaceAll("\n", "<BR>")}
-		</DIV>
+	let item = document.createElement("DIV");
+	item.className = "MESSAGEITEM";
+
+	//ユーザー
+	let user = document.createElement("DIV");
+	user.className = "USER";
+	item.appendChild(user);
+
+	//アイコン
+	let user_icon = document.createElement("IMG");
+	user_icon.className = "ICON";
+	user_icon.src = `https://account.rumiserver.com/api/Icon?ID=${User.ID}`;
+	user.appendChild(user_icon);
+	//ユーザー名
+	let user_name = document.createElement("SPAN");
+	user_name.className = "NAME";
+	user_name.innerText = UserName;
+	user.appendChild(user_name);
+	//日時
+	let date = document.createElement("SPAN");
+	date.className = "DATE";
+	date.innerText = format_datetime(Message.DATE)+"秒";
+	user.appendChild(date);
+
+	//本文
+	let text = document.createElement("DIV");
+	text.className = "TEXT";
+	text.innerHTML = Text;
+	item.appendChild(text);
+
+	if (Message.FILE.length != 0) {
+		item.appendChild(await gen_message_file_item(Message.FILE));
+	}
+
+	return item;
+
+
+	/*return `
+	<DIV CLASS="">
 		${await (async function () {
-			if (Message.FILE.length != 0) {
-				let Body = `<DIV CLASS="FILE_LIST">`;
+			if (.length != 0) {
+				let Body = `<DIV CLASS="">`;
 
 				//ファイルを順番にチェックする
-				for (let I = 0; I < Message.FILE.length; I++) {
-					const File = Message.FILE[I];
-					try {
-						switch(detect_file_type(File.TYPE)) {
-							case file_type_group.Image:
-								const img = await get_image_from_url(File.URL);
-								const new_height = img.height * (400 / img.width);
-								Body += gen_message_file_item(File.URL, `<IMG SRC="${File.URL}" onclick="OpenFileView('${File.URL}');" STYLE="height: ${new_height}px;">`);
-								img.remove();
-								break;
-
-							case file_type_group.Video:
-								Body += gen_message_file_item(File.URL, `<VIDEO SRC="${File.URL}" controls></VIDEO>`);
-								break;
-
-							default:
-								const data = await get_byte_from_url(File.URL);
-
-								//テキストファイルか？
-								if (is_textfile(data)) {
-									Body += gen_message_file_item(File.URL, `<TEXTAREA STYLE="widht: 100%; height: 500px" readonly>${new TextDecoder("UTF-8").decode(data)}</TEXTAREA>`);
-								} else {
-									Body += gen_message_file_item(File.URL, gen_hex_editor(data));
-								}
-								break;
-						}
-					} catch(ex) {
-						console.error(ex);
-						Body += gen_message_file_item(File.URL, `添付ファイル`);
-					}
-				}
+				
 
 				Body += `</DIV>`;
 				return Body;
@@ -120,19 +150,74 @@ async function GenMessageItem(Message, User) {
 				return "";
 			}
 		})()}
-	</DIV>`;
+	</DIV>`;*/
 }
 
-function gen_message_file_item(url, contents) {
-	return `
-	<DIV CLASS="FILE_ITEM">
-		<DIV CLASS="FILE">
-			${contents}
-		</DIV>
-		<DIV CLASS="CONTROLE">
-			<A HREF="${url}" download><BUTTON>ダウンロード</BUTTON></A>
-		</DIV>
-	</DIV>`;
+async function gen_message_file_item(file) {
+	let file_list = document.createElement("DIV");
+	file_list.className = "FILE_LIST";
+
+	console.log(file);
+
+	for (let I = 0; I < file.length; I++) {
+		const f = file[I];
+		let item = document.createElement("DIV");
+		item.className = "FILE_ITEM";
+		file_list.appendChild(item);
+		let contents = document.createElement("DIV");
+		contents.className = "FILE";
+		item.appendChild(contents);
+		let control = document.createElement("DIV");
+		control.className = "CONTROLE";
+		control.innerHTML = `<A HREF="${f.url}" download><BUTTON>ダウンロード</BUTTON></A>`;
+		item.appendChild(control);
+
+		try {
+			switch(detect_file_type(f.TYPE)) {
+				case file_type_group.Image:
+					const img = await get_image_from_url(f.URL);
+					const new_height = img.height * (400 / img.width);
+					let img_el = document.createElement("IMG");
+					img_el.src = f.URL;
+					img_el.addEventListener("click", (e)=>{
+						OpenFileView(f.URL);
+					});
+					img_el.style.height = `${new_height}px`;
+					contents.appendChild(img_el);
+					img.remove();
+					break;
+
+				case file_type_group.Video:
+					let video_el = document.createElement("VIDEO");
+					video_el.src = f.URL;
+					video_el.contents = true;
+					contents.appendChild(video_el);
+					break;
+
+				default:
+					const data = await get_byte_from_url(f.URL);
+
+					//テキストファイルか？
+					if (is_textfile(data)) {
+						let text_el = document.createElement("TEXTAREA");
+						text_el.innerText = new TextDecoder("UTF-8").decode(data);
+						text_el.style.width = "100%";
+						text_el.style.height = "500px";
+						text_el.readonly = true;
+						contents.appendChild(text_el);
+					} else {
+						contents.appendChild(gen_hex_editor(data));
+					}
+					break;
+			}
+		} catch(ex) {
+			let span = document.createElement("SPAN");
+			span.innerText = "添付ファイル";
+			contents.appendChild(span);
+		}
+	}
+
+	return file_list;
 }
 
 function gen_hex_editor(data) {
@@ -209,9 +294,7 @@ function gen_hex_editor(data) {
 		ascii_list.appendChild(ascii_row);
 	}
 
-	const html = parent.outerHTML;
-	parent.remove();
-	return html;
+	return parent;
 }
 
 function hex_to_ascii(hex) {
@@ -341,26 +424,33 @@ async function get_dataurl_from_file(file) {
 }
 
 async function gen_file_item(file) {
-	return `
-		<DIV ID="SEND_FILE_ITEM" CLASS="SEND_FILE_ITEM">
-			<SPAN CLASS="THUMBNAIL">
-			${await (async function(){
-				switch(detect_file_type(file.type)) {
-					case file_type_group.Image:
-						const dataurl = await get_dataurl_from_file(file);
-						return `<IMG SRC="${dataurl}">`;
+	let item = document.createElement("DIV");
+	//item.id = "SEND_FILE_ITEM";
+	item.className = "SEND_FILE_ITEM";
 
-					case file_type_group.Video:
-						return "動画";
+	let thumbnail = document.createElement("SPAN");
+	thumbnail.className = "THUMBNAIL";
+	switch(detect_file_type(file.type)) {
+		case file_type_group.Image:
+			const dataurl = await get_dataurl_from_file(file);
+			thumbnail.innerHTML = `<IMG SRC="${dataurl}">`;
+			break;
 
-					default:
-						return "?";
-				}
-			})()}
-			</SPAN>
-			<SPAN CLASS="NAME">
-				${file.name}
-			</SPAN>
-		</DIV>
-	`;
+		case file_type_group.Video:
+			thumbnail.innerHTML = "動画";
+			break;
+
+		default:
+			thumbnail.innerHTML = "?";
+			break;
+	}
+
+	let name = document.createElement("SPAN");
+	name.className = "NAME";
+	name.innerText = file.name;
+
+	item.appendChild(thumbnail);
+	item.appendChild(name);
+
+	return item;
 }

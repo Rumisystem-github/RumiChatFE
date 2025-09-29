@@ -104,9 +104,7 @@ async function PageRoom(RETURN) {
 
 	for (let I = 0; I < MessageList.length; I++) {
 		const ROW = MessageList[I];
-		const DOMP = new DOMParser();
-		const Doc = DOMP.parseFromString(await GenMessageItem(ROW.MESSAGE, ROW.USER), "text/html");
-		EL.CONTENTS.MESSAGELIST.prepend(Doc.body.firstElementChild);
+		EL.CONTENTS.MESSAGELIST.prepend(await GenMessageItem(ROW.MESSAGE, ROW.USER));
 	}
 
 	//チャットルームを表示
@@ -148,9 +146,7 @@ async function PageDM(RETURN) {
 
 	for (let I = 0; I < MessageList.length; I++) {
 		const ROW = MessageList[I];
-		const DOMP = new DOMParser();
-		const Doc = DOMP.parseFromString(await GenMessageItem(ROW.MESSAGE, ROW.USER), "text/html");
-		EL.CONTENTS.MESSAGELIST.prepend(Doc.body.firstElementChild);
+		EL.CONTENTS.MESSAGELIST.prepend(await GenMessageItem(ROW.MESSAGE, ROW.USER));
 	}
 
 	//チャットルームを表示

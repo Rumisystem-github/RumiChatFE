@@ -53,10 +53,7 @@ async function ConnectStreamingAPI() {
 						if (OpenRoomID == Body.RID) {
 							const Temp = ChatMessageListScrollBottom;
 
-							//DOM化して追加
-							const DOMP = new DOMParser();
-							const Doc = DOMP.parseFromString(await GenMessageItem(Body.MESSAGE, Body.USER), "text/html");
-							EL.CONTENTS.MESSAGELIST.appendChild(Doc.body.firstElementChild);
+							EL.CONTENTS.MESSAGELIST.appendChild(await GenMessageItem(Body.MESSAGE, Body.USER));
 
 							//一番下までスクロール
 							if (Temp) {
