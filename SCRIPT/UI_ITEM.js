@@ -122,6 +122,11 @@ async function GenMessageItem(Message, User) {
 	</DIV>`;
 }
 
+/**
+ * バイナリをデコードし、UTF-8として解釈できるかを返します。
+ * @param {Uint8Array} data データ
+ * @returns 解釈できるならtrue
+ */
 function is_textfile(data) {
 	try {
 		new TextDecoder("UTF-8", {fatal: true}).decode(data);
@@ -131,6 +136,12 @@ function is_textfile(data) {
 	}
 }
 
+/**
+ * Uint8ArrayをDataURLへ変換します。
+ * @param {Uint8Array} data データ
+ * @param {string} type MimeType
+ * @returns 
+ */
 function unit8array_to_dataurl(data, type) {
 	const blob = new Blob([data], {type: type});
 	const url = URL.createObjectURL(blob);
@@ -138,6 +149,11 @@ function unit8array_to_dataurl(data, type) {
 	return url;
 }
 
+/**
+ * URLからデータをロードし、100MBを越えた場合に例外を返します。
+ * @param {string} url URL
+ * @returns Uint8Array
+ */
 async function get_byte_from_url(url) {
 	let ajax = await fetch(url);
 	if (!ajax.body) throw new Error("ストリーミング非対応");
@@ -169,6 +185,11 @@ async function get_byte_from_url(url) {
 	return result;
 }
 
+/**
+ * URLから画像をロードします
+ * @param {string} url URL
+ * @returns Image
+ */
 async function get_image_from_url(url) {
 	const data = await get_byte_from_url(url);
 	const dataurl = unit8array_to_dataurl(data, "");
@@ -182,6 +203,11 @@ async function get_image_from_url(url) {
 	});
 }
 
+/**
+ * URLから動画をロードします。
+ * @param {string} url URL
+ * @returns Video
+ */
 async function get_video_from_url(url) {
 	const data = await get_byte_from_url(url);
 	const dataurl = unit8array_to_dataurl(data, "");
@@ -196,6 +222,11 @@ async function get_video_from_url(url) {
 	});
 }
 
+/**
+ * ファイルからデータをロードします。
+ * @param {File} file ファイル
+ * @returns ArrayBuffer
+ */
 async function get_dataurl_from_file(file) {
 	return new Promise((resolve, reject) => {
 		const r = new FileReader();
