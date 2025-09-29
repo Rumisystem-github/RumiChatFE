@@ -190,7 +190,7 @@ async function gen_message_file_item(file) {
 				case file_type_group.Video:
 					let video_el = document.createElement("VIDEO");
 					video_el.src = f.URL;
-					video_el.contents = true;
+					video_el.setAttribute("controls", "");
 					contents.appendChild(video_el);
 					break;
 
