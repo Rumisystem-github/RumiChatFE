@@ -130,7 +130,7 @@ function gen_message_file_item(url, contents) {
 			${contents}
 		</DIV>
 		<DIV CLASS="CONTROLE">
-			<A HREF="${url}" download><BUTTON>DL</BUTTON></A>
+			<A HREF="${url}" download><BUTTON>ダウンロード</BUTTON></A>
 		</DIV>
 	</DIV>`;
 }
