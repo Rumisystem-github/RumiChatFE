@@ -211,6 +211,7 @@ async function gen_message_file_item(file) {
 					break;
 			}
 		} catch(ex) {
+			console.error(ex);
 			let span = document.createElement("SPAN");
 			span.innerText = "添付ファイル";
 			contents.appendChild(span);
@@ -226,7 +227,6 @@ function gen_hex_editor(data) {
 		length = 300;
 	}
 
-	const header = `<TH>0</TH><TH>1</TH><TH>2</TH><TH>3</TH><TH>4</TH><TH>5</TH><TH>6</TH><TH>7</TH><TH>8</TH><TH>9</TH><TH>A</TH><TH>B</TH><TH>C</TH><TH>D</TH><TH>E</TH><TH>F</TH>`;
 	let hex_map = [[]];
 	let col = 0;
 	let row = 0;
@@ -250,16 +250,31 @@ function gen_hex_editor(data) {
 	//<TABLE CLASS="HEX_LIST">
 	let hex_list = document.createElement("TABLE");
 	hex_list.className = "HEX_LIST";
-	hex_list.innerHTML = `
-		<TR CLASS="HEX_HEADER">
-			<TH></TH>${header}
-		</TR>
-	`;
+
+	//HEXのヘッダー
+	let hex_header = document.createElement("TR");
+	hex_header.className = "HEX_HEADER";
+	hex_header.appendChild(document.createElement("TH"));
+	for (let i = 0; i < 16; i++) {
+		let header = document.createElement("TH");
+		header.innerText = i.toString(16).toUpperCase();
+		hex_header.appendChild(header);
+	}
+	hex_list.appendChild(hex_header);
 
 	//<TABLE CLASS="ASCII_LIST">
 	let ascii_list = document.createElement("TABLE");
 	ascii_list.className = "ASCII_LIST";
-	ascii_list.innerHTML = `<TR CLASS="HEX_HEADER">${header}</TR>`;
+
+	//ASCIIのヘッダー
+	let ascii_header = document.createElement("TR");
+	ascii_header.className = "ASCII_HEADER";
+	ascii_list.appendChild(ascii_header);
+	for (let i = 0; i < 16; i++) {
+		let header = document.createElement("TH");
+		header.innerText = i.toString(16).toUpperCase();
+		ascii_header.appendChild(header);
+	}
 
 	//親に入れる
 	parent.appendChild(hex_list);
@@ -275,18 +290,44 @@ function gen_hex_editor(data) {
 
 		for (let j = 0; j < hex_map[i].length; j++) {
 			const hex = hex_map[i][j].toUpperCase();
+			const cell_id = crypto.randomUUID();
+
 			//HEX
 			let hex_col = document.createElement("TD");
 			hex_col.className = "HEX_CONTENTS";
+			hex_col.dataset["id"] = cell_id;
+			hex_col.dataset["select"] = "false";
 			hex_col.innerText = hex;
 			hex_row.appendChild(hex_col);
+			hex_col.addEventListener("mouseover", (e)=>{
+				let el = document.querySelector(`.ASCII_CONTENTS[data-id="${cell_id}"]`);
+				console.log(el);
+				if (el == null) return;
+				el.dataset["select"] = "true";
+			});
+			hex_col.addEventListener("mouseleave", (e)=>{
+				let el = document.querySelector(`.ASCII_CONTENTS[data-id="${cell_id}"]`);
+				if (el == null) return;
+				el.dataset["select"] = "false";
+			});
 
 			//ASCII
 			let ascii_col = document.createElement("TD");
 			ascii_col.className = "ASCII_CONTENTS";
-			ascii_col.dataset["hex"] = hex;
+			ascii_col.dataset["id"] = cell_id;
+			ascii_col.dataset["select"] = "false";
 			ascii_col.innerText = hex_to_ascii(hex);
 			ascii_row.appendChild(ascii_col);
+			ascii_col.addEventListener("mouseover", (e)=>{
+				let el = document.querySelector(`.HEX_CONTENTS[data-id="${cell_id}"]`);
+				if (el == null) return;
+				el.dataset["select"] = "true";
+			});
+			ascii_col.addEventListener("mouseleave", (e)=>{
+				let el = document.querySelector(`.HEX_CONTENTS[data-id="${cell_id}"]`);
+				if (el == null) return;
+				el.dataset["select"] = "false";
+			});
 		}
 
 		//リストへ追加
