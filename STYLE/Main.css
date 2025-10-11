@@ -44,6 +44,27 @@ body{
 	border-right: solid 1px;
 }
 
+.SIDEMENU > .GROUP_ROOM > .GROUP_TOOLBAR{
+	display: flex;
+	flex-direction: row;
+
+	height: 26px;
+}
+
+.SIDEMENU > .GROUP_ROOM > .GROUP_TOOLBAR > span{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	width: calc(var(--SIDEMENU_WIDTH) - 18px - 1px);
+}
+
+.SIDEMENU > .GROUP_ROOM > .GROUP_TOOLBAR > button{
+	width: 18px;
+
+	padding: 0px;
+}
+
 .CONTENTS{
 	position: fixed;
 	top: var(--GROUPLIST_HEIGHT);
