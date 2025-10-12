@@ -66,7 +66,6 @@ async function ConnectStreamingAPI() {
 						//開いていないグループなら未読マーク
 						if (OpenGroupID != Body.GID) {
 							let GroupItem = document.querySelector(`.GROUPITEM[data-id='${Body.GID}']`);
-							console.log(GroupItem);
 							if (GroupItem != null) {
 								GroupItem.dataset.ack = "false";
 							}
