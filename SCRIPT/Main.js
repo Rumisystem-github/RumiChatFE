@@ -733,7 +733,7 @@ async function open_user_profile(user_id) {
 			rspa.OPEN_URI(`/dm/${DMList.find(row=>row.UID == user_id).ID}`);
 		}
 
-		menu_el.remove();
+		dialog.CLOSE_MENU(menu_el.parentElement.id.replace("MENU_", ""));
 	});
 	user_el.appendChild(open_dm_button);
 
