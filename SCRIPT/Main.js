@@ -577,7 +577,11 @@ async function InviteACKButton(ID, E) {
 }*/
 
 EL.CONTENTS.FILE_SELECT.addEventListener("change", async (e) => {
-	SelectFileList = EL.CONTENTS.FILE_SELECT.files;
+	for (let i = 0; i < EL.CONTENTS.FILE_SELECT.files.length; i++) {
+		const f = EL.CONTENTS.FILE_SELECT.files[i];
+		SelectFileList.push(f);
+	}
+
 	await UpdateSendFileList();
 });
 

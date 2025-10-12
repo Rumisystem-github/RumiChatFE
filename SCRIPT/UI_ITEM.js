@@ -473,8 +473,17 @@ async function get_dataurl_from_file(file) {
 
 async function gen_file_item(file) {
 	let item = document.createElement("DIV");
-	//item.id = "SEND_FILE_ITEM";
 	item.className = "SEND_FILE_ITEM";
+
+	let delete_btn = document.createElement("BUTTON");
+	delete_btn.innerText = "X";
+	delete_btn.style.color = "red";
+	delete_btn.addEventListener("click", async (e)=>{
+		let i = SelectFileList.findIndex(row=>row.name === file.name);
+		SelectFileList.splice(i, 1);
+		await UpdateSendFileList();
+	});
+	item.appendChild(delete_btn);
 
 	let thumbnail = document.createElement("SPAN");
 	thumbnail.className = "THUMBNAIL";
