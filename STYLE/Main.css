@@ -175,3 +175,18 @@ body{
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
+/*------------------------------------------------プロフ*/
+.USER_PROFILE > .NAME > img{
+	width: 64px;
+	height: 64px;
+
+	vertical-align: middle;
+}
+
+.USER_PROFILE > .DESC{
+	margin: 5px;
+	padding: 5px;
+
+	background-color: rgb(235, 235, 235);
+}

@@ -122,12 +122,17 @@ async function GenMessageItem(Message, User) {
 	let user_icon = document.createElement("IMG");
 	user_icon.className = "ICON";
 	user_icon.src = `https://account.rumiserver.com/api/Icon?ID=${User.ID}`;
+	user_icon.addEventListener("click", (e)=>{
+		open_user_profile(User.ID);
+	});
 	user.appendChild(user_icon);
+
 	//ユーザー名
 	let user_name = document.createElement("SPAN");
 	user_name.className = "NAME";
 	user_name.innerText = UserName;
 	user.appendChild(user_name);
+
 	//日時
 	let date = document.createElement("SPAN");
 	date.className = "DATE";

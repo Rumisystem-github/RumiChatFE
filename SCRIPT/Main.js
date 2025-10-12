@@ -149,6 +149,11 @@ async function main() {
 		await RefreshGroupList();
 		LOAD_WAIT_STOP(L, "OK");
 
+		//DM一覧を初期化
+		L = LOAD_WAIT_PRINT("DM一覧を初期化中");
+		DMList = await GetDMList();
+		LOAD_WAIT_STOP(L, "OK");
+
 		//設定をロード
 		L = LOAD_WAIT_PRINT("設定を読み込んでいます");
 		let server_setting = await GetSetting();
@@ -697,3 +702,41 @@ EL.CONTENTS.HOME.CREATE_DM.UID.addEventListener("keyup", async (e)=>{
 		`;
 	}
 });
+
+async function open_user_profile(user_id) {
+	let menu_el = show_menu();
+	menu_el.className = "USER_PROFILE";
+	const user = await GetACCOUNT(user_id);
+
+	let user_el = document.createElement("DIV");
+	user_el.className = "NAME";
+	menu_el.appendChild(user_el);
+
+	let icon_el = document.createElement("IMG");
+	icon_el.className = `ICON_${user.ICON}`;
+	icon_el.src = `https://account.rumiserver.com/api/Icon?UID=${user.UID}`;
+	user_el.appendChild(icon_el);
+
+	let name_el = document.createElement("SPAN");
+	name_el.innerText = user.NAME;
+	user_el.appendChild(name_el);
+
+	let open_dm_button = document.createElement("BUTTON");
+	open_dm_button.innerText = "DMを開く";
+	open_dm_button.addEventListener("click", async (e)=>{
+		const dm = DMList.find(row=>row.UID == user_id);
+		if (dm != null) {
+			rspa.OPEN_URI(`/dm/${dm.ID}`);
+		} else {
+			await CreateDM(user_id);
+			DMList = await GetDMList();
+			rspa.OPEN_URI(`/dm/${DMList.find(row=>row.UID == user_id).ID}`);
+		}
+	});
+	user_el.appendChild(open_dm_button);
+
+	let desc_el = document.createElement("DIV");
+	desc_el.className = "DESC";
+	desc_el.innerText = user.DESCRIPTION;
+	menu_el.appendChild(desc_el);
+}
