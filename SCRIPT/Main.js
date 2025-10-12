@@ -514,7 +514,7 @@ function show_menu() {
 	const width = Math.floor(vw / 2);
 	const height = Math.floor(vh / 2);
 	const menu_id = dialog.OPEN_MENU((vw - width) / 2, (vh - height) / 2, `<DIV ID="${id}" STYLE="width: ${width}px; height: ${height}px; background-color: white; padding: 10px;"></DIV>`);
-	document.getElementById(`MENU_BACKGROUND_${menu_id}`).style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+	document.getElementById(`MENU_BACKGROUND_${menu_id}`).style.backgroundColor = "var(--DIALOG_BG_COLOR)";
 
 	return document.getElementById(id);
 }

@@ -4,7 +4,9 @@
 
 	--GROUP_BAR_HEIGHT: 26px;
 
-	--CHATINPUT_HEIGHT: 32px
+	--CHATINPUT_HEIGHT: 32px;
+
+	--DIALOG_BG_COLOR: rgba(0, 0, 0, 0.5);
 }
 
 body{
@@ -19,7 +21,7 @@ body{
 	width: 100vw;
 	height: 100vh;
 
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: var(--DIALOG_BG_COLOR);
 }
 
 .HEADER{
