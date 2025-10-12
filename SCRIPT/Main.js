@@ -506,50 +506,59 @@ function CloseGroupMenu() {
 	EL.SIDEMENU.GROUP_MENU.MAIN.style.display = "none";
 }
 
+function show_menu() {
+	const id = crypto.randomUUID();
+
+	const vw = window.innerWidth;
+	const vh = window.innerHeight;
+	const width = Math.floor(vw / 2);
+	const height = Math.floor(vh / 2);
+	dialog.OPEN_MENU((vw - width) / 2, (vh - height) / 2, `<DIV ID="${id}" STYLE="width: ${width}px; height: ${height}px; background-color: white; padding: 10px;"></DIV>`);
+
+	return document.getElementById(id);
+}
+
 async function ShowInviteView() {
 	const InviteList = await GetInviteList(OpenGroupID);
 
-	const ID = crypto.randomUUID();
-	const VW = window.innerWidth;
-	const VH = window.innerHeight;
-	const Width = Math.floor(VW / 2);
-	const Height = Math.floor(VH / 2);
-	dialog.OPEN_MENU((VW - Width) / 2, (VH - Height) / 2, `
-		<DIV STYLE="width: ${Width}px; height: ${Height}px; background-color: white; padding: 10px;">
-			<TABLE>
-				<TBODY ID="${ID}"></TBODY>
-			</TABLE>
-		</DIV>
-	`);
+	let menu_el = show_menu();
+	let table_el = document.createElement("TABLE");
+	menu_el.appendChild(table_el);
 
 	for (let I = 0; I < InviteList.length; I++) {
 		const Inv = InviteList[I];
-		document.getElementById(ID).innerHTML += `
-			<TR>
-				<TD>
-					<IMG SRC="https://account.rumiserver.com/api/Icon?ID=${Inv.ID}" STYLE="width: 25px; height: 25px;">
-					${htmlspecialchars(Inv.NAME)}
-				</TD>
-				<TD>
-					<BUTTON onclick="InviteACKButton('${Inv.ID}', this);">承認</BUTTON>
-					<BUTTON onclick="">拒否</BUTTON>
-				</TD>
-			</TR>
-		`
+		let tr = document.createElement("TR");
+		table_el.appendChild(tr);
+
+		//ユーザー情報
+		let td1 = document.createElement("TD");
+		tr.appendChild(td1);
+		let icon = document.createElement("IMG");
+		icon.style.width = "25px";
+		icon.style.height = "25px";
+		icon.src = "https://account.rumiserver.com/api/Icon?ID="+Inv.ID;
+		td1.appendChild(icon);
+		let name = document.createElement("SPAN");
+		name.innerText = Inv.NAME;
+		td1.appendChild(name);
+
+		//可否
+		let td2 = document.createElement("TD");
+		tr.appendChild(td2);
+		let ack_btn = document.createElement("BUTTON");
+		ack_btn.innerText = "承認";
+		ack_btn.addEventListener("click", (e)=>{ InviteACKButton(Inv.ID, ack_btn); });
+		td2.appendChild(ack_btn);
+		let rst_btn = document.createElement("BUTTON");
+		ack_btn.innerText = "死ねしね消えろ";
+		td2.appendChild(rst_btn);
 	}
 }
 
 async function show_invite_url() {
-	const VW = window.innerWidth;
-	const VH = window.innerHeight;
-	const Width = Math.floor(VW / 2);
-	const Height = Math.floor(VH / 2);
-	dialog.OPEN_MENU((VW - Width) / 2, (VH - Height) / 2, `
-		<DIV STYLE="width: ${Width}px; height: ${Height}px; background-color: white; padding: 10px;">
-			<DIV>招待URL</DIV>
-			<INPUT VALUE="https://chat.rumiserver.com/invite/${OpenGroupID}">
-		</DIV>
-	`);
+	let menu_el = show_menu();
+	//TODO:DOM操作に変更する
+	menu_el.innerHTML = `<INPUT VALUE="https://chat.rumiserver.com/invite/${OpenGroupID}">`
 }
 
 async function InviteACKButton(ID, E) {
