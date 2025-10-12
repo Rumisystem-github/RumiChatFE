@@ -107,7 +107,7 @@ async function GenMessageItem(Message, User) {
 	item.appendChild(controle);
 
 	let copy_btn = document.createElement("BUTTON");
-	copy_btn.innerText = "コ";
+	copy_btn.innerHTML = `<IMG SRC="/Asset/MaterialSymbolsContentCopyOutline.svg">`;
 	copy_btn.addEventListener("click", (e)=>{
 		navigator.clipboard.writeText(Text);
 	});
