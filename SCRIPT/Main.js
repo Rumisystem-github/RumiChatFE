@@ -609,14 +609,23 @@ async function UpdateSendFileList() {
 	}
 }
 
-function OpenFileView(URL) {
+function OpenImageFileView(URL) {
 	EL.FILE_VIWER.BG.style.display = "block";
 	EL.FILE_VIWER.VIEWER.style.display = "block";
 
 	EL.FILE_VIWER.VIEWER.innerHTML = `<IMG SRC="${URL}">`;
 }
 
+async function OpenBinaryFileView(url) {
+	EL.FILE_VIWER.BG.style.display = "block";
+	EL.FILE_VIWER.VIEWER.style.display = "block";
+
+	EL.FILE_VIWER.VIEWER.appendChild(gen_hex_editor(await get_byte_from_url(url)));
+}
+
 function CloseFileView() {
+	EL.FILE_VIWER.VIEWER.innerHTML = "";
+
 	EL.FILE_VIWER.BG.style.display = "none";
 	EL.FILE_VIWER.VIEWER.style.display = "none";
 }

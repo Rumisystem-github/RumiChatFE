@@ -157,8 +157,6 @@ async function gen_message_file_item(file) {
 	let file_list = document.createElement("DIV");
 	file_list.className = "FILE_LIST";
 
-	console.log(file);
-
 	for (let I = 0; I < file.length; I++) {
 		const f = file[I];
 		let item = document.createElement("DIV");
@@ -169,13 +167,23 @@ async function gen_message_file_item(file) {
 		item.appendChild(contents);
 		let control = document.createElement("DIV");
 		control.className = "CONTROLE";
-		control.innerHTML = `<A HREF="${f.url}" download><BUTTON>ダウンロード</BUTTON></A>`;
 		item.appendChild(control);
+
+		//ダウンロード
+		let download_btn = document.createElement("A");
+		download_btn.innerHTML = "<BUTTON>ダウンロード</BUTTON>";
+		download_btn.href = f.url;
+		download_btn.setAttribute("download", "");
+		control.appendChild(download_btn);
+
+		let view_btn = document.createElement("BUTTON");
+		view_btn.innerText = "能く見る";
+		control.appendChild(view_btn);
 
 		try {
 			switch(detect_file_type(f.TYPE)) {
 				case file_type_group.Image:
-					const img = await get_image_from_url(f.URL);
+					/*const img = await get_image_from_url(f.URL);
 					const new_height = img.height * (400 / img.width);
 					let img_el = document.createElement("IMG");
 					img_el.src = f.URL;
@@ -184,7 +192,14 @@ async function gen_message_file_item(file) {
 					});
 					img_el.style.height = `${new_height}px`;
 					contents.appendChild(img_el);
-					img.remove();
+					img.remove();*/
+					let img_el = document.createElement("IMG");
+					img_el.src = f.URL;
+					img_el.style.height = "400px";
+					contents.appendChild(img_el);
+
+					view_btn.addEventListener("click", (e)=>{ OpenImageFileView(f.URL); });
+					img_el.addEventListener("click", (e)=>{ OpenImageFileView(f.URL); });
 					break;
 
 				case file_type_group.Video:
@@ -192,6 +207,8 @@ async function gen_message_file_item(file) {
 					video_el.src = f.URL;
 					video_el.setAttribute("controls", "");
 					contents.appendChild(video_el);
+
+					view_btn.addEventListener("click", (e)=>{ window.open(f.URL); });
 					break;
 
 				case file_type_group.Audio:
@@ -199,21 +216,22 @@ async function gen_message_file_item(file) {
 					audio_el.src = f.URL;
 					audio_el.setAttribute("controls", "");
 					contents.appendChild(audio_el);
+
+					view_btn.remove();
 					break;
 
 				default:
-					const data = await get_byte_from_url(f.URL);
-
-					//テキストファイルか？
-					if (is_textfile(data)) {
+					if (f.IS_TEXT) {
 						let text_el = document.createElement("TEXTAREA");
-						text_el.innerText = new TextDecoder("UTF-8").decode(data);
+						text_el.innerText = new TextDecoder("UTF-8").decode(await get_byte_from_url(f.URL));
 						text_el.style.width = "100%";
 						text_el.style.height = "500px";
 						text_el.readonly = true;
 						contents.appendChild(text_el);
+						view_btn.remove();
 					} else {
-						contents.appendChild(gen_hex_editor(data));
+						contents.innerText = "バイナリデータ";
+						view_btn.addEventListener("click", (e)=>{ OpenBinaryFileView(f.URL); });
 					}
 					break;
 			}
@@ -308,7 +326,6 @@ function gen_hex_editor(data) {
 			hex_row.appendChild(hex_col);
 			hex_col.addEventListener("mouseover", (e)=>{
 				let el = document.querySelector(`.ASCII_CONTENTS[data-id="${cell_id}"]`);
-				console.log(el);
 				if (el == null) return;
 				el.dataset["select"] = "true";
 			});
