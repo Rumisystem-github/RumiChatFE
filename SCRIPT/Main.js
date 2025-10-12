@@ -31,7 +31,11 @@ let EL = {
 		GROUP_NAME: document.getElementById("GROUP_NAME"),
 		ROOMLIST: document.getElementById("ROOMLIST"),
 		DM: document.getElementById("DM"),
-		DMLIST: document.getElementById("DMLIST")
+		DMLIST: document.getElementById("DMLIST"),
+		GROUP_MENU: {
+			BG: document.getElementById("GROUP_MENU_BG"),
+			MAIN: document.getElementById("GROUP_MENU")
+		}
 	},
 	CONTENTS: {
 		DISPLAY: document.getElementById("DISPLAY"),
@@ -492,16 +496,14 @@ function GroupInfoClose() {
 	EL.CONTENTS.GROUP_INFO.style.display = "none";
 }
 
-function OpenGroupMenu(X, Y) {
-	const Rect = EL.SIDEMENU.GROUP_TOOLBAR.getBoundingClientRect();
-	console.log(Rect);
+function OpenGroupMenu() {
+	EL.SIDEMENU.GROUP_MENU.BG.style.display = "block";
+	EL.SIDEMENU.GROUP_MENU.MAIN.style.display = "block";
+}
 
-	dialog.OPEN_MENU(0, Rect.top + Rect.height, `
-		<DIV STYLE="width: ${Rect.width}px; margin: -10px; padding: 5px;">
-			<BUTTON onclick="ShowInviteView(); dialog.CLOSE_MENU('$_ID');">参加申請を見る</BUTTON>
-			<BUTTON onclick="ClickNewRoomButton(); dialog.CLOSE_MENU('$_ID');">部屋を作成</BUTTON>
-		</DIV>
-	`);
+function CloseGroupMenu() {
+	EL.SIDEMENU.GROUP_MENU.BG.style.display = "none";
+	EL.SIDEMENU.GROUP_MENU.MAIN.style.display = "none";
 }
 
 async function ShowInviteView() {
@@ -535,6 +537,19 @@ async function ShowInviteView() {
 			</TR>
 		`
 	}
+}
+
+async function show_invite_url() {
+	const VW = window.innerWidth;
+	const VH = window.innerHeight;
+	const Width = Math.floor(VW / 2);
+	const Height = Math.floor(VH / 2);
+	dialog.OPEN_MENU((VW - Width) / 2, (VH - Height) / 2, `
+		<DIV STYLE="width: ${Width}px; height: ${Height}px; background-color: white; padding: 10px;">
+			<DIV>招待URL</DIV>
+			<INPUT VALUE="https://chat.rumiserver.com/invite/${OpenGroupID}">
+		</DIV>
+	`);
 }
 
 async function InviteACKButton(ID, E) {

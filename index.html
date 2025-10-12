@@ -58,13 +58,20 @@
 			<DIV CLASS="GROUP_ROOM" ID="GROUP_ROOM" STYLE="display: none;">
 				<DIV CLASS="GROUP_TOOLBAR" ID="GROUP_TOOLBAR">
 					<SPAN ID="GROUP_NAME"></SPAN>
-					<BUTTON onclick="OpenGroupMenu(this.getBoundingClientRect().x, this.getBoundingClientRect().y);">︙</BUTTON>
+					<BUTTON onclick="OpenGroupMenu();">︙</BUTTON>
 				</DIV>
 				<DIV CLASS="ROOMLIST" ID="ROOMLIST"></DIV>
 			</DIV>
 			<DIV ID="DM" STYLE="display: none;">
 				<DIV CLASS="ROOMLIST" ID="DMLIST"></DIV>
 			</DIV>
+		</DIV>
+
+		<DIV CLASS="GROUP_MENU_BG" ID="GROUP_MENU_BG" onclick="CloseGroupMenu();" STYLE="display: none;"></DIV>
+		<DIV CLASS="GROUP_MENU" ID="GROUP_MENU" STYLE="display: none;">
+			<BUTTON onclick="show_invite_url(); CloseGroupMenu();">招待する</BUTTON>
+			<BUTTON onclick="ShowInviteView(); CloseGroupMenu();">参加申請を見る</BUTTON>
+			<BUTTON onclick="ClickNewRoomButton(); CloseGroupMenu();">部屋を作成</BUTTON>
 		</DIV>
 
 		<DIV CLASS="CONTENTS">

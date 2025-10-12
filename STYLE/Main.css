@@ -2,6 +2,8 @@
 	--GROUPLIST_HEIGHT: 50px;
 	--SIDEMENU_WIDTH: 200px;
 
+	--GROUP_BAR_HEIGHT: 26px;
+
 	--CHATINPUT_HEIGHT: 32px
 }
 
@@ -48,7 +50,7 @@ body{
 	display: flex;
 	flex-direction: row;
 
-	height: 26px;
+	height: var(--GROUP_BAR_HEIGHT);
 }
 
 .SIDEMENU > .GROUP_ROOM > .GROUP_TOOLBAR > span{
@@ -63,6 +65,40 @@ body{
 	width: 18px;
 
 	padding: 0px;
+}
+
+.GROUP_MENU_BG{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	height: 100vh;
+
+	background-color: transparent;
+
+	z-index: 1;
+}
+
+.GROUP_MENU{
+	position: fixed;
+	top: calc(var(--GROUPLIST_HEIGHT) + var(--GROUP_BAR_HEIGHT));
+
+	width: var(--SIDEMENU_WIDTH);
+	height: fit-content;
+
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+
+	background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(1px);
+
+	z-index: 2;
+}
+
+.GROUP_MENU > button{
+	width: 100%;
+
+	background-color: transparent;
 }
 
 .CONTENTS{
