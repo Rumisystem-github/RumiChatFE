@@ -78,6 +78,11 @@ async function PageRoom(RETURN) {
 	}
 	Page = ChatMessagePage[RID];
 
+	//部屋のページ番号を全て0に
+	for (let i = 0; i < Object.keys(ChatMessagePage).length; i++) {
+		ChatMessagePage[Object.keys(ChatMessagePage)[i]] = 0;
+	}
+
 	//取得
 	const Group = await GetGroup(GID);
 	const Room = await GetRoom(RID);
