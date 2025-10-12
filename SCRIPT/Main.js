@@ -732,6 +732,8 @@ async function open_user_profile(user_id) {
 			DMList = await GetDMList();
 			rspa.OPEN_URI(`/dm/${DMList.find(row=>row.UID == user_id).ID}`);
 		}
+
+		menu_el.remove();
 	});
 	user_el.appendChild(open_dm_button);
 
