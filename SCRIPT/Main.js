@@ -513,7 +513,8 @@ function show_menu() {
 	const vh = window.innerHeight;
 	const width = Math.floor(vw / 2);
 	const height = Math.floor(vh / 2);
-	dialog.OPEN_MENU((vw - width) / 2, (vh - height) / 2, `<DIV ID="${id}" STYLE="width: ${width}px; height: ${height}px; background-color: white; padding: 10px;"></DIV>`);
+	const menu_id = dialog.OPEN_MENU((vw - width) / 2, (vh - height) / 2, `<DIV ID="${id}" STYLE="width: ${width}px; height: ${height}px; background-color: white; padding: 10px;"></DIV>`);
+	document.getElementById(`MENU_BACKGROUND_${menu_id}`).style.backgroundColor = "rgba(0, 0, 0, 0.5)";
 
 	return document.getElementById(id);
 }
