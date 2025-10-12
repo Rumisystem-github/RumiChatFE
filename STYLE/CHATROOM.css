@@ -115,6 +115,8 @@
 }
 
 .MESSAGEITEM > .CONTROLE{
+	display: none;
+
 	position: absolute;
 	top: 0px;
 	right: 0px;
@@ -122,6 +124,10 @@
 
 .MESSAGEITEM > .CONTROLE > button{
 	padding: 0px;
+}
+
+.MESSAGEITEM:hover > .CONTROLE{
+	display: block;
 }
 
 .MESSAGEITEM > .USER > img {
