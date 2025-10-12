@@ -109,7 +109,19 @@
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .MESSAGEITEM {
+	position: relative;
+
 	padding: 5px;
+}
+
+.MESSAGEITEM > .CONTROLE{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+.MESSAGEITEM > .CONTROLE > button{
+	padding: 0px;
 }
 
 .MESSAGEITEM > .USER > img {

@@ -101,6 +101,18 @@ async function GenMessageItem(Message, User) {
 	let item = document.createElement("DIV");
 	item.className = "MESSAGEITEM";
 
+	//操作するやつ
+	let controle = document.createElement("DIV");
+	controle.className = "CONTROLE";
+	item.appendChild(controle);
+
+	let copy_btn = document.createElement("BUTTON");
+	copy_btn.innerText = "コ";
+	copy_btn.addEventListener("click", (e)=>{
+		navigator.clipboard.writeText(Text);
+	});
+	controle.appendChild(copy_btn);
+
 	//ユーザー
 	let user = document.createElement("DIV");
 	user.className = "USER";
