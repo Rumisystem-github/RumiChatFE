@@ -100,6 +100,7 @@ async function GenMessageItem(Message, User) {
 
 	let item = document.createElement("DIV");
 	item.className = "MESSAGEITEM";
+	item.dataset.id = Message.ID;
 
 	//操作するやつ
 	let controle = document.createElement("DIV");
@@ -112,6 +113,13 @@ async function GenMessageItem(Message, User) {
 		navigator.clipboard.writeText(Text);
 	});
 	controle.appendChild(copy_btn);
+
+	let delete_btn = document.createElement("BUTTON");
+	delete_btn.innerHTML = `<IMG SRC="/Asset/MaterialSymbolsDeleteOutline.svg">`;
+	delete_btn.addEventListener("click", (e)=>{
+		DeleteMessage(Message.ID);
+	});
+	controle.appendChild(delete_btn);
 
 	//ユーザー
 	let user = document.createElement("DIV");

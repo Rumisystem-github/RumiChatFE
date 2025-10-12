@@ -79,6 +79,13 @@ async function ConnectStreamingAPI() {
 						return;
 					}
 
+					case "DELETE_MESSAGE": {
+						//今開いているルームの話じゃないなら無視
+						if (OpenRoomID == Body.RID) {
+							document.querySelector(`.MESSAGEITEM[data-id="${Body.ID}"]`).remove();
+						}
+					}
+
 					case "MESSAGE_ACK": {
 							let ChannelItem = document.querySelector(`.ROOMITEM[data-id='${Body.RID}']`);
 							if (ChannelItem != null) {

@@ -279,6 +279,24 @@ async function SendFileMessage(RID, Text, FileList) {
 		throw new Error(RESULT.ERR);
 	}
 }
+async function DeleteMessage(ID) {
+	let AJAX = await fetch("/api/Message?ID=" + ID, {
+		method: "DELETE",
+		headers: {
+			TOKEN: SESSION
+		},
+		body: JSON.stringify({
+			TEXT: Text
+		})
+	});
+
+	const RESULT = await AJAX.json();
+	if (RESULT.STATUS) {
+		return;
+	} else {
+		throw new Error(RESULT.ERR);
+	}
+}
 //--------------------------------------------------添付ファイル
 async function UpoadFile(ID, Data) {
 	let AJAX = await fetch("/api/File/Upload?ID=" + ID, {
