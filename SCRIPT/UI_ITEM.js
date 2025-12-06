@@ -208,16 +208,6 @@ async function gen_message_file_item(file) {
 		try {
 			switch(detect_file_type(f.TYPE)) {
 				case file_type_group.Image:
-					/*const img = await get_image_from_url(f.URL);
-					const new_height = img.height * (400 / img.width);
-					let img_el = document.createElement("IMG");
-					img_el.src = f.URL;
-					img_el.addEventListener("click", (e)=>{
-						OpenFileView(f.URL);
-					});
-					img_el.style.height = `${new_height}px`;
-					contents.appendChild(img_el);
-					img.remove();*/
 					let img_el = document.createElement("IMG");
 					img_el.src = f.URL;
 					img_el.style.height = "400px";
