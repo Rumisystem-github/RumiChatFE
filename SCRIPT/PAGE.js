@@ -134,8 +134,9 @@ async function PageDM(RETURN) {
 	await RefreshDMList();
 
 	const Room = await GetRoom(RID);
-	const UID = DMList.find(Row=>Row.ID == RID).UID;
+	const UID = DMList.find(Row=>Row.ID == RID).USER_ID;
 	const MessageList = await GetMessageList(RID, Page);
+	console.log(MessageList);
 
 	OpenGroupID = null;
 	OpenRoomID = RID;

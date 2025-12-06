@@ -139,7 +139,7 @@ async function CreateGroup(Name) {
 }
 //--------------------------------------------------部屋
 async function GetRoomList(ID) {
-	let AJAX = await fetch("/api/Room?GID=" + ID, {
+	let AJAX = await fetch("/api/Room?GROUP_ID=" + ID, {
 		method: "GET",
 		headers: {
 			TOKEN: SESSION
@@ -173,7 +173,7 @@ async function GetRoom(ID) {
 }
 
 async function CreateRoom(GID, Name) {
-	let AJAX = await fetch("/api/Room?GID=" + GID, {
+	let AJAX = await fetch("/api/Room?GROUP_ID=" + GID, {
 		method: "POST",
 		headers: {
 			TOKEN: SESSION
@@ -227,7 +227,7 @@ async function CreateDM(UID) {
 }
 //--------------------------------------------------メッセージ
 async function GetMessageList(ID, Page) {
-	let AJAX = await fetch(`/api/Message?RID=${ID}&PAGE=${Page}`, {
+	let AJAX = await fetch(`/api/Message?ROOM_ID=${ID}&PAGE=${Page}`, {
 		method: "GET",
 		headers: {
 			TOKEN: SESSION
@@ -243,7 +243,7 @@ async function GetMessageList(ID, Page) {
 	}
 }
 async function SendMessage(RID, Text) {
-	let AJAX = await fetch("/api/Message?RID=" + RID, {
+	let AJAX = await fetch("/api/Message?ROOM_ID=" + RID, {
 		method: "POST",
 		headers: {
 			TOKEN: SESSION
@@ -261,7 +261,7 @@ async function SendMessage(RID, Text) {
 	}
 }
 async function SendFileMessage(RID, Text, FileList) {
-	let AJAX = await fetch("/api/Message?RID=" + RID, {
+	let AJAX = await fetch("/api/Message?ROOM_ID=" + RID, {
 		method: "POST",
 		headers: {
 			TOKEN: SESSION
@@ -332,7 +332,7 @@ async function UpoadFinalize(ID) {
 }
 //--------------------------------------------------招待
 async function GetInviteList(GID) {
-	let AJAX = await fetch("/api/Invite?GID=" + GID, {
+	let AJAX = await fetch("/api/Invite?GROUP_ID=" + GID, {
 		method: "GET",
 		headers: {
 			TOKEN: SESSION
@@ -349,7 +349,7 @@ async function GetInviteList(GID) {
 }
 
 async function CreateInvite(GID) {
-	let AJAX = await fetch("/api/Invite?GID=" + GID, {
+	let AJAX = await fetch("/api/Invite?GROUP_ID=" + GID, {
 		method: "POST",
 		headers: {
 			TOKEN: SESSION
@@ -366,7 +366,7 @@ async function CreateInvite(GID) {
 }
 
 async function ACKInvite(GID, UID) {
-	let AJAX = await fetch("/api/Invite?GID=" + GID + "&UID=" + UID, {
+	let AJAX = await fetch("/api/Invite?GROUP_ID=" + GID + "&UID=" + UID, {
 		method: "PATCH",
 		headers: {
 			TOKEN: SESSION
@@ -383,7 +383,7 @@ async function ACKInvite(GID, UID) {
 }
 
 async function DeleteInvite(GID, UID) {
-	let AJAX = await fetch("/api/Invite?GID=" + GID + "&UID=" + UID, {
+	let AJAX = await fetch("/api/Invite?GROUP_ID=" + GID + "&UID=" + UID, {
 		method: "DELETE",
 		headers: {
 			TOKEN: SESSION
@@ -400,7 +400,7 @@ async function DeleteInvite(GID, UID) {
 }
 //--------------------------------------------------既読
 async function GetACKList(GID) {
-	let AJAX = await fetch("/api/ACK?GID=" + GID, {
+	let AJAX = await fetch("/api/ACK?GROUP_ID=" + GID, {
 		method: "GET",
 		headers: {
 			TOKEN: SESSION
@@ -416,7 +416,7 @@ async function GetACKList(GID) {
 	}
 }
 async function UpdateACK(RID) {
-	let AJAX = await fetch("/api/ACK?RID=" + RID, {
+	let AJAX = await fetch("/api/ACK?ROOM_ID=" + RID, {
 		method: "PATCH",
 		headers: {
 			TOKEN: SESSION

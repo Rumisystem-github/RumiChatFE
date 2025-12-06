@@ -51,7 +51,7 @@ function GenDMItem(DM) {
 
 	let icon = document.createElement("IMG");
 	icon.className = "ICON_CIRCLE";
-	icon.src = `https://account.rumiserver.com/api/Icon?ID=${DM.UID}`;
+	icon.src = `https://account.rumiserver.com/api/Icon?ID=${DM.USER_ID}`;
 	icon.style.width = "35px";
 	icon.style.height = "35px";
 
@@ -61,7 +61,7 @@ function GenDMItem(DM) {
 	let item = document.createElement("DIV");
 	item.className = "ROOMITEM";
 	item.dataset["id"] = DM.ID;
-	item.dataset["uid"] = DM.UID;
+	item.dataset["uid"] = DM.USER_ID;
 	item.appendChild(icon);
 	item.appendChild(name);
 	parent.appendChild(item);

@@ -50,7 +50,7 @@ async function ConnectStreamingAPI() {
 					//メッセージ受信
 					case "RECEIVE_MESSAGE": {
 						//今開いているルームの話じゃないなら無視
-						if (OpenRoomID == Body.RID) {
+						if (OpenRoomID == Body.ROOM_ID) {
 							const Temp = ChatMessageListScrollBottom;
 
 							EL.CONTENTS.MESSAGELIST.appendChild(await GenMessageItem(Body.MESSAGE, Body.USER));
@@ -64,14 +64,14 @@ async function ConnectStreamingAPI() {
 						}
 
 						//開いていないグループなら未読マーク
-						if (OpenGroupID != Body.GID) {
-							let GroupItem = document.querySelector(`.GROUPITEM[data-id='${Body.GID}']`);
+						if (OpenGroupID != Body.GROUP_ID) {
+							let GroupItem = document.querySelector(`.GROUPITEM[data-id='${Body.GROUP_ID}']`);
 							if (GroupItem != null) {
 								GroupItem.dataset.ack = "false";
 							}
 						} else {
 							//開いているグループなら、開いていない部屋を未読にする
-							let ChannelItem = document.querySelector(`.ROOMITEM[data-id='${Body.RID}']`);
+							let ChannelItem = document.querySelector(`.ROOMITEM[data-id='${Body.ROOM_ID}']`);
 							if (ChannelItem != null) {
 								ChannelItem.dataset.ack = "false";
 							}
@@ -81,13 +81,13 @@ async function ConnectStreamingAPI() {
 
 					case "DELETE_MESSAGE": {
 						//今開いているルームの話じゃないなら無視
-						if (OpenRoomID == Body.RID) {
+						if (OpenRoomID == Body.ROOM_ID) {
 							document.querySelector(`.MESSAGEITEM[data-id="${Body.ID}"]`).remove();
 						}
 					}
 
 					case "MESSAGE_ACK": {
-							let ChannelItem = document.querySelector(`.ROOMITEM[data-id='${Body.RID}']`);
+							let ChannelItem = document.querySelector(`.ROOMITEM[data-id='${Body.ROOM_ID}']`);
 							if (ChannelItem != null) {
 								ChannelItem.dataset.ack = "true";
 							}
