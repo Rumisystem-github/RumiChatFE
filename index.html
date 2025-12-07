@@ -1,184 +1,34 @@
-<!DOCTYPE html>
-<HTML>
-	<HEAD>
-		<TITLE>るみチャット</TITLE>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>rumichat-fe</title>
+	</head>
+	<body>
+		<div id="app">
+			<div>
+				<a href="https://vite.dev" target="_blank">
+					<img src="public/vite.svg" class="logo" alt="Vite logo" />
+				</a>
+				<a href="https://www.typescriptlang.org/" target="_blank">
+					<img src="/public/typescript.svg" class="logo vanilla" alt="TypeScript logo" />
+				</a>
+				<h1>Vite + TypeScript</h1>
+				<div class="card">
+					<DIV ID="count">カウント:</DIV>
 
-		<!--るみ鯖のデフォ-->
-		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/reset.css">
-		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/font.css">
-		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/DEFAULT.css">
-		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/icon.css">
-
-		<!--CSS-->
-		<LINK REL="stylesheet" HREF="/STYLE/Main.css">
-		<LINK REL="stylesheet" HREF="/STYLE/HEADER.css">
-		<LINK REL="stylesheet" HREF="/STYLE/ROOMLIST.css">
-		<LINK REL="stylesheet" HREF="/STYLE/CHATROOM.css">
-		<LINK REL="stylesheet" HREF="/STYLE/FileViewer.css">
-		<LINK REL="stylesheet" HREF="/STYLE/Setting.css">
-		<LINK REL="stylesheet" HREF="/STYLE/HexEditor.css">
-
-		<!--スマホ(iOSを除く)にスマホアプリで対応できたら消す-->
-		<META NAME="viewport" CONTENT="width=device-width, initial-scale=1" />
-	</HEAD>
-
-	<BODY>
-		<DIV STYLE="position: fixed; bottom: 0px; left: 0px; pointer-events: none; color: gray; z-index: 100;">
-			ベータ版なのでバグまみれですわ！<BR>
-			バグを見つけたら報告してくださいまし！
-		</DIV>
-
-		<!--読み込み画面-->
-		<DIV ID="LOADING_DISPLAY"
-			STYLE="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: white; z-index: 1;">
-			<PRE ID="LOADING_DISPLAY_LOG"></PRE>
-		</DIV>
-
-		<!--初回画面-->
-		<DIV CLASS="WELCOME" ID="WELCOME" STYLE="display: none;">
-			<H1>るみチャットへようこそ</H1>
-			<DIV>
-				ここに説明を書けばいいな
-			</DIV>
-			<BUTTON onclick="StartUse();">利用を開始する</BUTTON>
-		</DIV>
-
-		<DIV CLASS="HEADER">
-			<DIV CLASS="GROUPLIST" ID="GROUPLIST"></DIV>
-			<BUTTON onclick="ClickNewGroupButton();">+</BUTTON>
-
-			<DIV CLASS="ACCOUNT_INFO">
-				<BUTTON onclick="OpenSettingDialog();"><IMG SRC="/Asset/MdiCogOutline.svg"></BUTTON>
-				<BUTTON onclick="window.open('https:\/\/account.rumiserver.com/SETTING/');"><IMG SRC="/Asset/MdiAccountSettingsVariant.svg"></BUTTON>
-				<IMG CLASS="ICON" ID="SELF_ICON">
-			</DIV>
-		</DIV>
-
-		<DIV CLASS="SIDEMENU">
-			<DIV CLASS="GROUP_ROOM" ID="GROUP_ROOM" STYLE="display: none;">
-				<DIV CLASS="GROUP_TOOLBAR" ID="GROUP_TOOLBAR">
-					<SPAN ID="GROUP_NAME"></SPAN>
-					<BUTTON onclick="OpenGroupMenu();">︙</BUTTON>
-				</DIV>
-				<DIV CLASS="ROOMLIST" ID="ROOMLIST"></DIV>
-			</DIV>
-			<DIV ID="DM" STYLE="display: none;">
-				<DIV CLASS="ROOMLIST" ID="DMLIST"></DIV>
-			</DIV>
-		</DIV>
-
-		<DIV CLASS="GROUP_MENU_BG" ID="GROUP_MENU_BG" onclick="CloseGroupMenu();" STYLE="display: none;"></DIV>
-		<DIV CLASS="GROUP_MENU" ID="GROUP_MENU" STYLE="display: none;">
-			<BUTTON onclick="show_invite_url(); CloseGroupMenu();">招待する</BUTTON>
-			<BUTTON onclick="ShowInviteView(); CloseGroupMenu();">参加申請を見る</BUTTON>
-			<BUTTON onclick="ClickNewRoomButton(); CloseGroupMenu();">部屋を作成</BUTTON>
-		</DIV>
-
-		<DIV CLASS="CONTENTS">
-			<DIV CLASS="DISPLAY" ID="DISPLAY" STYLE="display: none;"></DIV>
-			<DIV CLASS="DISPLAY" ID="GROUP_INFO" STYLE="display: none;"></DIV>
-			<DIV CLASS="DISPLAY" ID="DM_DISPLAY" STYLE="display: none;">
-				暫定デザイン↓<BR>
-				<INPUT TYPE="TEXT" ID="CREATE_DM_UID" PLACEHOLDER="ユーザーを検索">
-				<DIV CLASS="CREATE_DM_LIST" ID="CREATE_DM_LIST"></DIV>
-			</DIV>
-
-			<DIV CLASS="CHATROOM" ID="CHATROOM" STYLE="display: none;">
-				<DIV CLASS="CONTAINER">
-					<DIV CLASS="MESSAGELIST" ID="MESSAGELIST"></DIV>
-					<DIV CLASS="CHATINPUTFIELD">
-						<DIV CLASS="CHATINPUT" ID="CHATINPUT">
-							<BUTTON onclick="SendMenuOC();">+</BUTTON>
-							<TEXTAREA ID="MSGINPUT_TEXT"></TEXTAREA>
-							<BUTTON onclick="SendMessageButton(document.getElementById('MSGINPUT_TEXT'));" ID="MESSAGE_SEND_BUTTON">↑</BUTTON>
-						</DIV>
-					</DIV>
-				</DIV>
-			</DIV>
-		</DIV>
-
-		<!--ファイルビュワー-->
-		<DIV CLASS="FILE_VIEWER_BG DIALOG_BG" ID="FILE_VIEWER_BG" onclick="CloseFileView()" STYLE="display: none;"></DIV>
-		<DIV CLASS="FILE_VIEWER" ID="FILE_VIEWER" STYLE="display: none;"></DIV>
-
-		<!--設定画面-->
-		<DIV CLASS="DIALOG_BG" ID="SETTING_DIALOG_BG" onclick="CloseSettingDialog()" STYLE="display: none;"></DIV>
-		<DIV CLASS="SETTING_DIALOG PLATE" ID="SETTING_DIALOG" STYLE="display: none;">
-			<DIV>
-				<DIV CLASS="TABVIEW" data-tabviewid="setting">
-					<DIV CLASS="TABVIEW_BTN">
-						<BUTTON ID="TABVIEW_BTN_ITEM" on="true" onclick="TABVIEW_CH('chat', this);" data-name="chat" data-tabviewid="setting">チャット</BUTTON>
-						<BUTTON ID="TABVIEW_BTN_ITEM" on="false" onclick="TABVIEW_CH('encrypt', this); OpenPGPMenu();" data-name="encrypt" data-tabviewid="setting" data-promode="true">暗号通信</BUTTON>
-						<BUTTON ID="TABVIEW_BTN_ITEM" on="false" onclick="TABVIEW_CH('info', this);" data-name="info" data-tabviewid="setting">情報</BUTTON>
-					</DIV>
-					<DIV CLASS="TABVIEW_ITEM_PARENT">
-						<!--チャット-->
-						<DIV CLASS="TABVIEW_ITEM_ON" ID="TABVIEW_ITEM" data-name="chat" data-tabviewid="setting">
-							<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_CTRL_SEND" onchange="setting['rc_enter_send'] = !this.checked; apply_setting();"><LABEL FOR="SETTING_CTRL_SEND">Ctrl+Enterで送信する</LABEL>
-							<BR>
-							<INPUT CLASS="CheckboxSwitch" TYPE="CHECKBOX" ID="SETTING_URLC" onchange="setting['rc_url_cleaner'] = !this.checked; apply_setting();" data-promode="true"><LABEL FOR="SETTING_URLC" data-promode="true">URLクリーナー</LABEL>
-						</DIV>
-						<!--暗号通信-->
-						<DIV CLASS="TABVIEW_ITEM_OFF" ID="TABVIEW_ITEM" data-name="encrypt" data-tabviewid="setting" data-promode="true">
-							<DIV ID="PGPMENU_NEW_KEY" STYLE="display: block;">
-								<BUTTON onclick="GenPGPKey();" ID="PGPMENU_GENKEY">鍵を作成する</BUTTON>
-								<BUTTON onclick="ImportSelfPGPKey();">鍵をインポート</BUTTON>
-							</DIV>
-							<DIV ID="PGPMENU_EXITS_KEY" STYLE="display: none;">
-								<BUTTON onclick="DeletePGPKey();" CLASS="DELETE_SELFKEY" ID="PGPMENU_DELKEY">鍵を削除する</BUTTON>
-								<BUTTON onclick="DownloadSelfPGPKey();">鍵をエクスポート</BUTTON>
-								<DETAILS>
-									<SUMMARY>ﾟ+.ヽ(≧▽≦)ﾉ.+ﾟ</SUMMARY>
-									<PRE ID="PGPMENU_KIRAKIRA"></PRE>
-								</DETAILS>
-							</DIV>
-							<HR>
-							インポート済みの鍵<BR>
-							<TABLE CLASS="KEYLIST" ID="PGPMENU_KEYLIST">
-								<TR>
-									<TH>ユーザー</TH>
-									<TH>操作</TH>
-								</TR>
-							</TABLE>
-						</DIV>
-						<!--情報-->
-						<DIV CLASS="TABVIEW_ITEM_OFF" ID="TABVIEW_ITEM" data-name="info" data-tabviewid="setting">
-							<DIV onclick="switch_promode();">BEバージョン：書くのが面倒くさい</DIV>
-							<DIV>FEバージョン：書くのが面倒くさい</DIV>
-						</DIV>
-					</DIV>
-				</DIV>
-			</DIV>
-		</DIV>
-
-		<!--送信メニュー-->
-		<DIV CLASS="MENU" ID="SEND_MENU" style="display: none;">
-			<BUTTON onclick="SendMenuOC(); EL.CONTENTS.FILE_SELECT.click();">ファイル</BUTTON>
-			<BUTTON onclick="SendMenuOC(); SendPublicKeyToRoom();">公開鍵を添付</BUTTON>
-		</DIV>
-		<DIV CLASS="SEND_FILE_LIST" ID="SEND_FILE_LIST" STYLE="display: none;"></DIV>
-		<INPUT TYPE="FILE" ID="FILE_SELECT" STYLE="display: none;" multiple>
-	</BODY>
-
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/RSPA.js?V=1.0" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/DIALOG.js?V=LATEST" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/COOKIE.js?V=LATEST" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/LOADING.js?V=LATEST" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/Login.js?V=LATEST" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/htmlspecialchars.js" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/RMD.js?V=LATEST" defer></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/xz.js?V=LATEST"></SCRIPT>
-	<SCRIPT SRC="https://cdn.rumia.me/LIB/TABVIEW.js?V=LATEST" defer></SCRIPT>
-	<SCRIPT SRC="https://unpkg.com/openpgp@5.10.0/dist/openpgp.min.js" defer></SCRIPT>
-
-	<SCRIPT SRC="/SCRIPT/LOADING.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/Linkify.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/MimeType.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/DateFormat.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/API.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/UI_ITEM.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/PAGE.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/StreamingAPI.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/PGP.js" defer></SCRIPT>
-	<SCRIPT SRC="/SCRIPT/Main.js" defer></SCRIPT>
-</HTML>
+					<button id="add" type="button">+</button>
+					<button id="sub" type="button">-</button>
+					<button id="mul" type="button">×</button>
+					<button id="div" type="button">÷</button>
+				</div>
+				<p class="read-the-docs">
+					Click on the Vite and TypeScript logos to learn more
+				</p>
+			</div>
+		</div>
+		<script type="module" src="/src/main.ts"></script>
+	</body>
+</html>
