@@ -1,0 +1,59 @@
+.CHAT_ROOM{
+	display: flex;
+	flex-direction: column;
+
+	/*他のスタイル設定はMain.cssに*/
+}
+
+/*----------------------------------------------------------------------------------------------上*/
+.CHAT_ROOM > .CHAT_CONTROLE{
+	flex: 1;
+
+	max-height: 30px;
+
+	background-color: blueviolet;
+
+	overflow: hidden;
+}
+
+/*----------------------------------------------------------------------------------------------メッセージ一覧*/
+.CHAT_ROOM > .MESSAGE_LIST{
+	flex: 5;
+
+	background-color: chartreuse;
+}
+
+/*----------------------------------------------------------------------------------------------入力中*/
+.CHAT_ROOM > .MESSAGE_VIEW{
+	flex: 2;
+	max-height: 100px;
+
+	background-color: darkcyan;
+}
+
+.CHAT_ROOM > .MESSAGE_VIEW[data-hide="true"]{
+	flex: 0;
+}
+
+/*----------------------------------------------------------------------------------------------入力欄*/
+.CHAT_ROOM > .MESSAGE_FORM{
+	display: flex;
+	flex-direction: row;
+
+	flex: 1;
+	max-height: 50px;
+
+	background-color: aquamarine;
+
+	overflow: hidden;
+}
+
+.CHAT_ROOM > .MESSAGE_FORM > button{
+	flex: 1;
+
+	max-width: 50px;
+}
+
+.CHAT_ROOM > .MESSAGE_FORM > textarea{
+	flex: 9;
+}

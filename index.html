@@ -1,34 +1,38 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>rumichat-fe</title>
-	</head>
-	<body>
-		<div id="app">
-			<div>
-				<a href="https://vite.dev" target="_blank">
-					<img src="public/vite.svg" class="logo" alt="Vite logo" />
-				</a>
-				<a href="https://www.typescriptlang.org/" target="_blank">
-					<img src="/public/typescript.svg" class="logo vanilla" alt="TypeScript logo" />
-				</a>
-				<h1>Vite + TypeScript</h1>
-				<div class="card">
-					<DIV ID="count">カウント:</DIV>
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE>るみチャット</TITLE>
 
-					<button id="add" type="button">+</button>
-					<button id="sub" type="button">-</button>
-					<button id="mul" type="button">×</button>
-					<button id="div" type="button">÷</button>
-				</div>
-				<p class="read-the-docs">
-					Click on the Vite and TypeScript logos to learn more
-				</p>
-			</div>
-		</div>
-		<script type="module" src="/src/main.ts"></script>
-	</body>
-</html>
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/reset.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/font.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/DEFAULT.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/icon.css">
+
+		<LINK REL="stylesheet" HREF="public/Style/Main.css">
+		<LINK REL="stylesheet" HREF="public/Style/Message.css">
+		<LINK REL="stylesheet" HREF="public/Style/ChatRoom.css">
+	</HEAD>
+	<BODY>
+		<DIV CLASS="HEADER">
+			<DIV CLASS="GROUP_LIST" ID="GROUP_LIST"></DIV>
+		</DIV>
+
+		<DIV CLASS="SIDE">
+			<DIV CLASS="ROOM_LIST" ID="ROOM_LIST"></DIV>
+		</DIV>
+
+		<DIV CLASS="CHAT_ROOM" ID="CHAT_ROOM">
+			<DIV CLASS="CHAT_CONTROLE">ううううううううううううううううううううう</DIV>
+			<DIV CLASS="MESSAGE_LIST" ID="MESSAGE_LIST"></DIV>
+			<DIV CLASS="MESSAGE_VIEW" ID="MESSAGE_VIEW" data-hide="true"></DIV>
+			<DIV CLASS="MESSAGE_FORM">
+				<BUTTON>+</BUTTON>
+				<TEXTAREA PLACEHOLDER="は？"></TEXTAREA>
+				<BUTTON>→</BUTTON>
+			</DIV>
+		</DIV>
+	</BODY>
+
+	<SCRIPT TYPE="MODULE" SRC="src/Main.ts"></SCRIPT>
+	<SCRIPT TYPE="MODULE" SRC="src/SPA.ts"></SCRIPT>
+</HTML>

@@ -1,0 +1,20 @@
+.MESSAGE_ITEM{
+	margin: 10px;
+}
+
+.MESSAGE_ITEM > .USER{
+	vertical-align: middle;
+}
+
+.MESSAGE_ITEM > .USER > .USER_ICON{
+	width: 45px;
+	height: 45px;
+
+	vertical-align: bottom;
+
+	margin-right: 10px;
+}
+
+.MESSAGE_ITEM > .TEXT{
+	margin-left: calc(45px + 10px);
+}
