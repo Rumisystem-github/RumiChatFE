@@ -28,3 +28,7 @@ export type GetMessageListResponse = {
 		ACCOUNT: User
 	}[]
 };
+
+export type SendMessageResponse = {
+	STATUS: boolean
+};

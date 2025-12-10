@@ -24,7 +24,11 @@ export let mel = {
 			parent: document.getElementById("MESSAGE_VIEW")!
 		},
 		form: {
-			
+			menu: {
+				button: document.getElementById("MESSAGE_FORM_MENU_BUTTON")!
+			},
+			text: document.getElementById("MESSAGE_FORM_TEXT")! as HTMLTextAreaElement,
+			send: document.getElementById("MESSAGE_FORM_SEND")!
 		}
 	}
 };
