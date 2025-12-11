@@ -10,6 +10,7 @@ export function uiitem_group_item(group: Group):HTMLElement {
 	let item = document.createElement("DIV");
 	parent.appendChild(item);
 	item.className = "GROUP_ITEM";
+	item.dataset["ack"] = "true";
 	item.dataset["id"] = group.ID;
 
 	let icon = document.createElement("DIV");
@@ -26,6 +27,7 @@ export function uiitem_room_item(group_id:string, room: Room):HTMLElement {
 	let item = document.createElement("DIV");
 	parent.appendChild(item);
 	item.className = "ROOM_ITEM";
+	item.dataset["ack"] = "true";
 	item.dataset["id"] = room.ID;
 
 	let name = document.createElement("DIV");
