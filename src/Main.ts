@@ -21,14 +21,24 @@ export let mel = {
 		parent: document.getElementById("CHAT_ROOM")!,
 		message_list: document.getElementById("MESSAGE_LIST")!,
 		viewer: {
-			parent: document.getElementById("MESSAGE_VIEW")!
+			parent: document.getElementById("MESSAGE_VIEW")!,
+			user: {
+				icon: document.getElementById("MESSAGE_VIEW_USER_ICON")! as HTMLImageElement,
+				name: document.getElementById("MESSAGE_VIEW_USER_NAME")!
+			},
+			text: document.getElementById("MESSAGE_VIEW_TEXT")!
 		},
 		form: {
 			menu: {
-				button: document.getElementById("MESSAGE_FORM_MENU_BUTTON")!
+				button: document.getElementById("MESSAGE_FORM_MENU_BUTTON")!,
+				menu: document.getElementById("MESSAGE_FORM_MENU")!,
+				contents: {
+					file: document.getElementById("MESSAGE_FORM_MENU_FILE_BUTTON")!
+				}
 			},
 			text: document.getElementById("MESSAGE_FORM_TEXT")! as HTMLTextAreaElement,
-			send: document.getElementById("MESSAGE_FORM_SEND")!
+			send: document.getElementById("MESSAGE_FORM_SEND")!,
+			file_list: document.getElementById("MESSAGE_FORM_FILE_LIST")!
 		}
 	}
 };

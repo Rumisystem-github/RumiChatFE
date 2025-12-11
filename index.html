@@ -22,13 +22,36 @@
 		</DIV>
 
 		<DIV CLASS="CHAT_ROOM" ID="CHAT_ROOM">
+			<!--上-->
 			<DIV CLASS="CHAT_CONTROLE">ううううううううううううううううううううう</DIV>
+
+			<!--メッセージリスト-->
 			<DIV CLASS="MESSAGE_LIST" ID="MESSAGE_LIST"></DIV>
-			<DIV CLASS="MESSAGE_VIEW" ID="MESSAGE_VIEW" data-hide="true"></DIV>
+
+			<!--メッセージ閲覧-->
+			<DIV CLASS="MESSAGE_VIEW" ID="MESSAGE_VIEW" data-hide="true">
+				<DIV CLASS="MESSAGE_ITEM">
+					<DIV CLASS="USER">
+						<IMG CLASS="USER_ICON" ID="MESSAGE_VIEW_USER_ICON">
+						<SPAN CLASS="USER_NAME" ID="MESSAGE_VIEW_USER_NAME">あ</SPAN>
+					</DIV>
+					<DIV CLASS="TEXT" ID="MESSAGE_VIEW_TEXT"></DIV>
+				</DIV>
+			</DIV>
+
+			<!--フォーム-->
 			<DIV CLASS="MESSAGE_FORM">
 				<BUTTON ID="MESSAGE_FORM_MENU_BUTTON">+</BUTTON>
 				<TEXTAREA ID="MESSAGE_FORM_TEXT" PLACEHOLDER="は？"></TEXTAREA>
 				<BUTTON ID="MESSAGE_FORM_SEND">→</BUTTON>
+
+				<!--メニュー-->
+				<DIV CLASS="MENU" ID="MESSAGE_FORM_MENU" data-hide="true">
+					<BUTTON ID="MESSAGE_FORM_MENU_FILE_BUTTON">ファイル</BUTTON>
+				</DIV>
+
+				<!--ファイル一覧-->
+				<DIV CLASS="FILE_LIST" ID="MESSAGE_FORM_FILE_LIST"></DIV>
 			</DIV>
 		</DIV>
 	</BODY>

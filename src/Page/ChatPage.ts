@@ -1,15 +1,21 @@
 import { get_message_list } from "../API";
 import { mel, self_user, token } from "../Main";
 import type { SendMessageResponse } from "../Type/APIResponseType";
-import type { Message } from "../Type/Message";
+import type { Message, MessageFile } from "../Type/Message";
 import { refresh_room_list } from "../UI";
-import { uiitem_message_item } from "../UIItem";
+import { uiitem_message_file, uiitem_message_item } from "../UIItem";
 
+const UPLOAD_CHUNK_SIZE = 500 * 1024;
 let message_list_scrolled_bottom = false;
 let open_room_id:string;
+let select_file_list:File[] = [];
 
 export async function start(group_id: string, room_id: string) {
 	open_room_id = room_id;
+
+	mel.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
+	mel.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
+	mel.chat.viewer.user.name.innerText = self_user.NAME;
 
 	//部屋一覧
 	await refresh_room_list(group_id);
@@ -52,18 +58,15 @@ mel.chat.message_list.addEventListener("scroll", () => {
 	}
 });
 
-mel.chat.form.text.addEventListener("keyup", async () => {
+//入力欄への入力イベント
+mel.chat.form.text.addEventListener("keyup", refresh_viewer);
+
+async function refresh_viewer() {
 	const bottom = message_list_scrolled_bottom;
+	const text = mel.chat.form.text.value.trim();
 
-	if (mel.chat.form.text.value.trim().length !== 0) {
-		mel.chat.viewer.parent.replaceChildren();
-		mel.chat.viewer.parent.append(await uiitem_message_item(self_user, {
-			ID: "",
-			CREATE_AT: new Date().toISOString(),
-			TEXT: mel.chat.form.text.value.trim(),
-			FILE_LIST: []
-		} as Message));
-
+	if (text.length !== 0) {
+		mel.chat.viewer.text.innerText = text;
 		mel.chat.viewer.parent.dataset["hide"] = "false";
 
 		//アニメーションが終わって、且つさっきまで一番下までスクロールしてたなら、一番下までもっかいスクロールする
@@ -73,11 +76,28 @@ mel.chat.form.text.addEventListener("keyup", async () => {
 			}
 		}, {once: true});
 	} else {
-		mel.chat.viewer.parent.replaceChildren();
+		//mel.chat.viewer.parent.replaceChildren();
 		mel.chat.viewer.parent.dataset["hide"] = "true";
 	}
-});
+}
 
+async function refresh_file_list() {
+	mel.chat.form.file_list.replaceChildren();
+	for (let i = 0; i < select_file_list.length; i++) {
+		const file = select_file_list[i];
+		const blob = URL.createObjectURL(file);
+
+		//TODO:削除ボタンとか
+
+		let file_item = document.createElement("IMG") as HTMLImageElement;
+		file_item.src = blob;
+		mel.chat.form.file_list.appendChild(file_item);
+
+		URL.revokeObjectURL(blob);
+	}
+}
+
+//送信
 mel.chat.form.text.addEventListener("keypress", (e)=>{
 	if (e.key == "Enter" && !e.ctrlKey) {
 		e.preventDefault();
@@ -94,6 +114,21 @@ async function send() {
 	mel.chat.form.menu.button.setAttribute("disabled", "");
 	mel.chat.form.send.setAttribute("disabled", "");
 
+	type file_queue_type = {
+		TYPE: string,
+		NSFW: boolean
+	};
+
+	let file_list:file_queue_type[] = [];
+	for (let i = 0; i < select_file_list.length; i++) {
+		file_list.push(
+			{
+				TYPE: select_file_list[i].type,
+				NSFW: false
+			}
+		);
+	}
+
 	let ajax = await fetch("/api/Message", {
 		method: "POST",
 		headers: {
@@ -101,7 +136,8 @@ async function send() {
 		},
 		body: JSON.stringify({
 			"ROOM_ID": open_room_id,
-			"TEXT": text
+			"TEXT": text,
+			"FILE": file_list
 		})
 	});
 	const result = await ajax.json() as SendMessageResponse;
@@ -109,10 +145,108 @@ async function send() {
 		alert("エラー");
 	}
 
+	if (select_file_list.length !== 0 && result.FILE != null) {
+		for (let i = 0; i < select_file_list.length; i++) {
+			const file = select_file_list[i];
+			const queue_id = result.FILE[i];
+			const total_size = file.size;
+			let end = 0;
+			const stream = file.stream();
+			const reader = stream.getReader();
+			let buffer = new Uint8Array(0);
+
+			while (true) {
+				const {done, value} = await reader.read();
+				if (done) break;
+
+				//前回の余りと結合
+				const merged = new Uint8Array(buffer.length + value.length);
+				merged.set(buffer, 0);
+				merged.set(value, buffer.length);
+				buffer = merged;
+
+				//500KBずつ送信
+				while (buffer.length >= UPLOAD_CHUNK_SIZE) {
+					const chunk = buffer.slice(0, UPLOAD_CHUNK_SIZE);
+					buffer = buffer.slice(UPLOAD_CHUNK_SIZE);
+					await upload(queue_id, chunk);
+					end += chunk.length;
+					console.log("進捗", (end / total_size) * 100);
+				}
+			}
+
+			//残りを送信
+			if (buffer.length > 0) {
+				await upload(queue_id, buffer);
+				end += buffer.length;
+			}
+
+			await uplaod_end(queue_id);
+		}
+	}
+
 	//初期化
 	mel.chat.form.text.value = "";
+	select_file_list.splice(0);
 	mel.chat.form.menu.button.removeAttribute("disabled");
 	mel.chat.form.send.removeAttribute("disabled");
 	mel.chat.viewer.parent.replaceChildren();
 	mel.chat.viewer.parent.dataset["hide"] = "true";
+
+	refresh_file_list();
 }
+
+async function upload(queue_id: string, chunk: Uint8Array<ArrayBuffer>): Promise<boolean> {
+	let ajax = await fetch("/api/Message/File?QUEUE_ID="+queue_id, {
+		method: "POST",
+		headers: {
+			"TOKEN": token
+		},
+		body: chunk
+	});
+	const result = await ajax.json();
+	if (result["STATUS"]) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+async function uplaod_end(queue_id: string): Promise<boolean> {
+	let ajax = await fetch("/api/Message/File?QUEUE_ID="+queue_id, {
+		method: "PATCH",
+		headers: {
+			"TOKEN": token
+		}
+	});
+	const result = await ajax.json();
+	if (result["STATUS"]) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//メニューの開く閉じる
+mel.chat.form.menu.button.addEventListener("click", ()=>{
+	if (mel.chat.form.menu.menu.dataset["hide"] === "true") {
+		mel.chat.form.menu.menu.dataset["hide"] = "false"
+	} else {
+		mel.chat.form.menu.menu.dataset["hide"] = "true"
+	}
+});
+
+//ファイル選択
+mel.chat.form.menu.contents.file.addEventListener("click", ()=>{
+	let dialog = document.createElement("INPUT") as HTMLInputElement;
+	dialog.type = "file";
+	dialog.click();
+
+	dialog.onchange = function() {
+		const file_list = dialog.files!;
+		for (let i = 0; i < file_list.length; i++) {
+			select_file_list.push(file_list[i]);
+		}
+		refresh_file_list();
+	}
+});

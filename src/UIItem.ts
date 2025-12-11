@@ -1,5 +1,5 @@
 import type { Group } from "./Type/Group";
-import type { Message } from "./Type/Message";
+import type { Message, MessageFile } from "./Type/Message";
 import type { Room } from "./Type/Room";
 import type { User } from "./Type/User";
 
@@ -70,18 +70,22 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 
 	for (let i = 0; i < message.FILE_LIST.length; i++) {
 		const file = message.FILE_LIST[i];
-
-		let file_item = document.createElement("DIV");
-		file_el.appendChild(file_item);
-
-		switch (file.TYPE.split("/")[0]) {
-			case "image":
-				let content = document.createElement("IMG") as HTMLImageElement;
-				content.src = file.URL;
-				file_item.appendChild(content);
-				break;
-		}
+		file_el.appendChild(await uiitem_message_file(file));
 	}
 
 	return item;
+}
+
+export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivElement> {
+	let file_item = document.createElement("DIV")as HTMLDivElement;
+
+	switch (file.TYPE.split("/")[0]) {
+		case "image":
+			let content = document.createElement("IMG") as HTMLImageElement;
+			content.src = file.URL;
+			file_item.appendChild(content);
+			break;
+	}
+
+	return file_item;
 }

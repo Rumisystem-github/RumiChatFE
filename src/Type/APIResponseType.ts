@@ -31,4 +31,5 @@ export type GetMessageListResponse = {
 
 export type SendMessageResponse = {
 	STATUS: boolean
+	FILE?: string[]
 };
