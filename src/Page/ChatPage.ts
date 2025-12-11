@@ -1,9 +1,8 @@
 import { get_message_list } from "../API";
 import { mel, self_user, token } from "../Main";
 import type { SendMessageResponse } from "../Type/APIResponseType";
-import type { Message, MessageFile } from "../Type/Message";
 import { refresh_room_list } from "../UI";
-import { uiitem_message_file, uiitem_message_item } from "../UIItem";
+import { uiitem_message_item } from "../UIItem";
 
 const UPLOAD_CHUNK_SIZE = 500 * 1024;
 let message_list_scrolled_bottom = false;
@@ -16,6 +15,8 @@ export async function start(group_id: string, room_id: string) {
 	mel.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
 	mel.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
 	mel.chat.viewer.user.name.innerText = self_user.NAME;
+
+	refresh_file_list();
 
 	//部屋一覧
 	await refresh_room_list(group_id);
@@ -83,14 +84,38 @@ async function refresh_viewer() {
 
 async function refresh_file_list() {
 	mel.chat.form.file_list.replaceChildren();
+
+	if (select_file_list.length === 0) {
+		mel.chat.form.file_list.style.display = "none";
+		return;
+	} else {
+		mel.chat.form.file_list.style.display = "block";
+	}
+
 	for (let i = 0; i < select_file_list.length; i++) {
 		const file = select_file_list[i];
 		const blob = URL.createObjectURL(file);
 
-		//TODO:削除ボタンとか
+		let file_item = document.createElement("DIV");
+		file_item.className = "FILE_ITEM";
+		file_item.dataset["type"] = "UPLOADING";
+		file_item.dataset["index"] = i.toString();
 
-		let file_item = document.createElement("IMG") as HTMLImageElement;
-		file_item.src = blob;
+		let delete_button = document.createElement("BUTTON");
+		delete_button.innerText = "X";
+		file_item.append(delete_button);
+		delete_button.onclick = function() {
+			refresh_file_list();
+		};
+
+		let content = document.createElement("IMG") as HTMLImageElement;
+		content.src = blob;
+		file_item.appendChild(content);
+
+		let progress_bar = document.createElement("PROGRESS") as HTMLProgressElement;
+		progress_bar.max = 100;
+		file_item.append(progress_bar);
+
 		mel.chat.form.file_list.appendChild(file_item);
 
 		URL.revokeObjectURL(blob);
@@ -171,7 +196,7 @@ async function send() {
 					buffer = buffer.slice(UPLOAD_CHUNK_SIZE);
 					await upload(queue_id, chunk);
 					end += chunk.length;
-					console.log("進捗", (end / total_size) * 100);
+					update_file_progress(i, (end / total_size) * 100);
 				}
 			}
 
@@ -179,6 +204,7 @@ async function send() {
 			if (buffer.length > 0) {
 				await upload(queue_id, buffer);
 				end += buffer.length;
+				update_file_progress(i, (end / total_size) * 100);
 			}
 
 			await uplaod_end(queue_id);
@@ -194,6 +220,15 @@ async function send() {
 	mel.chat.viewer.parent.dataset["hide"] = "true";
 
 	refresh_file_list();
+}
+
+function update_file_progress(index:number, progress:number) {
+	let file_item = document.querySelector(`.FILE_ITEM[data-type="UPLOADING"][data-index="${index.toString()}"]`);
+	if (file_item == null) return;
+	let progress_bar = file_item.querySelector("PROGRESS") as HTMLProgressElement;
+	if (progress_bar == null) return;
+
+	progress_bar.value = progress;
 }
 
 async function upload(queue_id: string, chunk: Uint8Array<ArrayBuffer>): Promise<boolean> {
@@ -247,6 +282,8 @@ mel.chat.form.menu.contents.file.addEventListener("click", ()=>{
 		for (let i = 0; i < file_list.length; i++) {
 			select_file_list.push(file_list[i]);
 		}
+
+		mel.chat.form.menu.menu.dataset["hide"] = "true"
 		refresh_file_list();
 	}
 });

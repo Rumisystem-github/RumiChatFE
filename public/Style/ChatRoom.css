@@ -90,14 +90,38 @@
 
 .CHAT_ROOM > .MESSAGE_FORM > .FILE_LIST{
 	position: fixed;
-	top: 0px;
-	left: 0px;
+	bottom: var(--MESSAGE_FORM_HEIGHT);
+	right: 0px;
 
 	background-color: rgba(0, 0, 0, 0.5);
 
+	margin: 10px;
 	padding: 10px;
+
+	display: flex;
+	gap: 10px;
+
+	max-width: 50vh;
+
+	overflow-x: scroll;
 }
 
-.CHAT_ROOM > .MESSAGE_FORM > .FILE_LIST > *{
-	height: 100px;
+.CHAT_ROOM > .MESSAGE_FORM > .FILE_LIST > .FILE_ITEM{
+	display: flex;
+	flex-direction: column;
+}
+
+.CHAT_ROOM > .MESSAGE_FORM > .FILE_LIST > .FILE_ITEM > img{
+	width: 200px;
+	height: 200px;
+
+	object-fit: cover;
+}
+
+.CHAT_ROOM > .MESSAGE_FORM > .FILE_LIST > .FILE_ITEM > button{
+	padding: 0px;
+}
+
+.CHAT_ROOM > .MESSAGE_FORM > .FILE_LIST > .FILE_ITEM > progress{
+	height: 5px;
 }
