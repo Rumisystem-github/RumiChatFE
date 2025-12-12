@@ -58,8 +58,8 @@ async function decompress(input: Blob): Promise<string> {
 	const decompressed_blob = await new Response(decompressed_stream).blob();
 	const text = decompressed_blob.text();
 
-	const before_size = input.size;
-	const after_size = decompressed_blob.size;
+	const before_size = decompressed_blob.size;
+	const after_size = input.size;
 	const persent = Math.floor(((before_size - after_size) / before_size) * 100);
 	console.log(`受信を解凍：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
 
