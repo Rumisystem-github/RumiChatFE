@@ -1,26 +1,35 @@
 import { get_message_list } from "../API";
-import { mel, self_user, token } from "../Main";
+import { dm_list, mel, self_user, token } from "../Main";
 import type { SendMessageResponse } from "../Type/APIResponseType";
-import { refresh_room_list } from "../UI";
+import { refresh_dm_list, refresh_room_list } from "../UI";
 import { uiitem_message_item } from "../UIItem";
 
 const UPLOAD_CHUNK_SIZE = 500 * 1024;
 let message_list_scrolled_bottom = false;
 let open_room_id:string;
 let select_file_list:File[] = [];
+let is_dm = false;
 
-export async function start(group_id: string, room_id: string) {
+export async function start(group_id: string | null, room_id: string) {
 	open_room_id = room_id;
+	is_dm = (group_id == null);
 
 	mel.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
 	mel.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
 	mel.chat.viewer.user.name.innerText = self_user.NAME;
 
+	//ううううううう
 	refresh_file_list();
 
-	//部屋一覧
-	await refresh_room_list(group_id);
-	mel.side.room_list.style.display = "block";
+	//DMじゃない場合に処理
+	if (!dm_list) {
+		//部屋一覧
+		await refresh_room_list(group_id!);
+		mel.side.room_list.style.display = "block";
+	} else {
+		//DMリスト
+		await refresh_dm_list();
+	}
 
 	//メッセージ一覧を消し飛ばす
 	mel.chat.message_list.replaceChildren();

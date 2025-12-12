@@ -1,5 +1,6 @@
 import { get_dm_list, get_user } from "../API";
 import { mel } from "../Main";
+import { refresh_dm_list } from "../UI";
 
 //パスを読んでページを検知
 export async function page_detect() {
@@ -12,7 +13,7 @@ export async function page_detect() {
 
 	if (path == "/") {
 		//トップ
-		mel.side.dm_list.style.display = "block";
+		await refresh_dm_list();
 		return;
 	}
 
@@ -39,6 +40,7 @@ export async function page_detect() {
 	const dm_mtc = path.match(/^\/dm\/([^/]+)\/?$/);
 	if (dm_mtc) {
 		const room_id = dm_mtc[1];
-		console.log(room_id);
+		const chatroom = await import("./ChatPage");
+		await chatroom.start(null, room_id);
 	}
 }

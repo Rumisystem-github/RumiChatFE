@@ -23,4 +23,6 @@ export async function refresh_dm_list() {
 	for (const dm of dm_list) {
 		mel.side.dm_list.appendChild(uiitem_dm_item(dm));
 	}
+
+	mel.side.dm_list.style.display = "block";
 }
