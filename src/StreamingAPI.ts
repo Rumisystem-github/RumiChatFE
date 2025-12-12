@@ -1,8 +1,10 @@
 import { token } from "./Main";
 import zstd_init, { type ZstdAPI } from "./Lib/zstd";
+import type { EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
 
 let zstd: ZstdAPI;
 let ws:WebSocket;
+let handshake = false;
 
 export async function streaming_init() {
 	zstd = await zstd_init();
@@ -22,11 +24,28 @@ async function on_open() {
 
 async function on_message(e:MessageEvent) {
 	const text = await decompress(e.data);
-	console.log("受信：" + text);
+	const json = JSON.parse(text);
+	if (handshake) {
+		const event = json as EventReceive;
+		switch (event.TYPE) {
+			case "RECEIVE_MESSAGE":
+				const receive_message = json as ReveiveMessageEvent;
+				console.log(receive_message);
+				return;
+		}
+	} else {
+		const res = json as HandshakeResponse;
+		if (!res.STATUS) {
+			alert("WebSocketエラー");
+		}
+
+		handshake = true;
+	}
 }
 
 function on_close() {
 	console.log("切断");
+	handshake = false;
 	connect();
 }
 
