@@ -23,6 +23,8 @@
 	height: calc(100vh - var(--HEADER_HEIGHT));
 
 	background-color: aqua;
+
+	overflow: hidden;
 }
 
 .CHAT_ROOM{
@@ -42,4 +44,26 @@
 
 	width: 100%;
 	height: 100%;
+}
+
+.SIDE > .DM_LIST{
+	overflow: auto;
+
+	width: 100%;
+	height: 100%;
+}
+
+.DM_ITEM{
+	margin: 10px;
+}
+
+.DM_ITEM > img{
+	width: 45px;
+	height: 45px;
+
+	vertical-align: middle;
+}
+
+.DM_ITEM > span{
+	margin-left: 10px;
 }

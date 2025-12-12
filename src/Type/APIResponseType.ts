@@ -3,6 +3,11 @@ import type { Message } from "./Message";
 import type { Room } from "./Room";
 import type { User } from "./User";
 
+export type GetUserResponse = {
+	STATUS: boolean,
+	ACCOUNT: User
+};
+
 export type SessionLoginResponse = {
 	STATUS: boolean,
 	CID: string,
@@ -17,6 +22,11 @@ export type GetGroupListResponse = {
 };
 
 export type GetRoomListResponse = {
+	STATUS: boolean,
+	LIST: Room[]
+};
+
+export type GetDMListResponse = {
 	STATUS: boolean,
 	LIST: Room[]
 };

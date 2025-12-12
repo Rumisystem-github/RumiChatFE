@@ -1,3 +1,4 @@
+import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { Message, MessageFile } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -34,6 +35,27 @@ export function uiitem_room_item(group_id:string, room: Room):HTMLElement {
 	name.innerText = room.NAME;
 	item.appendChild(name);
 
+	return parent;
+}
+
+export function uiitem_dm_item(dm: DM): HTMLElement {
+	let parent = document.createElement("A") as HTMLAnchorElement;
+	parent.href = "/dm/" + dm.room.ID;
+
+	let item = document.createElement("DIV");
+	item.className = "DM_ITEM";
+	item.dataset["ack"] = "true";
+
+	let icon = document.createElement("IMG") as HTMLImageElement;
+	icon.className = "ICON_" + dm.user.ICON;
+	icon.src = "https://account.rumiserver.com/api/Icon?UID=" + dm.user.UID;
+	item.append(icon);
+
+	let name = document.createElement("SPAN");
+	name.innerText = dm.user.NAME;
+	item.append(name);
+
+	parent.append(item);
 	return parent;
 }
 

@@ -1,3 +1,4 @@
+import { get_dm_list, get_user } from "../API";
 import { mel } from "../Main";
 
 //パスを読んでページを検知

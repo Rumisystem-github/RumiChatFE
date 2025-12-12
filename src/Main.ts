@@ -1,21 +1,25 @@
-import { get_group_list } from "./API";
+import { get_dm_list, get_group_list, get_user } from "./API";
 import { page_detect } from "./Page/PageMain";
 import type { SessionLoginResponse } from "./Type/APIResponseType";
+import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { User } from "./Type/User";
-import { refresh_group_list } from "./UI";
+import { refresh_dm_list, refresh_group_list } from "./UI";
 
 const login_page = "https://account.rumiserver.com/Login/";
 
 export let token: string;
 export let self_user: User;
 export let join_group_list: Group[];
+export let dm_list: DM[] = [];
+
 export let mel = {
 	top: {
 		group_list: document.getElementById("GROUP_LIST")!
 	},
 	side: {
-		room_list: document.getElementById("ROOM_LIST")!
+		room_list: document.getElementById("ROOM_LIST")!,
+		dm_list: document.getElementById("DM_LIST")!
 	},
 	chat: {
 		parent: document.getElementById("CHAT_ROOM")!,
@@ -74,5 +78,24 @@ async function login() {
 		return;
 	}
 
+	await reload_dm_list();
+	refresh_dm_list();
+
 	self_user = result.ACCOUNT_DATA;
+}
+
+async function reload_dm_list() {
+	const dm_room_list = await get_dm_list();
+
+	for (let i = 0; i < dm_room_list.length; i++) {
+		const room = dm_room_list[i];
+		let user = await get_user(room.NAME);
+
+		dm_list.push(
+			{
+				room: room,
+				user: user
+			}
+		);
+	}
 }

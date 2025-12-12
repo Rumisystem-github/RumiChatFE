@@ -1,9 +1,23 @@
 import { token } from "./Main";
-import type { GetGroupListResponse, GetMessageListResponse, GetRoomListResponse } from "./Type/APIResponseType";
+import type { GetDMListResponse, GetGroupListResponse, GetMessageListResponse, GetRoomListResponse, GetUserResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
 import type { User } from "./Type/User";
+
+export async function get_user(user_id: string):Promise<User> {
+	let ajax = await fetch("https://account.rumiserver.com/api/User?ID="+user_id, {
+		headers: {
+			"TOKEN": token
+		}
+	});
+	const result = (await ajax.json()) as GetUserResponse;
+	if (result.STATUS) {
+		return result.ACCOUNT;
+	} else {
+		throw new Error("取得できなかった");
+	}
+}
 
 export async function get_group_list():Promise<Group[]> {
 	let ajax = await fetch("/api/Group", {
@@ -18,6 +32,21 @@ export async function get_group_list():Promise<Group[]> {
 		throw new Error("取得できなかった");
 	}
 }
+
+export async function get_dm_list():Promise<Room[]> {
+	let ajax = await fetch("/api/DM", {
+		headers: {
+			"TOKEN": token
+		}
+	});
+	const result = (await ajax.json()) as GetDMListResponse;
+	if (result.STATUS) {
+		return result.LIST;
+	} else {
+		throw new Error("取得できなかった");
+	}
+}
+
 
 export async function get_room_list(group_id:string):Promise<Room[]> {
 	let ajax = await fetch("/api/Room?GROUP_ID=" + group_id, {

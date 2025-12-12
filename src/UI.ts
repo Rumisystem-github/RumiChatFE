@@ -1,6 +1,6 @@
 import { get_room_list } from "./API";
-import { join_group_list, mel } from "./Main";
-import { uiitem_group_item, uiitem_room_item } from "./UIItem";
+import { dm_list, join_group_list, mel } from "./Main";
+import { uiitem_dm_item, uiitem_group_item, uiitem_room_item } from "./UIItem";
 
 export function refresh_group_list() {
 	mel.top.group_list.replaceChildren();
@@ -14,5 +14,13 @@ export async function refresh_room_list(group_id: string) {
 	const list = await get_room_list(group_id);
 	list.forEach(room => {
 		mel.side.room_list.appendChild(uiitem_room_item(group_id, room));
+	});
+}
+
+export async function refresh_dm_list() {
+	mel.side.dm_list.replaceChildren();
+
+	dm_list.forEach(dm => {
+		mel.side.dm_list.appendChild(uiitem_dm_item(dm));
 	});
 }
