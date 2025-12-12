@@ -25,6 +25,8 @@
 
 	display: grid;
 	gap: 8px;
+
+	max-width: 500px;
 }
 
 /*1こ*/
