@@ -7,10 +7,12 @@ export async function page_detect() {
 	console.info(path);
 
 	mel.side.room_list.style.display = "none";
+	mel.side.dm_list.style.display = "none";
 	mel.chat.parent.style.display = "none";
 
 	if (path == "/") {
 		//トップ
+		mel.side.dm_list.style.display = "block";
 		return;
 	}
 
@@ -31,5 +33,12 @@ export async function page_detect() {
 
 		const chatroom = await import("./ChatPage");
 		await chatroom.start(group_id, room_id);
+	}
+
+	//DM
+	const dm_mtc = path.match(/^\/dm\/([^/]+)\/?$/);
+	if (dm_mtc) {
+		const room_id = dm_mtc[1];
+		console.log(room_id);
 	}
 }

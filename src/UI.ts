@@ -20,7 +20,7 @@ export async function refresh_room_list(group_id: string) {
 export async function refresh_dm_list() {
 	mel.side.dm_list.replaceChildren();
 
-	dm_list.forEach(dm => {
+	for (const dm of dm_list) {
 		mel.side.dm_list.appendChild(uiitem_dm_item(dm));
-	});
+	}
 }

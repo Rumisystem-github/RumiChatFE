@@ -87,8 +87,7 @@ async function login() {
 async function reload_dm_list() {
 	const dm_room_list = await get_dm_list();
 
-	for (let i = 0; i < dm_room_list.length; i++) {
-		const room = dm_room_list[i];
+	for (const room of dm_room_list) {
 		let user = await get_user(room.NAME);
 
 		dm_list.push(
