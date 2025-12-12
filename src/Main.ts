@@ -1,5 +1,6 @@
 import { get_dm_list, get_group_list, get_user } from "./API";
 import { page_detect } from "./Page/PageMain";
+import { connect } from "./StreamingAPI";
 import type { SessionLoginResponse } from "./Type/APIResponseType";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
@@ -55,6 +56,12 @@ async function main() {
 	join_group_list = await get_group_list();
 	refresh_group_list();
 
+	await reload_dm_list();
+	await refresh_dm_list();
+
+	//WebSocket
+	connect();
+
 	page_detect();
 }
 
@@ -77,9 +84,6 @@ async function login() {
 		window.location.href = login_page;
 		return;
 	}
-
-	await reload_dm_list();
-	refresh_dm_list();
 
 	self_user = result.ACCOUNT_DATA;
 }

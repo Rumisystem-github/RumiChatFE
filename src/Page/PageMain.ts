@@ -14,6 +14,7 @@ export async function page_detect() {
 	if (path == "/") {
 		//トップ
 		await refresh_dm_list();
+		mel.side.dm_list.style.display = "block";
 		return;
 	}
 
