@@ -1,5 +1,5 @@
 import { get_message_list } from "../API";
-import { dm_list, mel, self_user, token } from "../Main";
+import { mel, self_user, token } from "../Main";
 import type { SendMessageResponse } from "../Type/APIResponseType";
 import { refresh_dm_list, refresh_room_list } from "../UI";
 import { uiitem_message_item } from "../UIItem";
@@ -21,14 +21,15 @@ export async function start(group_id: string | null, room_id: string) {
 	//ううううううう
 	refresh_file_list();
 
-	//DMじゃない場合に処理
-	if (!dm_list) {
+	//DMか
+	if (is_dm) {
+		//DMリスト
+		await refresh_dm_list();
+		mel.side.dm_list.style.display = "block";
+	} else {
 		//部屋一覧
 		await refresh_room_list(group_id!);
 		mel.side.room_list.style.display = "block";
-	} else {
-		//DMリスト
-		await refresh_dm_list();
 	}
 
 	//メッセージ一覧を消し飛ばす
