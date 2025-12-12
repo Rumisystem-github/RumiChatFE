@@ -4,9 +4,11 @@ import zstd_init, { type ZstdAPI } from "./Lib/zstd";
 let zstd: ZstdAPI;
 let ws:WebSocket;
 
-export async function connect() {
+export async function streaming_init() {
 	zstd = await zstd_init();
+}
 
+export async function connect() {
 	ws = new WebSocket("/api/ws?ENCODE=ZSTD");
 	ws.onopen = on_open;
 	ws.onmessage = on_message;

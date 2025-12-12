@@ -1,6 +1,6 @@
 import { get_dm_list, get_group_list, get_user } from "./API";
 import { page_detect } from "./Page/PageMain";
-import { connect } from "./StreamingAPI";
+import { connect, streaming_init } from "./StreamingAPI";
 import type { SessionLoginResponse } from "./Type/APIResponseType";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
@@ -60,7 +60,8 @@ async function main() {
 	await refresh_dm_list();
 
 	//WebSocket
-	connect();
+	await streaming_init();
+	await connect();
 
 	page_detect();
 }
