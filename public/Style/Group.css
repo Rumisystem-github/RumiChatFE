@@ -1,0 +1,23 @@
+.GROUP_LIST{
+	display: flex;
+}
+
+.GROUP_LIST > a{
+	color: black;
+	text-decoration: none;
+}
+
+.GROUP_ITEM{
+	width: 45px;
+	height: 45px;
+
+	overflow: hidden;
+
+	border-radius: 50px;
+
+	background-color: white;
+}
+
+.GROUP_ITEM[data-ack="false"]{
+	background-color: red;
+}

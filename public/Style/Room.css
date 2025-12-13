@@ -1,0 +1,13 @@
+.ROOM_LIST > a{
+	text-decoration: none;
+
+	color: black;
+}
+
+.ROOM_ITEM{
+	margin: 10px;
+}
+
+.ROOM_ITEM[data-ack="false"] {
+	color: red;
+}

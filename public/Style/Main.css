@@ -1,6 +1,7 @@
 :root{
-	--HEADER_HEIGHT: 100px;
+	--HEADER_HEIGHT: 50px;
 	--SIDE_WIDTH: 200px;
+	--MARGIN: 10px
 }
 
 .HEADER{
@@ -8,10 +9,14 @@
 	top: 0px;
 	left: 0px;
 
-	width: 100vw;
-	height: var(--HEADER_HEIGHT);
+	width: calc(100vw - (var(--MARGIN) * 2));
+	height: calc(var(--HEADER_HEIGHT) - var(--MARGIN));
 
 	background-color: red;
+
+	margin: var(--MARGIN);
+
+	overflow: hidden;
 }
 
 .SIDE{
@@ -19,12 +24,14 @@
 	top: var(--HEADER_HEIGHT);
 	left: 0px;
 
-	width: var(--SIDE_WIDTH);
-	height: calc(100vh - var(--HEADER_HEIGHT));
+	width: calc(var(--SIDE_WIDTH) - var(--MARGIN));
+	height: calc(100vh - var(--HEADER_HEIGHT) - (var(--MARGIN) * 2));
 
 	background-color: aqua;
 
 	overflow: hidden;
+
+	margin: var(--MARGIN);
 }
 
 .CHAT_ROOM{
@@ -32,10 +39,12 @@
 	top: var(--HEADER_HEIGHT);
 	left: var(--SIDE_WIDTH);
 
-	width: calc(100vw - var(--SIDE_WIDTH));
-	height: calc(100vh - var(--HEADER_HEIGHT));
+	width: calc(100vw - var(--SIDE_WIDTH) - (var(--MARGIN) * 2));
+	height: calc(100vh - var(--HEADER_HEIGHT) - (var(--MARGIN) * 2));
 
 	background-color: blue;
+
+	margin: var(--MARGIN);
 }
 
 .CHAT_ROOM > .MESSAGE_LIST{
