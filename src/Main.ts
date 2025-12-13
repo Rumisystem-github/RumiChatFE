@@ -13,6 +13,7 @@ export let token: string;
 export let self_user: User;
 export let join_group_list: Group[];
 export let dm_list: DM[] = [];
+export let watching = true;
 
 export let mel = {
 	top: {
@@ -49,6 +50,22 @@ export let mel = {
 };
 
 window.addEventListener("load", main);
+
+document.addEventListener("visibilitychange", ()=>{
+	if (document.visibilityState === "hidden") {
+		watching = false;
+	} else {
+		watching = true;
+	}
+});
+
+window.addEventListener("blur", ()=>{
+	watching = false;
+});
+
+window.addEventListener("focus", ()=>{
+	watching = true;
+});
 
 async function main() {
 	await login();
