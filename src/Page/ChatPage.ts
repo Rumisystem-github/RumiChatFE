@@ -1,17 +1,20 @@
 import { get_message_list } from "../API";
 import { mel, self_user, token } from "../Main";
+import { set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
 import { refresh_dm_list, refresh_room_list } from "../UI";
 import { uiitem_message_item } from "../UIItem";
 
 const UPLOAD_CHUNK_SIZE = 500 * 1024;
 let message_list_scrolled_bottom = false;
+let open_group_id: string | null;
 let open_room_id:string;
 let select_file_list:File[] = [];
 let is_dm = false;
 
 export async function start(group_id: string | null, room_id: string) {
 	open_room_id = room_id;
+	open_group_id = group_id;
 	is_dm = (group_id == null);
 
 	mel.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
@@ -50,6 +53,23 @@ export async function start(group_id: string | null, room_id: string) {
 	//一番下までスクロール
 	mel.chat.message_list.scrollTop = mel.chat.message_list.scrollHeight;
 	message_list_scrolled_bottom = true;
+
+	set_receive_message_event(async (e)=>{
+		if (open_room_id === e.ROOM_ID) {
+			const bottom = message_list_scrolled_bottom;
+			mel.chat.message_list.append(await uiitem_message_item(e.USER, e.MESSAGE));
+
+			if (bottom) {
+				//レイアウト確定を待つ
+				await new Promise(requestAnimationFrame);
+				mel.chat.message_list.scrollTop = mel.chat.message_list.scrollHeight;
+			}
+		} else {
+			if (is_dm == false && open_group_id == e.GROUP_ID) {
+				console.log("ひらいているグループの話だ");
+			}
+		}
+	});
 }
 
 //メッセージ一覧スクロール

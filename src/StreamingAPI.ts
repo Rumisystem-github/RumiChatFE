@@ -5,6 +5,7 @@ import type { EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Typ
 let zstd: ZstdAPI;
 let ws:WebSocket;
 let handshake = false;
+let event_listener_receive_message:(e: ReveiveMessageEvent) => void;
 
 export async function streaming_init() {
 	zstd = await zstd_init();
@@ -15,6 +16,10 @@ export async function connect() {
 	ws.onopen = on_open;
 	ws.onmessage = on_message;
 	ws.onclose = on_close;
+}
+
+export function set_receive_message_event(fn: (e: ReveiveMessageEvent) => void) {
+	event_listener_receive_message = fn;
 }
 
 async function on_open() {
@@ -30,7 +35,7 @@ async function on_message(e:MessageEvent) {
 		switch (event.TYPE) {
 			case "RECEIVE_MESSAGE":
 				const receive_message = json as ReveiveMessageEvent;
-				console.log(receive_message);
+				event_listener_receive_message(receive_message);
 				return;
 		}
 	} else {
