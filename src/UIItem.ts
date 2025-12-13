@@ -28,7 +28,11 @@ export function uiitem_room_item(group_id:string, room: Room):HTMLElement {
 	let item = document.createElement("DIV");
 	parent.appendChild(item);
 	item.className = "ROOM_ITEM";
-	item.dataset["ack"] = "true";
+	if (room.ACK) {
+		item.dataset["ack"] = "true";
+	} else {
+		item.dataset["ack"] = "false";
+	}
 	item.dataset["id"] = room.ID;
 
 	let name = document.createElement("DIV");
@@ -44,7 +48,11 @@ export function uiitem_dm_item(dm: DM): HTMLElement {
 
 	let item = document.createElement("DIV");
 	item.className = "DM_ITEM";
-	item.dataset["ack"] = "true";
+	if (dm.room.ACK) {
+		item.dataset["ack"] = "true";
+	} else {
+		item.dataset["ack"] = "false";
+	}
 
 	let icon = document.createElement("IMG") as HTMLImageElement;
 	icon.className = "ICON_" + dm.user.ICON;

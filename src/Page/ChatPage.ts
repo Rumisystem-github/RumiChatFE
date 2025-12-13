@@ -1,4 +1,4 @@
-import { get_message_list } from "../API";
+import { get_message_list, update_last_read_message } from "../API";
 import { mel, self_user, token } from "../Main";
 import { set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
@@ -58,6 +58,8 @@ export async function start(group_id: string | null, room_id: string) {
 		if (open_room_id === e.ROOM_ID) {
 			const bottom = message_list_scrolled_bottom;
 			mel.chat.message_list.append(await uiitem_message_item(e.USER, e.MESSAGE));
+
+			await update_last_read_message(e.ROOM_ID);
 
 			if (bottom) {
 				//レイアウト確定を待つ

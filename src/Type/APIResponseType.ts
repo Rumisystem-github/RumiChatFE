@@ -43,3 +43,7 @@ export type SendMessageResponse = {
 	STATUS: boolean
 	FILE?: string[]
 };
+
+export type UpdateLastReadMessageResponse = {
+	STATUS: boolean
+};
