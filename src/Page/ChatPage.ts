@@ -50,6 +50,8 @@ export async function start(group_id: string | null, room_id: string) {
 	//レイアウト確定を待つ
 	await new Promise(requestAnimationFrame);
 
+	await update_last_read_message(room_id);
+
 	//一番下までスクロール
 	mel.chat.message_list.scrollTop = mel.chat.message_list.scrollHeight;
 	message_list_scrolled_bottom = true;

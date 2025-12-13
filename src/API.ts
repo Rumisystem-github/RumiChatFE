@@ -78,6 +78,7 @@ export async function get_message_list(room_id:string):Promise<{MESSAGE:Message,
 
 export async function update_last_read_message(room_id:string) {
 	let ajax = await fetch("/api/Ack?ROOM_ID=" + room_id, {
+		method: "PATCH",
 		headers: {
 			"TOKEN": token
 		}
