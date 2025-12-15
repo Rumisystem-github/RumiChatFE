@@ -191,7 +191,8 @@ async function send() {
 	let ajax = await fetch("/api/Message", {
 		method: "POST",
 		headers: {
-			"TOKEN": token
+			"TOKEN": token,
+			"Content-Type": "application/json; charset=UTF-8"
 		},
 		body: JSON.stringify({
 			"ROOM_ID": open_room_id,

@@ -5,10 +5,36 @@ import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
 import type { User } from "./Type/User";
 
+async function api_get(path: string): Promise<object> {
+	let ajax = await fetch("/api" + path, {
+		method: "GET",
+		headers: {
+			"TOKEN": token,
+			"Content-Type": "application/json"
+		}
+	});
+	const result = await ajax.json();
+	return result;
+}
+
+async function api_patch(path: string, body: object): Promise<object> {
+	let ajax = await fetch("/api" + path, {
+		method: "PATCH",
+		headers: {
+			"TOKEN": token,
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(body)
+	});
+	const result = await ajax.json();
+	return result;
+}
+
 export async function get_user(user_id: string):Promise<User> {
 	let ajax = await fetch("https://account.rumiserver.com/api/User?ID="+user_id, {
 		headers: {
-			"TOKEN": token
+			"TOKEN": token,
+			"Content-Type": "application/json"
 		}
 	});
 	const result = (await ajax.json()) as GetUserResponse;
@@ -20,12 +46,7 @@ export async function get_user(user_id: string):Promise<User> {
 }
 
 export async function get_group_list():Promise<Group[]> {
-	let ajax = await fetch("/api/Group", {
-		headers: {
-			"TOKEN": token
-		}
-	});
-	const result = (await ajax.json()) as GetGroupListResponse;
+	const result = (await api_get("/Group")) as GetGroupListResponse;
 	if (result.STATUS) {
 		return result.LIST;
 	} else {
@@ -34,12 +55,7 @@ export async function get_group_list():Promise<Group[]> {
 }
 
 export async function get_dm_list():Promise<Room[]> {
-	let ajax = await fetch("/api/DM", {
-		headers: {
-			"TOKEN": token
-		}
-	});
-	const result = (await ajax.json()) as GetDMListResponse;
+	const result = (await api_get("/DM")) as GetDMListResponse;
 	if (result.STATUS) {
 		return result.LIST;
 	} else {
@@ -49,12 +65,7 @@ export async function get_dm_list():Promise<Room[]> {
 
 
 export async function get_room_list(group_id:string):Promise<Room[]> {
-	let ajax = await fetch("/api/Room?GROUP_ID=" + group_id, {
-		headers: {
-			"TOKEN": token
-		}
-	});
-	const result = (await ajax.json()) as GetRoomListResponse;
+	const result = (await api_get("/Room?GROUP_ID=" + group_id)) as GetRoomListResponse;
 	if (result.STATUS) {
 		return result.LIST;
 	} else {
@@ -63,12 +74,7 @@ export async function get_room_list(group_id:string):Promise<Room[]> {
 }
 
 export async function get_message_list(room_id:string):Promise<{MESSAGE:Message, ACCOUNT:User}[]> {
-	let ajax = await fetch("/api/Message?ROOM_ID=" + room_id, {
-		headers: {
-			"TOKEN": token
-		}
-	});
-	const result = (await ajax.json()) as GetMessageListResponse;
+	const result = (await api_get("/Message?ROOM_ID=" + room_id)) as GetMessageListResponse;
 	if (result.STATUS) {
 		return result.LIST;
 	} else {
@@ -77,13 +83,7 @@ export async function get_message_list(room_id:string):Promise<{MESSAGE:Message,
 }
 
 export async function update_last_read_message(room_id:string) {
-	let ajax = await fetch("/api/Ack?ROOM_ID=" + room_id, {
-		method: "PATCH",
-		headers: {
-			"TOKEN": token
-		}
-	});
-	const result = (await ajax.json()) as UpdateLastReadMessageResponse;
+	const result = (await api_patch("/Ack?ROOM_ID=" + room_id, {})) as UpdateLastReadMessageResponse;
 	if (result.STATUS) {
 		return;
 	} else {
