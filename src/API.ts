@@ -10,7 +10,8 @@ async function api_get(path: string): Promise<object> {
 		method: "GET",
 		headers: {
 			"TOKEN": token,
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			"Accept": "application/json"
 		}
 	});
 	const result = await ajax.json();
@@ -22,7 +23,8 @@ async function api_patch(path: string, body: object): Promise<object> {
 		method: "PATCH",
 		headers: {
 			"TOKEN": token,
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			"Accept": "application/json"
 		},
 		body: JSON.stringify(body)
 	});
@@ -34,7 +36,8 @@ export async function get_user(user_id: string):Promise<User> {
 	let ajax = await fetch("https://account.rumiserver.com/api/User?ID="+user_id, {
 		headers: {
 			"TOKEN": token,
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			"Accept": "application/json"
 		}
 	});
 	const result = (await ajax.json()) as GetUserResponse;

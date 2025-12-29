@@ -192,7 +192,8 @@ async function send() {
 		method: "POST",
 		headers: {
 			"TOKEN": token,
-			"Content-Type": "application/json; charset=UTF-8"
+			"Content-Type": "application/json; charset=UTF-8",
+			"Accept": "application/json"
 		},
 		body: JSON.stringify({
 			"ROOM_ID": open_room_id,
@@ -270,7 +271,8 @@ async function upload(queue_id: string, chunk: Uint8Array<ArrayBuffer>): Promise
 	let ajax = await fetch("/api/Message/File?QUEUE_ID="+queue_id, {
 		method: "POST",
 		headers: {
-			"TOKEN": token
+			"TOKEN": token,
+			"Accept": "application/json"
 		},
 		body: chunk
 	});
@@ -286,7 +288,8 @@ async function uplaod_end(queue_id: string): Promise<boolean> {
 	let ajax = await fetch("/api/Message/File?QUEUE_ID="+queue_id, {
 		method: "PATCH",
 		headers: {
-			"TOKEN": token
+			"TOKEN": token,
+			"Accept": "application/json"
 		}
 	});
 	const result = await ajax.json();
