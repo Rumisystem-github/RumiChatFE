@@ -105,6 +105,7 @@ async function main() {
 	} catch (ex) {
 		loading_end_progress(l, PREFIX_FAILED);
 		loading_print_failed(ex as string);
+		loading_message("ｼｽﾃﾑｴﾗｰ！");
 	}
 }
 
