@@ -48,6 +48,24 @@ export function loading_print_info(message: string) {
 	el.append(log_row);
 }
 
+export function loading_print_failed(message: string) {
+	let el = document.getElementById("LOADING_LOG") as HTMLDivElement;
+	if (el == null) return;
+
+	//行
+	let log_row = document.createElement("DIV");
+
+	//Prefix
+	log_row.append(gen_log_prefix(PREFIX_FAILED));
+
+	//メセージ
+	let message_el = document.createElement("SPAN");
+	message_el.innerText = message;
+	log_row.append(message_el);
+
+	el.append(log_row);
+}
+
 export function loading_message(message: string) {
 	let el = document.getElementById("LOADING_MESSAGE") as HTMLDivElement;
 	if (el == null) return;

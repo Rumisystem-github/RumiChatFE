@@ -1,5 +1,5 @@
 import { get_dm_list, get_group_list, get_user } from "./API";
-import { loading_end_progress, loading_message, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
+import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
 import { page_detect } from "./Page/PageMain";
 import { connect, streaming_init } from "./StreamingAPI";
 import type { SessionLoginResponse } from "./Type/APIResponseType";
@@ -104,6 +104,7 @@ async function main() {
 		document.getElementById("LOADING")?.remove();
 	} catch (ex) {
 		loading_end_progress(l, PREFIX_FAILED);
+		loading_print_failed(ex as string);
 	}
 }
 

@@ -1,21 +1,35 @@
 import { token } from "./Main";
 import zstd_init, { type ZstdAPI } from "./Lib/zstd";
 import type { EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
+import { loading_end_progress, loading_print_failed, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
 
 let zstd: ZstdAPI;
 let ws:WebSocket;
-let handshake = false;
+let initial = true;
 let event_listener_receive_message:(e: ReveiveMessageEvent) => void;
+
+//初回
+let handshake = false;
+let helo_load = "";
 
 export async function streaming_init() {
 	zstd = await zstd_init();
 }
 
 export async function connect() {
+	if (initial) helo_load = loading_print_progress("WebSocketに接続しています");
+
 	ws = new WebSocket("/api/ws?ENCODE=ZSTD");
 	ws.onopen = on_open;
 	ws.onmessage = on_message;
 	ws.onclose = on_close;
+
+	if (initial) {
+		ws.onerror = function() {
+			loading_end_progress(helo_load, PREFIX_FAILED);
+			loading_print_failed("WebSocketへの接続に失敗しました、鯖が落ちてるかも。");
+		};
+	}
 }
 
 export function set_receive_message_event(fn: (e: ReveiveMessageEvent) => void) {
@@ -23,7 +37,11 @@ export function set_receive_message_event(fn: (e: ReveiveMessageEvent) => void) 
 }
 
 async function on_open() {
-	console.log("接続");
+	if (initial) {
+		loading_end_progress(helo_load, PREFIX_OK);
+		helo_load = loading_print_progress("WebSocketﾊﾝﾄﾞｼｪｲｸ...");
+	}
+
 	ws.send(await compress(JSON.stringify(["HELO", token])));
 }
 
@@ -41,15 +59,21 @@ async function on_message(e:MessageEvent) {
 	} else {
 		const res = json as HandshakeResponse;
 		if (!res.STATUS) {
-			alert("WebSocketエラー");
+			if (initial) {
+				loading_end_progress(helo_load, PREFIX_FAILED);
+				loading_print_failed("WebSocketがｴﾗｰを返しました。");
+			}
+			return;
 		}
 
+		if (initial) loading_end_progress(helo_load, PREFIX_OK);
+
+		initial = false;
 		handshake = true;
 	}
 }
 
 function on_close() {
-	console.log("切断");
 	handshake = false;
 	connect();
 }
