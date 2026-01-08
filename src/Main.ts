@@ -1,4 +1,5 @@
 import { get_dm_list, get_group_list, get_user } from "./API";
+import { loading_end_progress, loading_message, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
 import { page_detect } from "./Page/PageMain";
 import { connect, streaming_init } from "./StreamingAPI";
 import type { SessionLoginResponse } from "./Type/APIResponseType";
@@ -68,19 +69,40 @@ window.addEventListener("focus", ()=>{
 });
 
 async function main() {
-	await login();
+	loading_print_info("るみチャット V0.0.0");
+	loading_print_info("©合同会社るみしすてむ 2026");
 
-	join_group_list = await get_group_list();
-	refresh_group_list();
+	let l = "";
 
-	await reload_dm_list();
-	await refresh_dm_list();
+	try {
+		l = loading_print_progress("ｱｶｳﾝﾄｻｰﾊﾞｰへﾛｸﾞｲﾝ情報を検証中...");
+		loading_message("ログインしています");
+		await login();
+		loading_end_progress(l, PREFIX_OK);
 
-	//WebSocket
-	await streaming_init();
-	await connect();
+		l = loading_print_progress("ｸﾞﾙｰﾌﾟ一覧を取得中...");
+		loading_message("グループを取得しています");
+		join_group_list = await get_group_list();
+		refresh_group_list();
+		loading_end_progress(l, PREFIX_OK);
 
-	page_detect();
+		l = loading_print_progress("DM一覧を取得中...");
+		loading_message("DMを取得しています");
+		await reload_dm_list();
+		await refresh_dm_list();
+		loading_end_progress(l, PREFIX_OK);
+
+		//WebSocket
+		l = loading_print_progress("WebSocketへ接続中...");
+		loading_message("サーバーへ接続しています");
+		await streaming_init();
+		await connect();
+		loading_end_progress(l, PREFIX_OK);
+
+		page_detect();
+	} catch (ex) {
+		loading_end_progress(l, PREFIX_FAILED);
+	}
 }
 
 async function login() {
