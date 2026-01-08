@@ -101,6 +101,7 @@ async function main() {
 
 		page_detect();
 		loading_message("よーこそ");
+		document.getElementById("LOADING")?.remove();
 	} catch (ex) {
 		loading_end_progress(l, PREFIX_FAILED);
 	}
