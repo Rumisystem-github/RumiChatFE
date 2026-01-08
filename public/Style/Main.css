@@ -1,5 +1,5 @@
 :root{
-	--HEADER_HEIGHT: 50px;
+	--HEADER_HEIGHT: 75px;
 	--SIDE_WIDTH: 200px;
 	--MARGIN: 10px
 }
@@ -12,11 +12,31 @@
 	width: calc(100vw - (var(--MARGIN) * 2));
 	height: calc(var(--HEADER_HEIGHT) - var(--MARGIN));
 
-	background-color: red;
-
 	margin: var(--MARGIN);
 
 	overflow: hidden;
+
+	display: flex;
+	flex-direction: row;
+
+	padding: 10px;
+}
+
+.HEADER > a{
+	flex: 0 1 auto;
+	max-width: 45px;
+}
+
+.HEADER > .SELF_USER{
+	flex: 0 1 auto;
+	max-width: 100px;
+}
+
+.HEADER > .SELF_USER > *{
+	width: 45px;
+	height: 45px;
+
+	vertical-align: middle;
 }
 
 .SIDE{
@@ -26,8 +46,6 @@
 
 	width: calc(var(--SIDE_WIDTH) - var(--MARGIN));
 	height: calc(100vh - var(--HEADER_HEIGHT) - (var(--MARGIN) * 2));
-
-	background-color: aqua;
 
 	overflow: hidden;
 
@@ -41,8 +59,6 @@
 
 	width: calc(100vw - var(--SIDE_WIDTH) - (var(--MARGIN) * 2));
 	height: calc(100vh - var(--HEADER_HEIGHT) - (var(--MARGIN) * 2));
-
-	background-color: blue;
 
 	margin: var(--MARGIN);
 }

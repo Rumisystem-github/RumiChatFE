@@ -19,7 +19,10 @@ export let watching = true;
 
 export let mel = {
 	top: {
-		group_list: document.getElementById("GROUP_LIST")!
+		group_list: document.getElementById("GROUP_LIST")!,
+		self_user: {
+			icon: document.getElementById("SELF_USER_ICON")! as HTMLImageElement
+		}
 	},
 	side: {
 		room_list: document.getElementById("ROOM_LIST")!,
@@ -27,6 +30,9 @@ export let mel = {
 	},
 	chat: {
 		parent: document.getElementById("CHAT_ROOM")!,
+		top: {
+			title: document.getElementById("CHAT_ROOM_TITLE")!
+		},
 		message_list: document.getElementById("MESSAGE_LIST")!,
 		viewer: {
 			parent: document.getElementById("MESSAGE_VIEW")!,
@@ -84,6 +90,7 @@ async function main() {
 		l = loading_print_progress("ｱｶｳﾝﾄｻｰﾊﾞｰへﾛｸﾞｲﾝ情報を検証中...");
 		loading_message("ログインしています");
 		await login();
+		mel.top.self_user.icon.src = "https://account.rumiserver.com/api/Icon?ID=" + self_user.ID;
 		loading_end_progress(l, PREFIX_OK);
 
 		l = loading_print_progress("ｸﾞﾙｰﾌﾟ一覧を取得中...");

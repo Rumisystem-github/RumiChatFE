@@ -1,5 +1,12 @@
 .GROUP_LIST{
+	flex: 1 1 auto;
+	min-width: 0;
+
 	display: flex;
+
+	margin-left: 10px;
+
+	gap: 10px;
 }
 
 .GROUP_LIST > a{

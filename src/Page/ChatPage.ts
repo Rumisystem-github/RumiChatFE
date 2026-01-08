@@ -21,6 +21,8 @@ export async function start(group_id: string | null, room_id: string) {
 	mel.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
 	mel.chat.viewer.user.name.innerText = self_user.NAME;
 
+	mel.chat.top.title.innerText = "//TODO:部屋名を取得する";
+
 	//ううううううう
 	refresh_file_list();
 
