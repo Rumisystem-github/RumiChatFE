@@ -1,3 +1,4 @@
+import { decompress } from "./Compresser";
 import { token } from "./Main";
 import type { GetDMListResponse, GetGroupListResponse, GetMessageListResponse, GetRoomListResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
@@ -11,10 +12,11 @@ async function api_get(path: string): Promise<object> {
 		headers: {
 			"TOKEN": token,
 			"Content-Type": "application/json",
-			"Accept": "application/json"
+			"Accept": "application/json",
+			"RSV-Accept-Encode": "Zstd"
 		}
 	});
-	const result = await ajax.json();
+	const result = JSON.parse(await decompress(await ajax.blob()));
 	return result;
 }
 
@@ -24,11 +26,12 @@ async function api_patch(path: string, body: object): Promise<object> {
 		headers: {
 			"TOKEN": token,
 			"Content-Type": "application/json",
-			"Accept": "application/json"
+			"Accept": "application/json",
+			"RSV-Accept-Encode": "Zstd"
 		},
 		body: JSON.stringify(body)
 	});
-	const result = await ajax.json();
+	const result = JSON.parse(await decompress(await ajax.blob()));
 	return result;
 }
 
@@ -37,10 +40,11 @@ export async function get_user(user_id: string):Promise<User> {
 		headers: {
 			"TOKEN": token,
 			"Content-Type": "application/json",
-			"Accept": "application/json"
+			"Accept": "application/json",
+			"RSV-Accept-Encode": "Zstd"
 		}
 	});
-	const result = (await ajax.json()) as GetUserResponse;
+	const result = (JSON.parse(await decompress(await ajax.blob()))) as GetUserResponse;
 	if (result.STATUS) {
 		return result.ACCOUNT;
 	} else {

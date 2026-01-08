@@ -256,12 +256,11 @@ function makeZstdAPI(module: any): ZstdAPI {
 			let offset = 0;
 
 			while (offset < input.length) {
-				const toCopy = Math.min(input.length - offset, this.inChunkSize);
-
-				if (toCopy > 0) {
-					HEAPU8.set(input.subarray(offset, offset + toCopy), this.inPtr);
-				}
-
+				const remaining = input.length - offset;
+				const toCopy = Math.min(remaining, this.inChunkSize);
+			
+				HEAPU8.set(input.subarray(offset, offset + toCopy), this.inPtr);
+			
 				const ret = zstdDStreamProcess(
 					this.ctx,
 					this.inPtr,
@@ -273,13 +272,15 @@ function makeZstdAPI(module: any): ZstdAPI {
 				checkError(ret);
 
 				const produced = ret | 0;
+				const consumed = HEAPU32[this.consumedPtr >> 2] >>> 0;
 
 				if (produced > 0) {
 					const view = HEAPU8.subarray(this.outPtr, this.outPtr + produced);
 					controller.enqueue(new Uint8Array(view));
 				}
 
-				offset += toCopy;
+				offset += consumed;
+				if (consumed === 0) break;
 			}
 		}
 

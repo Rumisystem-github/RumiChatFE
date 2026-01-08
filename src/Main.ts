@@ -1,7 +1,8 @@
 import { get_dm_list, get_group_list, get_user } from "./API";
+import { compresser_init } from "./Compresser";
 import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
 import { page_detect } from "./Page/PageMain";
-import { connect, streaming_init } from "./StreamingAPI";
+import { connect } from "./StreamingAPI";
 import type { SessionLoginResponse } from "./Type/APIResponseType";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
@@ -75,6 +76,11 @@ async function main() {
 	let l = "";
 
 	try {
+		l = loading_print_progress("圧縮システムを初期化中...");
+		loading_message("圧縮システムを初期化中...");
+		await compresser_init();
+		loading_end_progress(l, PREFIX_OK);
+
 		l = loading_print_progress("ｱｶｳﾝﾄｻｰﾊﾞｰへﾛｸﾞｲﾝ情報を検証中...");
 		loading_message("ログインしています");
 		await login();
@@ -95,7 +101,6 @@ async function main() {
 		//WebSocket
 		l = loading_print_progress("WebSocketへ接続中...");
 		loading_message("サーバーへ接続しています");
-		await streaming_init();
 		await connect();
 		loading_end_progress(l, PREFIX_OK);
 
