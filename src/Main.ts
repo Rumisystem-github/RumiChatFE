@@ -100,6 +100,7 @@ async function main() {
 		loading_end_progress(l, PREFIX_OK);
 
 		page_detect();
+		loading_message("よーこそ");
 	} catch (ex) {
 		loading_end_progress(l, PREFIX_FAILED);
 	}
