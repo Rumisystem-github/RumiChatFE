@@ -325,3 +325,13 @@ mel.chat.form.menu.contents.file.addEventListener("click", ()=>{
 		refresh_file_list();
 	}
 });
+
+mel.chat.form.text.addEventListener("paste", (e)=>{
+	if (e.clipboardData == null) return;
+
+	for (const file of e.clipboardData.files) {
+		select_file_list.push(file);
+	}
+
+	refresh_file_list();
+});
