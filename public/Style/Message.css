@@ -3,20 +3,24 @@
 }
 
 .MESSAGE_ITEM > .USER{
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 .MESSAGE_ITEM > .USER > .USER_ICON{
 	width: 45px;
 	height: 45px;
 
-	vertical-align: bottom;
+	vertical-align: top;
 
 	margin-right: 10px;
 }
 
 .MESSAGE_ITEM > .TEXT{
+	position: relative;
+	top: -25px;
+
 	margin-left: calc(45px + 10px);
+	margin-bottom: -25px;
 }
 
 /*---------------------------------------------------------------------------------------------------------------ファイル*/
