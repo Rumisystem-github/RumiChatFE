@@ -1,4 +1,3 @@
-import { get_dm_list, get_user } from "../API";
 import { mel } from "../Main";
 import { refresh_dm_list } from "../UI";
 
