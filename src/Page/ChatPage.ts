@@ -254,7 +254,6 @@ async function send() {
 	select_file_list.splice(0);
 	mel.chat.form.menu.button.removeAttribute("disabled");
 	mel.chat.form.send.removeAttribute("disabled");
-	mel.chat.viewer.parent.replaceChildren();
 	mel.chat.viewer.parent.dataset["hide"] = "true";
 
 	refresh_file_list();
