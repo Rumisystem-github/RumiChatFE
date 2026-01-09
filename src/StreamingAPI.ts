@@ -1,11 +1,12 @@
 import { token } from "./Main";
-import type { EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
+import type { DeleteMessageEvent, EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
 import { loading_end_progress, loading_print_failed, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
 import { compress, decompress } from "./Compresser";
 
 let ws:WebSocket;
 let initial = true;
 let event_listener_receive_message:(e: ReveiveMessageEvent) => void;
+let event_listener_delete_message:(e: DeleteMessageEvent) => void;
 
 //初回
 let handshake = false;
@@ -31,6 +32,10 @@ export function set_receive_message_event(fn: (e: ReveiveMessageEvent) => void) 
 	event_listener_receive_message = fn;
 }
 
+export function set_delete_message_event(fn: (e: DeleteMessageEvent) => void) {
+	event_listener_delete_message = fn;
+}
+
 async function on_open() {
 	if (initial) {
 		loading_end_progress(helo_load, PREFIX_OK);
@@ -49,6 +54,10 @@ async function on_message(e:MessageEvent) {
 			case "RECEIVE_MESSAGE":
 				const receive_message = json as ReveiveMessageEvent;
 				event_listener_receive_message(receive_message);
+				return;
+			case "DELETE_MESSAGE":
+				const delete_message = json as DeleteMessageEvent;
+				event_listener_delete_message(delete_message);
 				return;
 		}
 	} else {

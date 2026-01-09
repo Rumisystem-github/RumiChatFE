@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { GetDMListResponse, GetGroupListResponse, GetMessageListResponse, GetRoomListResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
+import type { DeleteMessageResponse, GetDMListResponse, GetGroupListResponse, GetMessageListResponse, GetRoomListResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -9,6 +9,20 @@ import type { User } from "./Type/User";
 async function api_get(path: string): Promise<object> {
 	let ajax = await fetch("/api" + path, {
 		method: "GET",
+		headers: {
+			"TOKEN": token,
+			"Content-Type": "application/json",
+			"Accept": "application/json",
+			"RSV-Accept-Encode": "Zstd"
+		}
+	});
+	const result = JSON.parse(await decompress(await ajax.blob()));
+	return result;
+}
+
+async function api_delete(path: string): Promise<object> {
+	let ajax = await fetch("/api" + path, {
+		method: "DELETE",
 		headers: {
 			"TOKEN": token,
 			"Content-Type": "application/json",
@@ -95,5 +109,14 @@ export async function update_last_read_message(room_id:string) {
 		return;
 	} else {
 		throw new Error("あ");
+	}
+}
+
+export async function delete_message(message_id:string) {
+	const result = (await api_delete("/Message?ID=" + message_id)) as DeleteMessageResponse;
+	if (result.STATUS) {
+		return;
+	} else {
+		throw new Error("削除失敗");
 	}
 }

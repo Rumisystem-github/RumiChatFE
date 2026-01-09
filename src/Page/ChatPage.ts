@@ -1,6 +1,6 @@
 import { get_message_list, update_last_read_message } from "../API";
 import { mel, self_user, token } from "../Main";
-import { set_receive_message_event } from "../StreamingAPI";
+import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
 import { refresh_dm_list, refresh_room_list } from "../UI";
 import { uiitem_message_item } from "../UIItem";
@@ -74,6 +74,14 @@ export async function start(group_id: string | null, room_id: string) {
 			if (is_dm == false && open_group_id == e.GROUP_ID) {
 				console.log("ひらいているグループの話だ");
 			}
+		}
+	});
+
+	set_delete_message_event(async (e)=>{
+		if (open_room_id === e.ROOM_ID) {
+			const message_el = document.querySelector(`.MESSAGE_ITEM[data-id="${e.MESSAGE_ID}"]`);
+			if (message_el == null) return;
+			message_el.remove();
 		}
 	});
 }

@@ -1,3 +1,4 @@
+import { delete_message } from "./API";
 import { self_user } from "./Main";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
@@ -80,8 +81,8 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 	//削除ボタン
 	if (user.ID == self_user.ID) {
 		let delete_button = document.createElement("BUTTON") as HTMLButtonElement;
-		delete_button.onclick = function() {
-			console.log("削除ボタン");
+		delete_button.onclick = async function() {
+			await delete_message(message.ID);
 		};
 		menu.append(delete_button);
 
