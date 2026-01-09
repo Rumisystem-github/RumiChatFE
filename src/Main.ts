@@ -25,6 +25,10 @@ export let mel = {
 		}
 	},
 	side: {
+		group_header: {
+			parent: document.getElementById("GROUP_HEADER")!,
+			title: document.getElementById("GROUP_HEADER_TITLE")!
+		},
 		room_list: document.getElementById("ROOM_LIST")!,
 		dm_list: document.getElementById("DM_LIST")!
 	},

@@ -1,4 +1,4 @@
-import { get_message_list, update_last_read_message } from "../API";
+import { get_group, get_message_list, get_room, update_last_read_message } from "../API";
 import { mel, self_user, token } from "../Main";
 import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
@@ -21,7 +21,16 @@ export async function start(group_id: string | null, room_id: string) {
 	mel.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
 	mel.chat.viewer.user.name.innerText = self_user.NAME;
 
-	mel.chat.top.title.innerText = "//TODO:部屋名を取得する";
+	if (!is_dm) {
+		//グループ取得
+		const group = await get_group(open_group_id!);
+		mel.side.group_header.title.innerText = group.NAME + "︙";
+		mel.side.group_header.parent.style.display = "block";
+	}
+
+	//部屋取得
+	const room = await get_room(open_room_id);
+	mel.chat.top.title.innerText = room.NAME;
 
 	//ううううううう
 	refresh_file_list();

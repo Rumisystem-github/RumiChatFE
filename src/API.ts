@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { DeleteMessageResponse, GetDMListResponse, GetGroupListResponse, GetMessageListResponse, GetRoomListResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
+import type { DeleteMessageResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -66,6 +66,15 @@ export async function get_user(user_id: string):Promise<User> {
 	}
 }
 
+export async function get_group(group_id: string):Promise<Group> {
+	const result = (await api_get("/Group?ID=" + group_id)) as GetGroupResponse;
+	if (result.STATUS) {
+		return result.GROUP;
+	} else {
+		throw new Error("取得できなかった");
+	}
+}
+
 export async function get_group_list():Promise<Group[]> {
 	const result = (await api_get("/Group")) as GetGroupListResponse;
 	if (result.STATUS) {
@@ -89,6 +98,15 @@ export async function get_room_list(group_id:string):Promise<Room[]> {
 	const result = (await api_get("/Room?GROUP_ID=" + group_id)) as GetRoomListResponse;
 	if (result.STATUS) {
 		return result.LIST;
+	} else {
+		throw new Error("取得できなかった");
+	}
+}
+
+export async function get_room(room_id:string):Promise<Room> {
+	const result = (await api_get("/Room?ID=" + room_id)) as GetRoomResponse;
+	if (result.STATUS) {
+		return result.ROOM;
 	} else {
 		throw new Error("取得できなかった");
 	}

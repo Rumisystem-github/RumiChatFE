@@ -52,6 +52,16 @@
 	margin: var(--MARGIN);
 }
 
+.SIDE > .GROUP_HEADER{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.SIDE > .GROUP_HEADER > span{
+	width: 100%;
+}
+
 .CHAT_ROOM{
 	position: absolute;
 	top: var(--HEADER_HEIGHT);

@@ -16,9 +16,19 @@ export type SessionLoginResponse = {
 	APP: string
 };
 
+export type GetGroupResponse = {
+	STATUS: boolean,
+	GROUP: Group
+};
+
 export type GetGroupListResponse = {
 	STATUS: boolean,
 	LIST: Group[]
+};
+
+export type GetRoomResponse = {
+	STATUS: boolean,
+	ROOM: Room
 };
 
 export type GetRoomListResponse = {

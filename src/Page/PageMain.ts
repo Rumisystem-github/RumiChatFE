@@ -6,6 +6,7 @@ export async function page_detect() {
 	const path = window.location.pathname;
 	console.info(path);
 
+	mel.side.group_header.parent.style.display = "none";
 	mel.side.room_list.style.display = "none";
 	mel.side.dm_list.style.display = "none";
 	mel.chat.parent.style.display = "none";
