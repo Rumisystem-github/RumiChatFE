@@ -2,8 +2,34 @@
 	margin: 10px;
 }
 
+.MESSAGE_ITEM > .MENU{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+
+	transition: opacity 0.1s;
+
+	opacity: 0;
+}
+
+.MESSAGE_ITEM > .MENU > button{
+	padding: 0px;
+}
+
+.MESSAGE_ITEM > .MENU > button > img{
+	width: 25px;
+	height: 25px;
+}
+
+.MESSAGE_ITEM:hover > .MENU{
+	opacity: 1;
+}
+
 .MESSAGE_ITEM > .USER{
 	vertical-align: top;
+
+	display: flex;
+	flex-direction: row;
 }
 
 .MESSAGE_ITEM > .USER > .USER_ICON{
@@ -15,12 +41,24 @@
 	margin-right: 10px;
 }
 
+.MESSAGE_ITEM > .USER > .DATE{
+	color: gray;
+
+	font-size: 11px;
+}
+
+.MESSAGE_ITEM > .USER > button{
+	padding: 0px;
+
+	height: 25px;
+}
+
 .MESSAGE_ITEM > .TEXT{
 	position: relative;
-	top: -25px;
+	top: -20px;
 
 	margin-left: calc(45px + 10px);
-	margin-bottom: -25px;
+	margin-bottom: -20px;
 }
 
 /*---------------------------------------------------------------------------------------------------------------ファイル*/

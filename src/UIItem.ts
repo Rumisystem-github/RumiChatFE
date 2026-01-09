@@ -1,3 +1,4 @@
+import { self_user } from "./Main";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { Message, MessageFile } from "./Type/Message";
@@ -72,6 +73,23 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 	item.className = "MESSAGE_ITEM PLATE";
 	item.dataset["id"] = message.ID;
 
+	let menu = document.createElement("DIV");
+	menu.className = "MENU";
+	item.appendChild(menu);
+
+	//削除ボタン
+	if (user.ID == self_user.ID) {
+		let delete_button = document.createElement("BUTTON") as HTMLButtonElement;
+		delete_button.onclick = function() {
+			console.log("削除ボタン");
+		};
+		menu.append(delete_button);
+
+		let delete_icon = document.createElement("IMG") as HTMLImageElement;
+		delete_icon.src = "/public/Asset/MaterialSymbolsDeleteOutline.svg";
+		delete_button.append(delete_icon);
+	}
+
 	let user_el = document.createElement("DIV");
 	user_el.className = "USER";
 	item.appendChild(user_el);
@@ -88,7 +106,7 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 
 	let date_el = document.createElement("SPAN");
 	date_el.className = "DATE";
-	date_el.innerHTML = " | " + message.CREATE_AT;
+	date_el.innerHTML = message.CREATE_AT;
 	user_el.appendChild(date_el);
 
 	let text_el = document.createElement("DIV");
