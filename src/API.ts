@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { DeleteMessageResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
+import type { DeleteMessageResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -136,5 +136,14 @@ export async function delete_message(message_id:string) {
 		return;
 	} else {
 		throw new Error("削除失敗");
+	}
+}
+
+export async function get_invite_list(group_id:string):Promise<User[]> {
+	const result = (await api_get("/Invite?GROUP_ID=" + group_id)) as GetInviteListResponse;
+	if (result.STATUS) {
+		return result.LIST;
+	} else {
+		throw new Error("取得できなかった");
 	}
 }

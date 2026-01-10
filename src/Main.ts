@@ -1,15 +1,14 @@
 import { get_dm_list, get_group_list, get_user } from "./API";
 import { compresser_init } from "./Compresser";
+import { LOGIN_PAGE_URL } from "./const";
 import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
+import { login } from "./Login";
 import { page_detect } from "./Page/PageMain";
 import { connect } from "./StreamingAPI";
-import type { SessionLoginResponse } from "./Type/APIResponseType";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { User } from "./Type/User";
 import { refresh_dm_list, refresh_group_list } from "./UI";
-
-const login_page = "https://account.rumiserver.com/Login/";
 
 export let token: string;
 export let self_user: User;
@@ -62,7 +61,8 @@ export let mel = {
 	menu: {
 		group: {
 			parent: document.getElementById("GROUP_MENU")!,
-			invite: document.getElementById("GROUP_MENU_INVITE")! as HTMLButtonElement
+			invite: document.getElementById("GROUP_MENU_INVITE")! as HTMLButtonElement,
+			invite_list: document.getElementById("GROUP_MENU_INV_LIST")! as HTMLButtonElement,
 		}
 	}
 };
@@ -99,7 +99,13 @@ async function main() {
 
 		l = loading_print_progress("ｱｶｳﾝﾄｻｰﾊﾞｰへﾛｸﾞｲﾝ情報を検証中...");
 		loading_message("ログインしています");
-		await login();
+		const login_result = await login();
+		if (!login_result.status) {
+			window.location.href = LOGIN_PAGE_URL;
+			return;
+		}
+		token = login_result.token!;
+		self_user = login_result.user!;
 		mel.top.self_user.icon.src = "https://account.rumiserver.com/api/Icon?ID=" + self_user.ID;
 		loading_end_progress(l, PREFIX_OK);
 
@@ -131,29 +137,6 @@ async function main() {
 	}
 }
 
-async function login() {
-	document.cookie.split(";").forEach(row => {
-		if (row.startsWith("SESSION=")) {
-			token = row.substring(row.indexOf("=") + 1);
-		}
-	});
-
-	if (token == null) {
-		window.location.href = login_page;
-		return;
-	}
-
-	let ajax = await fetch(`https://account.rumiserver.com/api/Session?ID=${token}`);
-	const result = (await ajax.json()) as SessionLoginResponse;
-
-	if (!result.STATUS) {
-		window.location.href = login_page;
-		return;
-	}
-
-	self_user = result.ACCOUNT_DATA;
-}
-
 async function reload_dm_list() {
 	const dm_room_list = await get_dm_list();
 
@@ -182,4 +165,8 @@ export function show_popup_bg(bg: boolean): HTMLDivElement {
 	document.body.append(el);
 
 	return el;
+}
+
+export async function copy(text: string) {
+	await navigator.clipboard.writeText(text);
 }

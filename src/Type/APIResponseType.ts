@@ -61,3 +61,8 @@ export type DeleteMessageResponse = {
 export type UpdateLastReadMessageResponse = {
 	STATUS: boolean
 };
+
+export type GetInviteListResponse = {
+	STATUS: boolean,
+	LIST: User[]
+};
