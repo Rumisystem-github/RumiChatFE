@@ -1,4 +1,5 @@
 import { get_group, get_message_list, get_room, update_last_read_message } from "../API";
+import { init_group_menu } from "../GroupMenu";
 import { mel, self_user, token } from "../Main";
 import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
@@ -26,6 +27,8 @@ export async function start(group_id: string | null, room_id: string) {
 		const group = await get_group(open_group_id!);
 		mel.side.group_header.title.innerText = group.NAME + "︙";
 		mel.side.group_header.parent.style.display = "block";
+
+		init_group_menu(open_group_id!);
 	}
 
 	//部屋取得

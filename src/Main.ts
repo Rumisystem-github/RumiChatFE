@@ -58,6 +58,12 @@ export let mel = {
 			send: document.getElementById("MESSAGE_FORM_SEND")!,
 			file_list: document.getElementById("MESSAGE_FORM_FILE_LIST")!
 		}
+	},
+	menu: {
+		group: {
+			parent: document.getElementById("GROUP_MENU")!,
+			invite: document.getElementById("GROUP_MENU_INVITE")! as HTMLButtonElement
+		}
 	}
 };
 
@@ -161,4 +167,19 @@ async function reload_dm_list() {
 			}
 		);
 	}
+}
+
+/**
+ * ポップアップを表示した際の後ろに出すアレを生成し、bodyに突っ込みます
+ * @param bg 背景をまっくろにするか
+ * @returns アレ
+ */
+export function show_popup_bg(bg: boolean): HTMLDivElement {
+	let el = document.createElement("DIV") as HTMLDivElement;
+	el.className = "POPUP_BG";
+	if (bg) el.dataset["bg"] = "true";
+
+	document.body.append(el);
+
+	return el;
 }

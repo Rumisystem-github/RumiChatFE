@@ -102,3 +102,49 @@
 .DM_ITEM > span{
 	margin-left: 10px;
 }
+
+.GROUP_MENU{
+	position: fixed;
+	top: calc(var(--HEADER_HEIGHT) + var(--MARGIN) + 50px);
+	left: calc(var(--MARGIN));
+
+	z-index: 20;
+
+	width: 200px;
+	height: fit-content;
+
+	opacity: 1;
+
+	overflow: hidden;
+
+	transition: 0.2s;
+}
+
+.GROUP_MENU[data-hide="true"] {
+	height: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	border-width: 0px;
+
+	pointer-events: none;
+}
+
+.GROUP_MENU > button{
+	width: 100%;
+}
+
+.POPUP_BG{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	height: 100vh;
+
+	z-index: 10;
+
+	background-color: transparent;
+}
+
+.POPUP_BG[data-bg="true"] {
+	background-color: rgba(0, 0, 0, 0.5);
+}
