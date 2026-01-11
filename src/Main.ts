@@ -117,8 +117,7 @@ async function main() {
 
 		l = loading_print_progress("ｸﾞﾙｰﾌﾟ一覧を取得中...");
 		loading_message("グループを取得しています");
-		join_group_list = await get_group_list();
-		refresh_group_list();
+		await reload_group_list();
 		loading_end_progress(l, PREFIX_OK);
 
 		l = loading_print_progress("DM一覧を取得中...");
@@ -143,7 +142,12 @@ async function main() {
 	}
 }
 
-async function reload_dm_list() {
+export async function reload_group_list() {
+	join_group_list = await get_group_list();
+	refresh_group_list();
+}
+
+export async function reload_dm_list() {
 	const dm_room_list = await get_dm_list();
 
 	for (const room of dm_room_list) {

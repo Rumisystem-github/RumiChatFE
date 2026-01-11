@@ -7,7 +7,7 @@ export type HandshakeResponse = {
 };
 
 export type EventReceive = {
-	TYPE: "RECEIVE_MESSAGE" | "DELETE_MESSAGE"
+	TYPE: "RECEIVE_MESSAGE" | "DELETE_MESSAGE" | "UPDATE_GROUP_LIST"
 };
 
 export type ReveiveMessageEvent = {

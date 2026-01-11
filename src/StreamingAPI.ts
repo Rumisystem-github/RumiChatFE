@@ -1,4 +1,4 @@
-import { token } from "./Main";
+import { reload_group_list, token } from "./Main";
 import type { DeleteMessageEvent, EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
 import { loading_end_progress, loading_print_failed, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
 import { compress, decompress } from "./Compresser";
@@ -58,6 +58,9 @@ async function on_message(e:MessageEvent) {
 			case "DELETE_MESSAGE":
 				const delete_message = json as DeleteMessageEvent;
 				event_listener_delete_message(delete_message);
+				return;
+			case "UPDATE_GROUP_LIST":
+				await reload_group_list();
 				return;
 		}
 	} else {
