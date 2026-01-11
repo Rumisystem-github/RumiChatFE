@@ -1,4 +1,6 @@
 .MESSAGE_ITEM{
+	position: relative;
+
 	margin: 10px;
 }
 
