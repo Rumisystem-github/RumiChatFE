@@ -142,15 +142,16 @@ async function main() {
 		l = loading_print_progress("設定を取得中...");
 		loading_message("設定を同期しています");
 		const server_setting = await get_setting();
+		console.log(server_setting);
 		loading_end_progress(l, PREFIX_OK);
 		//サーバーの設定でローカルの設定を上書きする
-		for (const raw_key of Object.keys(server_setting) as (keyof typeof server_setting)[]) {
+		for (const raw_key of Object.keys(server_setting)) {
 			// @ts-ignore
 			const key = raw_key.replace("rc_", "");
 			// @ts-ignore
 			if (setting[key] == null) continue;
 			// @ts-ignore
-			setting[key] = server_setting[key];
+			setting[key] = server_setting[raw_key];
 		}
 		loading_print_info("サーバー設定でローカル設定を上書きしました。");
 		loading_print_info(JSON.stringify(setting));
