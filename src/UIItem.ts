@@ -144,6 +144,12 @@ export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivEleme
 			content.src = file.URL;
 			file_item.appendChild(content);
 			break;
+		default:
+			let a = document.createElement("A") as HTMLAnchorElement;
+			a.href = file.URL;
+			a.innerText = "添付ファイル";
+			file_item.append(a);
+			break;
 	}
 
 	return file_item;
