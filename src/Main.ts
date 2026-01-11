@@ -64,6 +64,12 @@ export let mel = {
 			invite: document.getElementById("GROUP_MENU_INVITE")! as HTMLButtonElement,
 			invite_list: document.getElementById("GROUP_MENU_INV_LIST")! as HTMLButtonElement,
 		}
+	},
+	dialog: {
+		group_invite_list: {
+			parent: document.getElementById("GROUP_INVITE_LIST")!,
+			table: document.getElementById("GROUP_INVITE_LIST_TABLE")! as HTMLTableElement
+		}
 	}
 };
 
@@ -157,9 +163,9 @@ async function reload_dm_list() {
  * @param bg 背景をまっくろにするか
  * @returns アレ
  */
-export function show_popup_bg(bg: boolean): HTMLDivElement {
+export function show_dialog_bg(bg: boolean): HTMLDivElement {
 	let el = document.createElement("DIV") as HTMLDivElement;
-	el.className = "POPUP_BG";
+	el.className = "DIALOG_BG";
 	if (bg) el.dataset["bg"] = "true";
 
 	document.body.append(el);

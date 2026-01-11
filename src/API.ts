@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { DeleteMessageResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
+import type { DeleteMessageResponse, EditInviteResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -99,7 +99,7 @@ export async function get_room_list(group_id:string):Promise<Room[]> {
 	if (result.STATUS) {
 		return result.LIST;
 	} else {
-		throw new Error("取得できなかった");
+		throw new Error("取得できなかった" + JSON.stringify(result));
 	}
 }
 
@@ -145,5 +145,16 @@ export async function get_invite_list(group_id:string):Promise<User[]> {
 		return result.LIST;
 	} else {
 		throw new Error("取得できなかった");
+	}
+}
+
+export async function edit_invite_list(group_id:string, user_id:string, accept: boolean) {
+	const result = (await api_patch("/Invite", {
+		GROUP_ID: group_id,
+		USER_ID: user_id,
+		ACCEPT: accept
+	})) as EditInviteResponse;
+	if (!result.STATUS) {
+		throw new Error("変更失敗");
 	}
 }

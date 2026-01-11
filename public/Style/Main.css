@@ -133,7 +133,7 @@
 	width: 100%;
 }
 
-.POPUP_BG{
+.DIALOG_BG{
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -145,6 +145,28 @@
 	background-color: transparent;
 }
 
-.POPUP_BG[data-bg="true"] {
+.DIALOG_BG[data-bg="true"] {
 	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.DIALOG{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	z-index: 20;
+}
+
+.DIALOG[data-hide="true"]{
+	display: none;
+}
+
+.GROUP_INVITE_LIST_TABLE > tr > .ICON{
+	width: 45px;
+	height: 45px;
+}
+
+.GROUP_INVITE_LIST_TABLE > tr > .ICON > img{
+	vertical-align: middle;
 }

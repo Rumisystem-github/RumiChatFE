@@ -66,3 +66,7 @@ export type GetInviteListResponse = {
 	STATUS: boolean,
 	LIST: User[]
 };
+
+export type EditInviteResponse = {
+	STATUS: boolean
+};
