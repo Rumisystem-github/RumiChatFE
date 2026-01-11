@@ -62,17 +62,6 @@
 	width: 100%;
 }
 
-.CHAT_ROOM{
-	position: absolute;
-	top: var(--HEADER_HEIGHT);
-	left: var(--SIDE_WIDTH);
-
-	width: calc(100vw - var(--SIDE_WIDTH) - (var(--MARGIN) * 2));
-	height: calc(100vh - var(--HEADER_HEIGHT) - (var(--MARGIN) * 2));
-
-	margin: var(--MARGIN);
-}
-
 .CHAT_ROOM > .MESSAGE_LIST{
 	overflow: auto;
 	overflow-wrap: anywhere;
@@ -86,6 +75,19 @@
 
 	width: 100%;
 	height: 100%;
+}
+
+.CONTENTS{
+	position: absolute;
+	top: var(--HEADER_HEIGHT);
+	left: var(--SIDE_WIDTH);
+
+	width: calc(100vw - var(--SIDE_WIDTH) - (var(--MARGIN) * 2));
+	height: calc(100vh - var(--HEADER_HEIGHT) - (var(--MARGIN) * 2));
+
+	margin: var(--MARGIN);
+
+	overflow: hidden;
 }
 
 .DM_ITEM{
