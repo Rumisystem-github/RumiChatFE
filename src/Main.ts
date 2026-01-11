@@ -142,7 +142,6 @@ async function main() {
 		l = loading_print_progress("設定を取得中...");
 		loading_message("設定を同期しています");
 		const server_setting = await get_setting();
-		console.log(server_setting);
 		loading_end_progress(l, PREFIX_OK);
 		//サーバーの設定でローカルの設定を上書きする
 		for (const raw_key of Object.keys(server_setting)) {
