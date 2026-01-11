@@ -50,8 +50,9 @@ document.getElementById("JOIN_BUTTON")!.addEventListener("click", async ()=>{
 	});
 	const result = await ajax.json();
 	if (result["STATUS"]) {
-		//成功
+		alert("参加申請したので、承認されるまで待ってね〜〜〜");
+		window.location.href = "/";
 	} else {
-		//失敗
+		alert("参加申請できなかった、すでに申請してるかも？");
 	}
 });
