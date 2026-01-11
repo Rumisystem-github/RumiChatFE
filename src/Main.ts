@@ -17,7 +17,11 @@ export let join_group_list: Group[];
 export let dm_list: DM[] = [];
 export let watching = true;
 export let setting = {
-	promode: false
+	promode: false,
+	url_cleaner: true,
+	message_input_preview: true,
+	message_image_preview: true,
+	message_nsfw_image_blur: true
 };
 
 export let mel = {
@@ -140,15 +144,24 @@ async function main() {
 		const server_setting = await get_setting();
 		loading_end_progress(l, PREFIX_OK);
 		//サーバーの設定でローカルの設定を上書きする
-		for (const key of Object.keys(server_setting) as (keyof typeof server_setting)[]) {
+		for (const raw_key of Object.keys(server_setting) as (keyof typeof server_setting)[]) {
+			// @ts-ignore
+			const key = raw_key.replace("rc_", "");
+			// @ts-ignore
 			if (setting[key] == null) continue;
+			// @ts-ignore
 			setting[key] = server_setting[key];
 		}
 		loading_print_info("サーバー設定でローカル設定を上書きしました。");
 		loading_print_info(JSON.stringify(setting));
 
 		l = loading_print_progress("設定を同期中");
-		await update_setting(setting);
+		let latest_setting = {};
+		for (const key of Object.keys(setting)) {
+			// @ts-ignore
+			latest_setting["rc_" + key] = setting[key];
+		}
+		await update_setting(latest_setting);
 
 		//WebSocket
 		l = loading_print_progress("WebSocketへ接続中...");
