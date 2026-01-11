@@ -1,11 +1,4 @@
-type PrefixData = {
-	text: string,
-	color: string
-};
-
-const PREFIX_INFO: PrefixData = {text: " INFO ", color: "rgb(0, 0, 0)"};
-export const PREFIX_OK: PrefixData = {text: "  OK  ", color: "rgb(0, 255, 0)"};
-export const PREFIX_FAILED: PrefixData = {text: "FAILED", color: "rgb(255, 0, 0)"};
+import { console_print, PREFIX_FAILED, PREFIX_INFO, type PrefixData } from "./Log";
 
 function gen_log_prefix(prefix: PrefixData): HTMLSpanElement {
 	let el = document.createElement("SPAN") as HTMLSpanElement;
@@ -46,6 +39,8 @@ export function loading_print_info(message: string) {
 	log_row.append(message_el);
 
 	el.append(log_row);
+
+	console_print(PREFIX_INFO, message);
 }
 
 export function loading_print_failed(message: string) {
@@ -64,6 +59,8 @@ export function loading_print_failed(message: string) {
 	log_row.append(message_el);
 
 	el.append(log_row);
+
+	console_print(PREFIX_FAILED, message);
 }
 
 export function loading_message(message: string) {
@@ -71,6 +68,8 @@ export function loading_message(message: string) {
 	if (el == null) return;
 
 	el.innerText = message;
+
+	console_print(PREFIX_INFO, message);
 }
 
 export function loading_print_progress(message: string): string {
@@ -138,4 +137,6 @@ export function loading_end_progress(id: string, prefix: PrefixData) {
 	let inner = row_el.querySelector("SPAN")?.querySelector(".INNER")! as HTMLSpanElement;
 	inner.innerHTML = prefix.text;
 	inner.style.color = prefix.color;
+
+	console_print(prefix, "");
 }

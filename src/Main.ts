@@ -1,7 +1,8 @@
-import { get_dm_list, get_group_list, get_user } from "./API";
+import { get_dm_list, get_group_list, get_setting, get_user, update_setting } from "./API";
 import { compresser_init } from "./Compresser";
 import { LOGIN_PAGE_URL } from "./const";
-import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
+import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, } from "./Loading";
+import { PREFIX_FAILED, PREFIX_OK } from "./Log";
 import { login } from "./Login";
 import { page_detect } from "./Page/PageMain";
 import { connect } from "./StreamingAPI";
@@ -15,6 +16,9 @@ export let self_user: User;
 export let join_group_list: Group[];
 export let dm_list: DM[] = [];
 export let watching = true;
+export let setting = {
+	promode: false
+};
 
 export let mel = {
 	top: {
@@ -98,11 +102,13 @@ async function main() {
 	let l = "";
 
 	try {
+		//Zstd
 		l = loading_print_progress("圧縮システムを初期化中...");
 		loading_message("圧縮システムを初期化中...");
 		await compresser_init();
 		loading_end_progress(l, PREFIX_OK);
 
+		//ログイン
 		l = loading_print_progress("ｱｶｳﾝﾄｻｰﾊﾞｰへﾛｸﾞｲﾝ情報を検証中...");
 		loading_message("ログインしています");
 		const login_result = await login();
@@ -115,16 +121,34 @@ async function main() {
 		mel.top.self_user.icon.src = "https://account.rumiserver.com/api/Icon?ID=" + self_user.ID;
 		loading_end_progress(l, PREFIX_OK);
 
+		//グループ
 		l = loading_print_progress("ｸﾞﾙｰﾌﾟ一覧を取得中...");
 		loading_message("グループを取得しています");
 		await reload_group_list();
 		loading_end_progress(l, PREFIX_OK);
 
+		//DM
 		l = loading_print_progress("DM一覧を取得中...");
 		loading_message("DMを取得しています");
 		await reload_dm_list();
 		await refresh_dm_list();
 		loading_end_progress(l, PREFIX_OK);
+
+		//設定
+		l = loading_print_progress("設定を取得中...");
+		loading_message("設定を同期しています");
+		const server_setting = await get_setting();
+		loading_end_progress(l, PREFIX_OK);
+		//サーバーの設定でローカルの設定を上書きする
+		for (const key of Object.keys(server_setting) as (keyof typeof server_setting)[]) {
+			if (setting[key] == null) continue;
+			setting[key] = server_setting[key];
+		}
+		loading_print_info("サーバー設定でローカル設定を上書きしました。");
+		loading_print_info(JSON.stringify(setting));
+
+		l = loading_print_progress("設定を同期中");
+		await update_setting(setting);
 
 		//WebSocket
 		l = loading_print_progress("WebSocketへ接続中...");

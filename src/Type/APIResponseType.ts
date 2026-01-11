@@ -70,3 +70,12 @@ export type GetInviteListResponse = {
 export type EditInviteResponse = {
 	STATUS: boolean
 };
+
+export type GetSettingResponse = {
+	STATUS: boolean,
+	SETTING: object
+};
+
+export type UpdateSettingResponse = {
+	STATUS: boolean
+};

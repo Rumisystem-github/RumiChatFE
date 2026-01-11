@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { DeleteMessageResponse, EditInviteResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetUserResponse, UpdateLastReadMessageResponse } from "./Type/APIResponseType";
+import type { DeleteMessageResponse, EditInviteResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetSettingResponse, GetUserResponse, UpdateLastReadMessageResponse, UpdateSettingResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -156,5 +156,21 @@ export async function edit_invite_list(group_id:string, user_id:string, accept: 
 	})) as EditInviteResponse;
 	if (!result.STATUS) {
 		throw new Error("変更失敗");
+	}
+}
+
+export async function get_setting():Promise<object> {
+	const result = (await api_get("/Setting")) as GetSettingResponse;
+	if (result.STATUS) {
+		return result.SETTING;
+	} else {
+		throw new Error("取得できなかった");
+	}
+}
+
+export async function update_setting(setting:object) {
+	const result = (await api_patch("/Setting", setting)) as UpdateSettingResponse;
+	if (!result.STATUS) {
+		throw new Error("変更失敗" + JSON.stringify(result));
 	}
 }

@@ -1,7 +1,8 @@
 import { reload_group_list, token } from "./Main";
 import type { DeleteMessageEvent, EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
-import { loading_end_progress, loading_print_failed, loading_print_progress, PREFIX_FAILED, PREFIX_OK } from "./Loading";
+import { loading_end_progress, loading_print_failed, loading_print_progress } from "./Loading";
 import { compress, decompress } from "./Compresser";
+import { PREFIX_FAILED, PREFIX_OK } from "./Log";
 
 let ws:WebSocket;
 let initial = true;
