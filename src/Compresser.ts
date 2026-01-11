@@ -1,5 +1,6 @@
 import type { ZstdAPI } from "./Lib/zstd";
 import zstd_init from "./Lib/zstd";
+import { console_print, PREFIX_INFO } from "./Log";
 
 let zstd: ZstdAPI;
 
@@ -26,7 +27,7 @@ export async function compress(text: string): Promise<Uint8Array> {
 	const before_size = data.length;
 	const after_size = compressed.length;
 	const persent = Math.floor(((before_size - after_size) / before_size) * 100);
-	console.debug(`圧縮：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
+	console_print(PREFIX_INFO, `圧縮：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
 
 	return compressed;
 }
@@ -40,7 +41,7 @@ export async function decompress(input: Blob): Promise<string> {
 	const before_size = decompressed_blob.size;
 	const after_size = input.size;
 	const persent = Math.floor(((before_size - after_size) / before_size) * 100);
-	console.debug(`解凍：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
+	console_print(PREFIX_INFO, `解凍：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
 
 	return text;
 }
