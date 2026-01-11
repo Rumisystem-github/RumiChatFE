@@ -143,6 +143,8 @@ export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivEleme
 			let content = document.createElement("IMG") as HTMLImageElement;
 			content.src = file.URL;
 			file_item.appendChild(content);
+
+			if (setting.message_nsfw_image_blur && file.NSFW) content.dataset["NSFW"] = "true";
 			break;
 		default:
 			let a = document.createElement("A") as HTMLAnchorElement;
