@@ -1,6 +1,6 @@
 import { get_group, get_message_list, get_room, update_last_read_message } from "../API";
 import { init_group_menu } from "../GroupMenu";
-import { mel, self_user, token } from "../Main";
+import { mel, self_user, setting, token } from "../Main";
 import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
 import { refresh_dm_list, refresh_room_list } from "../UI";
@@ -119,6 +119,7 @@ mel.chat.message_list.addEventListener("scroll", () => {
 mel.chat.form.text.addEventListener("keyup", refresh_viewer);
 
 async function refresh_viewer() {
+	if (!setting.message_input_preview) return;
 	const bottom = message_list_scrolled_bottom;
 	const text = mel.chat.form.text.value.trim();
 

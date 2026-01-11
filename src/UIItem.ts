@@ -1,5 +1,5 @@
 import { delete_message } from "./API";
-import { self_user } from "./Main";
+import { self_user, setting } from "./Main";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { Message, MessageFile } from "./Type/Message";
@@ -129,6 +129,14 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 
 export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivElement> {
 	let file_item = document.createElement("DIV")as HTMLDivElement;
+
+	if (!setting.message_image_preview) {
+		let a = document.createElement("A") as HTMLAnchorElement;
+		a.href = file.URL;
+		a.innerText = "添付ファイル";
+		file_item.append(a);
+		return file_item;
+	}
 
 	switch (file.TYPE.split("/")[0]) {
 		case "image":
