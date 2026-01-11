@@ -71,7 +71,7 @@ export function uiitem_dm_item(dm: DM): HTMLElement {
 
 export async function uiitem_message_item(user: User, message: Message):Promise<HTMLElement> {
 	let item = document.createElement("DIV");
-	item.className = "MESSAGE_ITEM PLATE";
+	item.className = "MESSAGE_ITEM";
 	item.dataset["id"] = message.ID;
 
 	let menu = document.createElement("DIV");
