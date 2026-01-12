@@ -109,7 +109,7 @@ window.addEventListener("focus", ()=>{
 });
 
 async function main() {
-	loading_print_info("るみチャット V0.0.0");
+	loading_print_info(`るみチャット V${import.meta.env.APP_VERSION}`);
 	loading_print_info("©合同会社るみしすてむ 2026");
 
 	let l = "";
