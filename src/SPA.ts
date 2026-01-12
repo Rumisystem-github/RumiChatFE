@@ -1,5 +1,5 @@
 //RSPA(https://cdn.rumia.me/LIB/RSPA.js)のTS化バージョン
-//ほぼ同じ。
+//ほぼ同じ。←そんなことはなかった
 
 import { page_detect } from "./Page/PageMain";
 
@@ -36,4 +36,11 @@ function page_changed() {
 
 export function change_url(path:string) {
 	history.pushState(null, "", path);
+}
+
+export function replace_element(target: HTMLElement, child: HTMLElement[]) {
+	target.replaceChildren();
+	for (const el of child) {
+		target.append(el);
+	}
 }

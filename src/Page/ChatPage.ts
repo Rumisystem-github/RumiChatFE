@@ -1,6 +1,7 @@
 import { get_group, get_message_list, get_room, update_last_read_message } from "../API";
 import { init_group_menu } from "../GroupMenu";
 import { mel, self_user, setting, token } from "../Main";
+import { replace_element } from "../SPA";
 import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
 import { refresh_dm_list, refresh_room_list } from "../UI";
@@ -49,14 +50,14 @@ export async function start(group_id: string | null, room_id: string) {
 		mel.side.room_list.style.display = "block";
 	}
 
-	//メッセージ一覧を消し飛ばす
-	mel.contents.chat.message_list.replaceChildren();
-
 	//メッセージを入れる
+	let message_el_list: HTMLElement[] = [];
 	const message_list = await get_message_list(room_id);
 	for (let i = 0; i < message_list.length; i++) {
-		mel.contents.chat.message_list.prepend(await uiitem_message_item(message_list[i].ACCOUNT, message_list[i].MESSAGE));
+		message_el_list.push(await uiitem_message_item(message_list[i].ACCOUNT, message_list[i].MESSAGE));
 	}
+	message_el_list = message_el_list.reverse();
+	replace_element(mel.contents.chat.message_list, message_el_list);
 
 	//チャットルームを表示
 	mel.contents.chat.parent.style.display = "flex";

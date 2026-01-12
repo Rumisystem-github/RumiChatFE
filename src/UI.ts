@@ -1,26 +1,35 @@
 import { get_room_list } from "./API";
 import { dm_list, join_group_list, mel } from "./Main";
+import { replace_element } from "./SPA";
 import { uiitem_dm_item, uiitem_group_item, uiitem_room_item } from "./UIItem";
 
 export function refresh_group_list() {
-	mel.top.group_list.replaceChildren();
+	let el_list:HTMLElement[] = [];
+
 	join_group_list.forEach(group => {
-		mel.top.group_list.appendChild(uiitem_group_item(group));
+		el_list.push(uiitem_group_item(group));
 	});
+
+	replace_element(mel.top.group_list, el_list);
 }
 
 export async function refresh_room_list(group_id: string) {
-	mel.side.room_list.replaceChildren();
+	let el_list:HTMLElement[] = [];
+
 	const list = await get_room_list(group_id);
 	list.forEach(room => {
-		mel.side.room_list.appendChild(uiitem_room_item(group_id, room));
+		el_list.push(uiitem_room_item(group_id, room));
 	});
+
+	replace_element(mel.side.room_list, el_list);
 }
 
 export async function refresh_dm_list() {
-	mel.side.dm_list.replaceChildren();
+	let el_list:HTMLElement[] = [];
 
 	for (const dm of dm_list) {
-		mel.side.dm_list.appendChild(uiitem_dm_item(dm));
+		el_list.push(uiitem_dm_item(dm));
 	}
+
+	replace_element(mel.side.dm_list, el_list);
 }
