@@ -30,13 +30,20 @@
 .HEADER > .SELF_USER{
 	flex: 0 1 auto;
 	max-width: 100px;
+
+	display: flex;
 }
 
 .HEADER > .SELF_USER > *{
+	display: block;
+
 	width: 45px;
 	height: 45px;
+}
 
-	vertical-align: middle;
+.HEADER > .SELF_USER > * > *{
+	width: 100%;
+	height: 100%;
 }
 
 .SIDE{
@@ -88,6 +95,11 @@
 	margin: var(--MARGIN);
 
 	overflow: hidden;
+}
+
+.CONTENTS > div{
+	width: 100%;
+	height: 100%;
 }
 
 .DM_ITEM{

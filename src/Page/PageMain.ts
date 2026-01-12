@@ -9,13 +9,22 @@ export async function page_detect() {
 	mel.side.group_header.parent.style.display = "none";
 	mel.side.room_list.style.display = "none";
 	mel.side.dm_list.style.display = "none";
-	mel.chat.parent.style.display = "none";
+	mel.contents.chat.parent.style.display = "none";
+
+	mel.side.setting_list.style.display = "none";
+	mel.contents.setting.parent.style.display = "none";
 
 	if (path == "/") {
 		//トップ
 		await refresh_dm_list();
 		mel.side.dm_list.style.display = "block";
 		return;
+	}
+
+	//設定
+	if (path.startsWith("/setting")) {
+		const chatroom = await import("./SettingPage");
+		await chatroom.start(path);
 	}
 
 	//グループ

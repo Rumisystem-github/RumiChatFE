@@ -37,33 +37,42 @@ export let mel = {
 			title: document.getElementById("GROUP_HEADER_TITLE")!
 		},
 		room_list: document.getElementById("ROOM_LIST")!,
-		dm_list: document.getElementById("DM_LIST")!
+		dm_list: document.getElementById("DM_LIST")!,
+		setting_list: document.getElementById("SETTING_LIST")!
 	},
-	chat: {
-		parent: document.getElementById("CHAT_ROOM")!,
-		top: {
-			title: document.getElementById("CHAT_ROOM_TITLE")!
-		},
-		message_list: document.getElementById("MESSAGE_LIST")!,
-		viewer: {
-			parent: document.getElementById("MESSAGE_VIEW")!,
-			user: {
-				icon: document.getElementById("MESSAGE_VIEW_USER_ICON")! as HTMLImageElement,
-				name: document.getElementById("MESSAGE_VIEW_USER_NAME")!
+	contents: {
+		chat: {
+			parent: document.getElementById("CHAT_ROOM")!,
+			top: {
+				title: document.getElementById("CHAT_ROOM_TITLE")!
 			},
-			text: document.getElementById("MESSAGE_VIEW_TEXT")!
-		},
-		form: {
-			menu: {
-				button: document.getElementById("MESSAGE_FORM_MENU_BUTTON")!,
-				menu: document.getElementById("MESSAGE_FORM_MENU")!,
-				contents: {
-					file: document.getElementById("MESSAGE_FORM_MENU_FILE_BUTTON")!
-				}
+			message_list: document.getElementById("MESSAGE_LIST")!,
+			viewer: {
+				parent: document.getElementById("MESSAGE_VIEW")!,
+				user: {
+					icon: document.getElementById("MESSAGE_VIEW_USER_ICON")! as HTMLImageElement,
+					name: document.getElementById("MESSAGE_VIEW_USER_NAME")!
+				},
+				text: document.getElementById("MESSAGE_VIEW_TEXT")!
 			},
-			text: document.getElementById("MESSAGE_FORM_TEXT")! as HTMLTextAreaElement,
-			send: document.getElementById("MESSAGE_FORM_SEND")!,
-			file_list: document.getElementById("MESSAGE_FORM_FILE_LIST")!
+			form: {
+				menu: {
+					button: document.getElementById("MESSAGE_FORM_MENU_BUTTON")!,
+					menu: document.getElementById("MESSAGE_FORM_MENU")!,
+					contents: {
+						file: document.getElementById("MESSAGE_FORM_MENU_FILE_BUTTON")!
+					}
+				},
+				text: document.getElementById("MESSAGE_FORM_TEXT")! as HTMLTextAreaElement,
+				send: document.getElementById("MESSAGE_FORM_SEND")!,
+				file_list: document.getElementById("MESSAGE_FORM_FILE_LIST")!
+			}
+		},
+		setting: {
+			parent: document.getElementById("SETTING")!,
+			title: document.getElementById("SETTING_TITLE")!,
+			description: document.getElementById("SETTING_DESCRIPTION")!,
+			field: document.getElementById("SETTING_FIELD")!,
 		}
 	},
 	menu: {

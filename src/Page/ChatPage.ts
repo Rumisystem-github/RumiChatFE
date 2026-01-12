@@ -18,9 +18,9 @@ export async function start(group_id: string | null, room_id: string) {
 	open_group_id = group_id;
 	is_dm = (group_id == null);
 
-	mel.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
-	mel.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
-	mel.chat.viewer.user.name.innerText = self_user.NAME;
+	mel.contents.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
+	mel.contents.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
+	mel.contents.chat.viewer.user.name.innerText = self_user.NAME;
 
 	if (!is_dm) {
 		//グループ取得
@@ -33,7 +33,7 @@ export async function start(group_id: string | null, room_id: string) {
 
 	//部屋取得
 	const room = await get_room(open_room_id);
-	mel.chat.top.title.innerText = room.NAME;
+	mel.contents.chat.top.title.innerText = room.NAME;
 
 	//ううううううう
 	refresh_file_list();
@@ -50,16 +50,16 @@ export async function start(group_id: string | null, room_id: string) {
 	}
 
 	//メッセージ一覧を消し飛ばす
-	mel.chat.message_list.replaceChildren();
+	mel.contents.chat.message_list.replaceChildren();
 
 	//メッセージを入れる
 	const message_list = await get_message_list(room_id);
 	for (let i = 0; i < message_list.length; i++) {
-		mel.chat.message_list.prepend(await uiitem_message_item(message_list[i].ACCOUNT, message_list[i].MESSAGE));
+		mel.contents.chat.message_list.prepend(await uiitem_message_item(message_list[i].ACCOUNT, message_list[i].MESSAGE));
 	}
 
 	//チャットルームを表示
-	mel.chat.parent.style.display = "flex";
+	mel.contents.chat.parent.style.display = "flex";
 
 	//レイアウト確定を待つ
 	await new Promise(requestAnimationFrame);
@@ -67,20 +67,20 @@ export async function start(group_id: string | null, room_id: string) {
 	await update_last_read_message(room_id);
 
 	//一番下までスクロール
-	mel.chat.message_list.scrollTop = mel.chat.message_list.scrollHeight;
+	mel.contents.chat.message_list.scrollTop = mel.contents.chat.message_list.scrollHeight;
 	message_list_scrolled_bottom = true;
 
 	set_receive_message_event(async (e)=>{
 		if (open_room_id === e.ROOM_ID) {
 			const bottom = message_list_scrolled_bottom;
-			mel.chat.message_list.append(await uiitem_message_item(e.USER, e.MESSAGE));
+			mel.contents.chat.message_list.append(await uiitem_message_item(e.USER, e.MESSAGE));
 
 			await update_last_read_message(e.ROOM_ID);
 
 			if (bottom) {
 				//レイアウト確定を待つ
 				await new Promise(requestAnimationFrame);
-				mel.chat.message_list.scrollTop = mel.chat.message_list.scrollHeight;
+				mel.contents.chat.message_list.scrollTop = mel.contents.chat.message_list.scrollHeight;
 			}
 		} else {
 			if (is_dm == false && open_group_id == e.GROUP_ID) {
@@ -99,15 +99,15 @@ export async function start(group_id: string | null, room_id: string) {
 }
 
 //メッセージ一覧スクロール
-mel.chat.message_list.addEventListener("scroll", () => {
+mel.contents.chat.message_list.addEventListener("scroll", () => {
 	//一番上(から100px)
-	if (mel.chat.message_list.scrollTop <= 100) {
+	if (mel.contents.chat.message_list.scrollTop <= 100) {
 		console.log("一番上から100px");
 		return;
 	}
 
 	//一番下
-	if (mel.chat.message_list.scrollTop + mel.chat.message_list.clientHeight >= mel.chat.message_list.scrollHeight) {
+	if (mel.contents.chat.message_list.scrollTop + mel.contents.chat.message_list.clientHeight >= mel.contents.chat.message_list.scrollHeight) {
 		message_list_scrolled_bottom = true;
 		return;
 	} else {
@@ -116,37 +116,37 @@ mel.chat.message_list.addEventListener("scroll", () => {
 });
 
 //入力欄への入力イベント
-mel.chat.form.text.addEventListener("keyup", refresh_viewer);
+mel.contents.chat.form.text.addEventListener("keyup", refresh_viewer);
 
 async function refresh_viewer() {
 	if (!setting.message_input_preview) return;
 	const bottom = message_list_scrolled_bottom;
-	const text = mel.chat.form.text.value.trim();
+	const text = mel.contents.chat.form.text.value.trim();
 
 	if (text.length !== 0) {
-		mel.chat.viewer.text.innerText = text;
-		mel.chat.viewer.parent.dataset["hide"] = "false";
+		mel.contents.chat.viewer.text.innerText = text;
+		mel.contents.chat.viewer.parent.dataset["hide"] = "false";
 
 		//アニメーションが終わって、且つさっきまで一番下までスクロールしてたなら、一番下までもっかいスクロールする
-		mel.chat.viewer.parent.addEventListener("transitionend", ()=>{
+		mel.contents.chat.viewer.parent.addEventListener("transitionend", ()=>{
 			if (bottom) {
-				mel.chat.message_list.scrollTop = mel.chat.message_list.scrollHeight;
+				mel.contents.chat.message_list.scrollTop = mel.contents.chat.message_list.scrollHeight;
 			}
 		}, {once: true});
 	} else {
-		//mel.chat.viewer.parent.replaceChildren();
-		mel.chat.viewer.parent.dataset["hide"] = "true";
+		//mel.contents.chat.viewer.parent.replaceChildren();
+		mel.contents.chat.viewer.parent.dataset["hide"] = "true";
 	}
 }
 
 async function refresh_file_list() {
-	mel.chat.form.file_list.replaceChildren();
+	mel.contents.chat.form.file_list.replaceChildren();
 
 	if (select_file_list.length === 0) {
-		mel.chat.form.file_list.style.display = "none";
+		mel.contents.chat.form.file_list.style.display = "none";
 		return;
 	} else {
-		mel.chat.form.file_list.style.display = "block";
+		mel.contents.chat.form.file_list.style.display = "block";
 	}
 
 	for (let i = 0; i < select_file_list.length; i++) {
@@ -173,28 +173,28 @@ async function refresh_file_list() {
 		progress_bar.max = 100;
 		file_item.append(progress_bar);
 
-		mel.chat.form.file_list.appendChild(file_item);
+		mel.contents.chat.form.file_list.appendChild(file_item);
 
 		URL.revokeObjectURL(blob);
 	}
 }
 
 //送信
-mel.chat.form.text.addEventListener("keypress", (e)=>{
+mel.contents.chat.form.text.addEventListener("keypress", (e)=>{
 	if (e.key == "Enter" && !e.ctrlKey) {
 		e.preventDefault();
 		send();
 	}
 });
-mel.chat.form.send.addEventListener("click", send);
+mel.contents.chat.form.send.addEventListener("click", send);
 
 async function send() {
-	const text = mel.chat.form.text.value;
+	const text = mel.contents.chat.form.text.value;
 	if (text.trim().length === 0) return;
 
 	//ロック
-	mel.chat.form.menu.button.setAttribute("disabled", "");
-	mel.chat.form.send.setAttribute("disabled", "");
+	mel.contents.chat.form.menu.button.setAttribute("disabled", "");
+	mel.contents.chat.form.send.setAttribute("disabled", "");
 
 	type file_queue_type = {
 		TYPE: string,
@@ -271,11 +271,11 @@ async function send() {
 	}
 
 	//初期化
-	mel.chat.form.text.value = "";
+	mel.contents.chat.form.text.value = "";
 	select_file_list.splice(0);
-	mel.chat.form.menu.button.removeAttribute("disabled");
-	mel.chat.form.send.removeAttribute("disabled");
-	mel.chat.viewer.parent.dataset["hide"] = "true";
+	mel.contents.chat.form.menu.button.removeAttribute("disabled");
+	mel.contents.chat.form.send.removeAttribute("disabled");
+	mel.contents.chat.viewer.parent.dataset["hide"] = "true";
 
 	refresh_file_list();
 }
@@ -323,16 +323,16 @@ async function uplaod_end(queue_id: string): Promise<boolean> {
 }
 
 //メニューの開く閉じる
-mel.chat.form.menu.button.addEventListener("click", ()=>{
-	if (mel.chat.form.menu.menu.dataset["hide"] === "true") {
-		mel.chat.form.menu.menu.dataset["hide"] = "false"
+mel.contents.chat.form.menu.button.addEventListener("click", ()=>{
+	if (mel.contents.chat.form.menu.menu.dataset["hide"] === "true") {
+		mel.contents.chat.form.menu.menu.dataset["hide"] = "false"
 	} else {
-		mel.chat.form.menu.menu.dataset["hide"] = "true"
+		mel.contents.chat.form.menu.menu.dataset["hide"] = "true"
 	}
 });
 
 //ファイル選択
-mel.chat.form.menu.contents.file.addEventListener("click", ()=>{
+mel.contents.chat.form.menu.contents.file.addEventListener("click", ()=>{
 	let dialog = document.createElement("INPUT") as HTMLInputElement;
 	dialog.type = "file";
 	dialog.click();
@@ -343,12 +343,12 @@ mel.chat.form.menu.contents.file.addEventListener("click", ()=>{
 			select_file_list.push(file_list[i]);
 		}
 
-		mel.chat.form.menu.menu.dataset["hide"] = "true"
+		mel.contents.chat.form.menu.menu.dataset["hide"] = "true"
 		refresh_file_list();
 	}
 });
 
-mel.chat.form.text.addEventListener("paste", (e)=>{
+mel.contents.chat.form.text.addEventListener("paste", (e)=>{
 	if (e.clipboardData == null) return;
 
 	for (const file of e.clipboardData.files) {
