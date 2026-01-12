@@ -1,0 +1,19 @@
+.SETTING_LIST > a{
+	display: block;
+
+	width: 100%;
+}
+
+.SETTING > .TITLE{
+	font-size: 30px;
+}
+
+.SETTING > .FIELD{
+	margin-top: 20px;
+}
+
+.SETTING > .FIELD > div{
+	display: flex;
+
+	flex-direction: row;
+}
