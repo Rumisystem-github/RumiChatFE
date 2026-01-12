@@ -24,11 +24,12 @@ export async function compress(text: string): Promise<Uint8Array> {
 	const array_buffer = await compressed_blob.arrayBuffer();
 	const compressed = new Uint8Array(array_buffer);
 
-	const before_size = data.length;
-	const after_size = compressed.length;
-	const persent = Math.floor(((before_size - after_size) / before_size) * 100);
-	console_print(PREFIX_INFO, `圧縮：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
-
+	if (import.meta.env.DEV) {
+		const before_size = data.length;
+		const after_size = compressed.length;
+		const persent = Math.floor(((before_size - after_size) / before_size) * 100);
+		console_print(PREFIX_INFO, `圧縮：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
+	}
 	return compressed;
 }
 
@@ -38,10 +39,12 @@ export async function decompress(input: Blob): Promise<string> {
 	const decompressed_blob = await new Response(decompressed_stream).blob();
 	const text = decompressed_blob.text();
 
-	const before_size = decompressed_blob.size;
-	const after_size = input.size;
-	const persent = Math.floor(((before_size - after_size) / before_size) * 100);
-	console_print(PREFIX_INFO, `解凍：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
+	if (import.meta.env.DEV) {
+		const before_size = decompressed_blob.size;
+		const after_size = input.size;
+		const persent = Math.floor(((before_size - after_size) / before_size) * 100);
+		console_print(PREFIX_INFO, `解凍：${before_size}バイト→${after_size}バイト (${persent}%削減)`);
+	}
 
 	return text;
 }
