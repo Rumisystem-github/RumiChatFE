@@ -2,10 +2,20 @@
 <HTML>
 	<HEAD>
 		<TITLE>招待</TITLE>
+
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/reset.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/font.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/DEFAULT.css">
 	</HEAD>
 	<BODY>
-		<DIV ID="GROUP_NAME">グループ名</DIV>
-		<BUTTON ID="JOIN_BUTTON">参加申請をする</BUTTON>
+		<DIV CLASS="PLATE PLATE_CENTER" ID="PLZ_WAIT">
+			お待ち下さい。
+		</DIV>
+
+		<DIV CLASS="PLATE PLATE_CENTER" ID="MAIN" STYLE="display: none;">
+			<DIV ID="GROUP_NAME">グループ名</DIV>
+			<BUTTON ID="JOIN_BUTTON">参加申請をする</BUTTON>
+		</DIV>
 	</BODY>
 
 	<SCRIPT TYPE="module" SRC="src/Invite/Main.ts"></SCRIPT>
