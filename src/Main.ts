@@ -1,4 +1,4 @@
-import { get_dm_list, get_group_list, get_setting, get_user, update_setting } from "./API";
+import { get_dm_list, get_group_list, get_setting, get_user, get_user_raw, update_setting } from "./API";
 import { compresser_init } from "./Compresser";
 import { LOGIN_PAGE_URL } from "./const";
 import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, } from "./Loading";
@@ -96,7 +96,9 @@ export let mel = {
 			name: document.getElementById("USER_PROFILE_NAME")!,
 			uid: document.getElementById("USER_PROFILE_UID")!,
 			description: document.getElementById("USER_PROFILE_DESCRIPTION")!,
-			renkei_list: document.getElementById("USER_PROFILE_RENKEI_LIST")!
+			renkei_list: document.getElementById("USER_PROFILE_RENKEI_LIST")!,
+			dm: document.getElementById("USER_PROFILE_DM")! as HTMLButtonElement,
+			follow: document.getElementById("USER_PROFILE_FOLLOW")! as HTMLButtonElement
 		}
 	}
 };
@@ -240,7 +242,9 @@ export async function copy(text: string) {
 
 export async function open_user_profile(user_id: string) {
 	const bg = show_dialog_bg(true);
-	const user = await get_user(user_id);
+	const raw = await get_user_raw(user_id);
+	const user = raw.ACCOUNT;
+	let followed = raw.FOLLOW;
 
 	//アイコン
 	mel.dialog.user_profile.icon.src = "https://account.rumiserver.com/api/Icon?ID=" + user_id;
@@ -249,6 +253,36 @@ export async function open_user_profile(user_id: string) {
 	//名前/UID
 	mel.dialog.user_profile.name.innerText = user.NAME;
 	mel.dialog.user_profile.uid.innerText = user.UID;
+
+	//DMを開く
+	mel.dialog.user_profile.dm.onclick = async function() {
+
+	};
+
+	//フォローボタン
+	if (user.ID !== self_user.ID) {
+		mel.dialog.user_profile.follow.style.opacity = "1";
+		if (followed) {
+			mel.dialog.user_profile.follow.innerText = "フォロー解除";
+		} else {
+			if (raw.FOLLOWER) {
+				mel.dialog.user_profile.follow.innerText = "フォローバック";
+			} else {
+				mel.dialog.user_profile.follow.innerText = "フォロー";
+			}
+		}
+
+		mel.dialog.user_profile.follow.onclick = async function() {
+			if (followed) {
+				console.log("フォロー解除");
+			} else {
+				console.log("フォロー");
+			}
+		}
+	} else {
+		//自分自身なら隠すよ
+		mel.dialog.user_profile.follow.style.opacity = "0";
+	}
 
 	//説明
 	mel.dialog.user_profile.description.innerText = user.DESCRIPTION;

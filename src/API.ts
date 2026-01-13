@@ -66,6 +66,23 @@ export async function get_user(user_id: string):Promise<User> {
 	}
 }
 
+export async function get_user_raw(user_id: string):Promise<GetUserResponse> {
+	let ajax = await fetch("https://account.rumiserver.com/api/User?ID="+user_id, {
+		headers: {
+			"TOKEN": token,
+			"Content-Type": "application/json",
+			"Accept": "application/json",
+			"RSV-Accept-Encode": "Zstd"
+		}
+	});
+	const result = (JSON.parse(await decompress(await ajax.blob()))) as GetUserResponse;
+	if (result.STATUS) {
+		return result;
+	} else {
+		throw new Error("取得できなかった");
+	}
+}
+
 export async function get_group(group_id: string):Promise<Group> {
 	const result = (await api_get("/Group?ID=" + group_id)) as GetGroupResponse;
 	if (result.STATUS) {

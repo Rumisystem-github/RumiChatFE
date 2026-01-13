@@ -5,7 +5,11 @@ import type { User } from "./User";
 
 export type GetUserResponse = {
 	STATUS: boolean,
-	ACCOUNT: User
+	ACCOUNT: User,
+	BLOCK: boolean,
+	BLOCKER: boolean,
+	FOLLOW: boolean,
+	FOLLOWER: boolean
 };
 
 export type SessionLoginResponse = {
