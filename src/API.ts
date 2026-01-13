@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { DeleteMessageResponse, EditInviteResponse, FollowResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetSettingResponse, GetUserResponse, UpdateLastReadMessageResponse, UpdateSettingResponse } from "./Type/APIResponseType";
+import type { CreateDMResponse, DeleteMessageResponse, EditInviteResponse, FollowResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetSettingResponse, GetUserResponse, UpdateLastReadMessageResponse, UpdateSettingResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -37,6 +37,21 @@ async function api_delete(path: string): Promise<object> {
 async function api_patch(path: string, body: object): Promise<object> {
 	let ajax = await fetch("/api" + path, {
 		method: "PATCH",
+		headers: {
+			"TOKEN": token,
+			"Content-Type": "application/json",
+			"Accept": "application/json",
+			"RSV-Accept-Encode": "Zstd"
+		},
+		body: JSON.stringify(body)
+	});
+	const result = JSON.parse(await decompress(await ajax.blob()));
+	return result;
+}
+
+async function api_post(path: string, body: object): Promise<object> {
+	let ajax = await fetch("/api" + path, {
+		method: "POST",
 		headers: {
 			"TOKEN": token,
 			"Content-Type": "application/json",
@@ -131,14 +146,24 @@ export async function get_group_list():Promise<Group[]> {
 }
 
 export async function get_dm_list():Promise<Room[]> {
-	const result = (await api_get("/DM")) as GetDMListResponse;
+	const r = await api_get("/DM");
+	const result = r as GetDMListResponse;
 	if (result.STATUS) {
 		return result.LIST;
 	} else {
-		throw new Error("取得できなかった");
+		throw new Error("取得できなかった：" + JSON.stringify(r));
 	}
 }
 
+export async function create_dm(user_id: string):Promise<string> {
+	const r = await api_post("/DM?ID=" + user_id, {});
+	const result = r as CreateDMResponse;
+	if (result.STATUS) {
+		return result.ID;
+	} else {
+		throw new Error("作成失敗：" + JSON.stringify(r));
+	}
+}
 
 export async function get_room_list(group_id:string):Promise<Room[]> {
 	const result = (await api_get("/Room?GROUP_ID=" + group_id)) as GetRoomListResponse;

@@ -36,6 +36,7 @@ function page_changed() {
 
 export function change_url(path:string) {
 	history.pushState(null, "", path);
+	page_changed();
 }
 
 export function replace_element(target: HTMLElement, child: HTMLElement[]) {

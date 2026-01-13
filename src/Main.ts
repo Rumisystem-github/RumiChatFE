@@ -1,11 +1,11 @@
-import { follow_user, get_dm_list, get_group_list, get_setting, get_user, get_user_raw, unfollow_user, update_setting } from "./API";
+import { create_dm, follow_user, get_dm_list, get_group_list, get_setting, get_user, get_user_raw, unfollow_user, update_setting } from "./API";
 import { compresser_init } from "./Compresser";
 import { LOGIN_PAGE_URL } from "./const";
 import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, } from "./Loading";
 import { PREFIX_FAILED, PREFIX_OK } from "./Log";
 import { login } from "./Login";
 import { page_detect } from "./Page/PageMain";
-import { replace_element } from "./SPA";
+import { change_url, replace_element } from "./SPA";
 import { connect } from "./StreamingAPI";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
@@ -256,7 +256,12 @@ export async function open_user_profile(user_id: string) {
 
 	//DMを開く
 	mel.dialog.user_profile.dm.onclick = async function() {
+		mel.dialog.user_profile.dm.setAttribute("disabled", "");
+		const room_id = await create_dm(user.ID);
+		mel.dialog.user_profile.dm.removeAttribute("disabled");
 
+		change_url("/dm/" + room_id);
+		
 	};
 
 	//フォローボタン

@@ -53,6 +53,11 @@ export type GetDMListResponse = {
 	LIST: Room[]
 };
 
+export type CreateDMResponse = {
+	STATUS: boolean,
+	ID: string
+};
+
 export type GetMessageListResponse = {
 	STATUS: boolean,
 	LIST: {
