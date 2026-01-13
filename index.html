@@ -11,6 +11,7 @@
 		<LINK REL="stylesheet" HREF="public/Style/Loading.css">
 		<LINK REL="stylesheet" HREF="public/Style/Main.css">
 		<LINK REL="stylesheet" HREF="public/Style/Setting.css">
+		<LINK REL="stylesheet" HREF="public/Style/Profile.css">
 		<LINK REL="stylesheet" HREF="public/Style/Message.css">
 		<LINK REL="stylesheet" HREF="public/Style/ChatRoom.css">
 		<LINK REL="stylesheet" HREF="public/Style/Group.css">
@@ -109,6 +110,24 @@
 		<!--参加申請リスト-->
 		<DIV CLASS="DIALOG PLATE" data-hide="true" ID="GROUP_INVITE_LIST">
 			<TABLE CLASS="GROUP_INVITE_LIST_TABLE" ID="GROUP_INVITE_LIST_TABLE"></TABLE>
+		</DIV>
+
+		<!--プロフィール-->
+		<DIV CLASS="DIALOG PLATE" data-hide="true" ID="USER_PROFILE">
+			<DIV CLASS="BG PROFILE">
+				<DIV CLASS="USER_HEADER" ID="USER_PROFILE_HEADER"></DIV>
+				<DIV CLASS="USER_NAME">
+					<IMG ID="USER_PROFILE_ICON">
+					<DIV>
+						<DIV CLASS="NAME" ID="USER_PROFILE_NAME">名前</DIV>
+						<DIV CLASS="UID" ID="USER_PROFILE_UID">@<SPAN>name</SPAN></DIV>
+					</DIV>
+				</DIV>
+				<DIV CLASS="USER_DESCRIPTION" ID="USER_PROFILE_DESCRIPTION">
+					説明責任
+				</DIV>
+				<DIV CLASS="USER_RENKEI_LIST" ID="USER_PROFILE_RENKEI_LIST"></DIV>
+			</DIV>
 		</DIV>
 	</BODY>
 

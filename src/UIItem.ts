@@ -1,10 +1,10 @@
 import { delete_message } from "./API";
-import { self_user, setting } from "./Main";
+import { open_user_profile, self_user, setting } from "./Main";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { Message, MessageFile } from "./Type/Message";
 import type { Room } from "./Type/Room";
-import type { User } from "./Type/User";
+import type { RenkeiAccount, User } from "./Type/User";
 
 export function uiitem_group_item(group: Group):HTMLElement {
 	let parent = document.createElement("A") as HTMLAnchorElement;
@@ -99,6 +99,9 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 	user_icon_el.className = "USER_ICON ICON_" + user.ICON;
 	user_icon_el.src = "https://account.rumiserver.com/api/Icon?UID=" + user.UID;
 	user_el.appendChild(user_icon_el);
+	user_icon_el.addEventListener("click", ()=>{
+		open_user_profile(user.ID);
+	});
 
 	let user_name_el = document.createElement("SPAN");
 	user_name_el.className = "USER_NAME";
@@ -155,4 +158,26 @@ export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivEleme
 	}
 
 	return file_item;
+}
+
+export function gen_user_renkei(renkei:RenkeiAccount): HTMLElement {
+	let el = document.createElement("DIV");
+	el.className = "RENKEI_ITEM";
+
+	let logo = document.createElement("IMG") as HTMLImageElement;
+	logo.src = renkei.SERVICE_ICON;
+	el.append(logo);
+
+	let g = document.createElement("DIV");
+	el.append(g);
+
+	let service_name = document.createElement("DIV");
+	service_name.innerText = renkei.SERVICE_NAME;
+	g.append(service_name);
+
+	let account_name = document.createElement("DIV");
+	account_name.innerText = renkei.ACCOUNT_NAME;
+	g.append(account_name);
+
+	return el;
 }

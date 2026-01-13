@@ -1,0 +1,88 @@
+.PROFILE{
+	width: 400px;
+	max-height: 400px;
+
+	overflow: auto;
+}
+
+.PROFILE > .USER_HEADER{
+	width: 100%;
+	height: 100px;
+
+	background-color: aquamarine;
+}
+
+.PROFILE > .USER_NAME{
+	padding: 10px;
+
+	display: flex;
+	flex-direction: row;
+}
+
+.PROFILE > .USER_NAME > img{
+	width: 64px;
+	height: 64px;
+
+	margin-right: 10px;
+}
+
+.PROFILE > .USER_NAME > div{
+	display: flex;
+	flex-direction: column;
+
+	width: 100%;
+
+	overflow: hidden;
+}
+
+.PROFILE > .USER_NAME > div > .NAME, .PROFILE > .USER_NAME > div > .UID{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.PROFILE > .USER_NAME > div > .NAME{
+	font-size: 20px;
+}
+
+.PROFILE > .USER_NAME > div > .UID{
+	font-size: 15px;
+}
+
+.PROFILE > .USER_DESCRIPTION{
+	padding: 10px;
+}
+
+.RENKEI_ITEM{
+	display: flex;
+	flex-direction: row;
+
+	overflow: hidden;
+
+	width: 100%;
+	height: 64px;
+}
+
+.RENKEI_ITEM > img{
+	width: 64px;
+	height: 64px;
+
+	flex-shrink: 0;
+
+	margin-right: 10px;
+}
+
+.RENKEI_ITEM > div{
+	display: flex;
+	flex-direction: column;
+
+	width: 100%;
+}
+
+.RENKEI_ITEM > div > div{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	width: 100%;
+}

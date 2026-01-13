@@ -5,11 +5,13 @@ import { loading_end_progress, loading_message, loading_print_failed, loading_pr
 import { PREFIX_FAILED, PREFIX_OK } from "./Log";
 import { login } from "./Login";
 import { page_detect } from "./Page/PageMain";
+import { replace_element } from "./SPA";
 import { connect } from "./StreamingAPI";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
 import type { User } from "./Type/User";
 import { refresh_dm_list, refresh_group_list } from "./UI";
+import { gen_user_renkei } from "./UIItem";
 
 export let token: string;
 export let self_user: User;
@@ -86,6 +88,15 @@ export let mel = {
 		group_invite_list: {
 			parent: document.getElementById("GROUP_INVITE_LIST")!,
 			table: document.getElementById("GROUP_INVITE_LIST_TABLE")! as HTMLTableElement
+		},
+		user_profile: {
+			parent: document.getElementById("USER_PROFILE")!,
+			header: document.getElementById("USER_PROFILE_HEADER")!,
+			icon: document.getElementById("USER_PROFILE_ICON")! as HTMLImageElement,
+			name: document.getElementById("USER_PROFILE_NAME")!,
+			uid: document.getElementById("USER_PROFILE_UID")!,
+			description: document.getElementById("USER_PROFILE_DESCRIPTION")!,
+			renkei_list: document.getElementById("USER_PROFILE_RENKEI_LIST")!
 		}
 	}
 };
@@ -225,4 +236,33 @@ export function show_dialog_bg(bg: boolean): HTMLDivElement {
 
 export async function copy(text: string) {
 	await navigator.clipboard.writeText(text);
+}
+
+export async function open_user_profile(user_id: string) {
+	const bg = show_dialog_bg(true);
+	const user = await get_user(user_id);
+
+	//アイコン
+	mel.dialog.user_profile.icon.src = "https://account.rumiserver.com/api/Icon?ID=" + user_id;
+	mel.dialog.user_profile.icon.className = `ICON_${user.ICON}`;
+
+	//名前/UID
+	mel.dialog.user_profile.name.innerText = user.NAME;
+	mel.dialog.user_profile.uid.innerText = user.UID;
+
+	//説明
+	mel.dialog.user_profile.description.innerText = user.DESCRIPTION;
+
+	let renkei_list: HTMLElement[] = [];
+	for (const renkei of user.RENKEI) {
+		renkei_list.push(gen_user_renkei(renkei));
+	}
+	replace_element(mel.dialog.user_profile.renkei_list, renkei_list);
+
+	//閉じ
+	mel.dialog.user_profile.parent.dataset["hide"] = "false";
+	bg.onclick = function() {
+		bg.remove();
+		mel.dialog.user_profile.parent.dataset["hide"] = "true";
+	}
 }
