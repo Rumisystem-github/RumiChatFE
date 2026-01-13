@@ -1,4 +1,4 @@
-import { get_dm_list, get_group_list, get_setting, get_user, get_user_raw, update_setting } from "./API";
+import { follow_user, get_dm_list, get_group_list, get_setting, get_user, get_user_raw, unfollow_user, update_setting } from "./API";
 import { compresser_init } from "./Compresser";
 import { LOGIN_PAGE_URL } from "./const";
 import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, } from "./Loading";
@@ -274,9 +274,15 @@ export async function open_user_profile(user_id: string) {
 
 		mel.dialog.user_profile.follow.onclick = async function() {
 			if (followed) {
-				console.log("フォロー解除");
+				await unfollow_user(user.UID);
+
+				followed = false;
+				mel.dialog.user_profile.follow.innerText = "フォロー";
 			} else {
-				console.log("フォロー");
+				await follow_user(user.UID);
+
+				followed = true;
+				mel.dialog.user_profile.follow.innerText = "フォロー解除";
 			}
 		}
 	} else {

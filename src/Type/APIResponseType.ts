@@ -20,6 +20,14 @@ export type SessionLoginResponse = {
 	APP: string
 };
 
+export type FollowResponse = {
+	STATUS: boolean
+};
+
+export type UnFollowResponse = {
+	STATUS: boolean
+};
+
 export type GetGroupResponse = {
 	STATUS: boolean,
 	GROUP: Group

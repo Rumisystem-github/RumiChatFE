@@ -1,6 +1,6 @@
 import { decompress } from "./Compresser";
 import { token } from "./Main";
-import type { DeleteMessageResponse, EditInviteResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetSettingResponse, GetUserResponse, UpdateLastReadMessageResponse, UpdateSettingResponse } from "./Type/APIResponseType";
+import type { DeleteMessageResponse, EditInviteResponse, FollowResponse, GetDMListResponse, GetGroupListResponse, GetGroupResponse, GetInviteListResponse, GetMessageListResponse, GetRoomListResponse, GetRoomResponse, GetSettingResponse, GetUserResponse, UpdateLastReadMessageResponse, UpdateSettingResponse } from "./Type/APIResponseType";
 import type { Group } from "./Type/Group";
 import type { Message } from "./Type/Message";
 import type { Room } from "./Type/Room";
@@ -79,6 +79,35 @@ export async function get_user_raw(user_id: string):Promise<GetUserResponse> {
 	if (result.STATUS) {
 		return result;
 	} else {
+		throw new Error("取得できなかった");
+	}
+}
+
+export async function follow_user(user_id: string) {
+	let ajax = await fetch("https://account.rumiserver.com/api/Follow?UID=" + user_id, {
+		method: "POST",
+		headers: {
+			"TOKEN": token,
+			"Accept": "application/json",
+		},
+		body: ""
+	});
+	const result = await ajax.json() as FollowResponse;
+	if (!result.STATUS) {
+		throw new Error("取得できなかった");
+	}
+}
+
+export async function unfollow_user(user_id: string) {
+	let ajax = await fetch("https://account.rumiserver.com/api/Follow?UID=" + user_id, {
+		method: "DELETE",
+		headers: {
+			"TOKEN": token,
+			"Accept": "application/json",
+		}
+	});
+	const result = await ajax.json() as FollowResponse;
+	if (!result.STATUS) {
 		throw new Error("取得できなかった");
 	}
 }
