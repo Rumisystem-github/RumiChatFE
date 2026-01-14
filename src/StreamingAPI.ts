@@ -1,13 +1,14 @@
 import { reload_group_list, token } from "./Main";
-import type { DeleteMessageEvent, EventReceive, HandshakeResponse, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
+import type { DeleteMessageEvent, EventReceive, HandshakeResponse, MessageAckEvent, ReveiveMessageEvent } from "./Type/StreamingAPIResponse";
 import { loading_end_progress, loading_print_failed, loading_print_progress } from "./Loading";
 import { compress, decompress } from "./Compresser";
-import { PREFIX_FAILED, PREFIX_OK } from "./Log";
+import { console_print, PREFIX_FAILED, PREFIX_INFO, PREFIX_OK } from "./Log";
+import { ack_event, receive_message_event } from "./AckSystem";
 
 let ws:WebSocket;
 let initial = true;
-let event_listener_receive_message:(e: ReveiveMessageEvent) => void;
-let event_listener_delete_message:(e: DeleteMessageEvent) => void;
+let event_listener_receive_message:(e: ReveiveMessageEvent) => void | null;
+let event_listener_delete_message:(e: DeleteMessageEvent) => void | null;
 
 //初回
 let handshake = false;
@@ -27,6 +28,11 @@ export async function connect() {
 			loading_print_failed("WebSocketへの接続に失敗しました、鯖が落ちてるかも。");
 		};
 	}
+}
+
+export function init_event_listener() {
+	event_listener_delete_message = function(){};
+	event_listener_receive_message = function(){};
 }
 
 export function set_receive_message_event(fn: (e: ReveiveMessageEvent) => void) {
@@ -50,18 +56,28 @@ async function on_message(e:MessageEvent) {
 	const text = await decompress(e.data);
 	const json = JSON.parse(text);
 	if (handshake) {
+		console_print(PREFIX_INFO, "WebSocket←" + text);
+
 		const event = json as EventReceive;
 		switch (event.TYPE) {
 			case "RECEIVE_MESSAGE":
 				const receive_message = json as ReveiveMessageEvent;
+				receive_message_event(receive_message);
+
+				if (event_listener_receive_message == null) return;
 				event_listener_receive_message(receive_message);
 				return;
 			case "DELETE_MESSAGE":
+				if (event_listener_delete_message == null) return;
 				const delete_message = json as DeleteMessageEvent;
 				event_listener_delete_message(delete_message);
 				return;
 			case "UPDATE_GROUP_LIST":
 				await reload_group_list();
+				return;
+			case "MESSAGE_ACK":
+				const message_ack = json as MessageAckEvent;
+				ack_event(message_ack);
 				return;
 		}
 	} else {

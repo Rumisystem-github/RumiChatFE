@@ -7,7 +7,7 @@ export type HandshakeResponse = {
 };
 
 export type EventReceive = {
-	TYPE: "RECEIVE_MESSAGE" | "DELETE_MESSAGE" | "UPDATE_GROUP_LIST"
+	TYPE: "RECEIVE_MESSAGE" | "DELETE_MESSAGE" | "UPDATE_GROUP_LIST" | "MESSAGE_ACK"
 };
 
 export type ReveiveMessageEvent = {
@@ -20,4 +20,12 @@ export type ReveiveMessageEvent = {
 export type DeleteMessageEvent = {
 	MESSAGE_ID: string,
 	ROOM_ID: string
+};
+
+export type MessageAckEvent = {
+	ROOM_ID: string,
+	GROUP_ID: string | null,
+
+	IS_DM: boolean
+	DM_USER_ID: string | null
 };

@@ -1,4 +1,5 @@
 import { mel } from "../Main";
+import { init_event_listener } from "../StreamingAPI";
 import { refresh_dm_list } from "../UI";
 
 const GROUP_REGEX = /^\/chat\/([^/]+)\/?$/;
@@ -9,6 +10,9 @@ const DM_REGEX = /^\/dm\/([^/]+)\/?$/;
 export async function page_detect() {
 	const path = window.location.pathname;
 	console.info(path);
+
+	//ストリーミングAPIのイベントを初期化
+	init_event_listener();
 
 	if (path == "/") {
 		//トップ

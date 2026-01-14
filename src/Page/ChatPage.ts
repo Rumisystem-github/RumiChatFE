@@ -73,6 +73,7 @@ export async function start(group_id: string | null, room_id: string) {
 
 	set_receive_message_event(async (e)=>{
 		if (open_room_id === e.ROOM_ID) {
+			//今開いている部屋の話
 			const bottom = message_list_scrolled_bottom;
 			mel.contents.chat.message_list.append(await uiitem_message_item(e.USER, e.MESSAGE));
 
@@ -85,7 +86,10 @@ export async function start(group_id: string | null, room_id: string) {
 			}
 		} else {
 			if (is_dm == false && open_group_id == e.GROUP_ID) {
+				//今開いているグループの話
 				console.log("ひらいているグループの話だ");
+			} else {
+				//開いていないグループの話
 			}
 		}
 	});
