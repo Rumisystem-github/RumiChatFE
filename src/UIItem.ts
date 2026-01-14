@@ -5,6 +5,7 @@ import type { Group } from "./Type/Group";
 import type { Message, MessageFile } from "./Type/Message";
 import type { Room } from "./Type/Room";
 import type { RenkeiAccount, User } from "./Type/User";
+import delete_icon_img from "./Asset/MaterialSymbolsDeleteOutline.svg";
 
 export function uiitem_group_item(group: Group):HTMLElement {
 	let parent = document.createElement("A") as HTMLAnchorElement;
@@ -87,7 +88,7 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 		menu.append(delete_button);
 
 		let delete_icon = document.createElement("IMG") as HTMLImageElement;
-		delete_icon.src = "/public/Asset/MaterialSymbolsDeleteOutline.svg";
+		delete_icon.src = delete_icon_img;
 		delete_button.append(delete_icon);
 	}
 
