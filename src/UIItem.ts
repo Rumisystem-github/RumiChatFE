@@ -57,6 +57,9 @@ export function uiitem_dm_item(dm: DM): HTMLElement {
 		item.dataset["ack"] = "false";
 	}
 
+	item.dataset["room_id"] = dm.room.ID;
+	item.dataset["user_id"] = dm.user.ID;
+
 	let icon = document.createElement("IMG") as HTMLImageElement;
 	icon.className = "ICON_" + dm.user.ICON;
 	icon.src = "https://account.rumiserver.com/api/Icon?UID=" + dm.user.UID;
