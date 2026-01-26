@@ -19,7 +19,12 @@ export async function login(): Promise<LoginResult> {
 		return {status: false, token: null, user: null};
 	}
 
-	let ajax = await fetch(`https://account.rumiserver.com/api/Session?ID=${token}`);
+	let ajax = await fetch(`https://account.rumiserver.com/api/Session?ID=${token}`, {
+		method: "GET",
+		headers: {
+			"Accept": "application/json; charset=UTF-8"
+		}
+	});
 	const result = (await ajax.json()) as SessionLoginResponse;
 
 	if (!result.STATUS) {
