@@ -28,6 +28,20 @@ const setting_table: Genre[] = [
 				type: "Bool",
 				key: "url_cleaner",
 				pro: true
+			},
+			{
+				name: "動画プレイヤーの音量を同期する",
+				description: "全ての動画プレイヤーで音量を同期します",
+				type: "Bool",
+				key: "message_video_volume_all_sync",
+				pro: false
+			},
+			{
+				name: "動画プレイヤーの音量を保存する",
+				description: "動画プレイヤーの音量を保存します",
+				type: "Bool",
+				key: "message_video_volume_save",
+				pro: false
 			}
 		]
 	},

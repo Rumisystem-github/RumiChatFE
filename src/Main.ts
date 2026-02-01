@@ -23,7 +23,9 @@ export let setting = {
 	url_cleaner: true,
 	message_input_preview: true,
 	message_image_preview: true,
-	message_nsfw_image_blur: true
+	message_nsfw_image_blur: true,
+	message_video_volume_all_sync: true,
+	message_video_volume_save: true
 };
 
 export let mel = {

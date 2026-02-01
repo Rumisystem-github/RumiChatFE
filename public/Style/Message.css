@@ -117,3 +117,7 @@
 .MESSAGE_ITEM > .FILE_LIST > div{
 	overflow: hidden;
 }
+
+.MESSAGE_ITEM > .FILE_LIST > div > *{
+	width: 100%;
+}

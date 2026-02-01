@@ -146,19 +146,61 @@ export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivEleme
 	}
 
 	switch (file.TYPE.split("/")[0]) {
-		case "image":
+		case "image": {
 			let content = document.createElement("IMG") as HTMLImageElement;
 			content.src = file.URL;
 			file_item.appendChild(content);
 
 			if (setting.message_nsfw_image_blur && file.NSFW) content.dataset["NSFW"] = "true";
 			break;
-		default:
+		}
+
+		case "video": {
+			let content = document.createElement("VIDEO") as HTMLVideoElement;
+			content.className = "MESSAGE_FILE_VIDEO";
+			content.src = file.URL;
+			content.controls = true;
+			file_item.appendChild(content);
+
+			//保存した音量を取得
+			if (setting.message_video_volume_save) {
+				const saved_volume = localStorage.getItem("MESSAGE_VIDEO_VOLUME");
+				if (saved_volume != null) {
+					const converted_volume = Number.parseInt(saved_volume);
+					const float_volume = converted_volume / 100;
+					content.volume = float_volume;
+				}
+			}
+
+			//音量変更
+			content.onvolumechange = function() {
+				const volume = content.volume;
+
+				//音量を保存
+				if (setting.message_video_volume_save) {
+					const converted_volume = Math.floor(volume * 100);
+					localStorage.setItem("MESSAGE_VIDEO_VOLUME", converted_volume.toString());
+				}
+
+				//音量を同期
+				if (setting.message_video_volume_all_sync) {
+					for (const video_el of document.querySelectorAll(".MESSAGE_FILE_VIDEO") as NodeListOf<HTMLVideoElement>) {
+						video_el.volume = volume;
+					}
+				}
+			}
+
+			if (setting.message_nsfw_image_blur && file.NSFW) content.dataset["NSFW"] = "true";
+			break;
+		}
+
+		default: {
 			let a = document.createElement("A") as HTMLAnchorElement;
 			a.href = file.URL;
 			a.innerText = "添付ファイル";
 			file_item.append(a);
 			break;
+		}
 	}
 
 	return file_item;
