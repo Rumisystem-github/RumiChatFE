@@ -196,7 +196,9 @@ mel.contents.chat.form.send.addEventListener("click", send);
 
 async function send() {
 	const text = mel.contents.chat.form.text.value;
-	if (text.trim().length === 0) return;
+	if (text.trim().length === 0) {
+		if (select_file_list.length === 0) return;
+	}
 
 	//ロック
 	mel.contents.chat.form.menu.button.setAttribute("disabled", "");

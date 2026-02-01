@@ -59,6 +59,8 @@
 	position: relative;
 	top: -20px;
 
+	min-height: 1lh;
+
 	margin-left: calc(45px + 10px);
 	margin-bottom: -20px;
 }
