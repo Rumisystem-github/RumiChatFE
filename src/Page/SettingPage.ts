@@ -1,5 +1,5 @@
 import { update_setting } from "../API";
-import { mel, self_pgp_key, self_user, setting, token } from "../Main";
+import { mel, self_user, setting, token } from "../Main";
 import * as openpgp from "openpgp";
 
 type Field = {
