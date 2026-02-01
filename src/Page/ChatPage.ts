@@ -343,6 +343,7 @@ mel.contents.chat.form.menu.button.addEventListener("click", ()=>{
 mel.contents.chat.form.menu.contents.file.addEventListener("click", ()=>{
 	let dialog = document.createElement("INPUT") as HTMLInputElement;
 	dialog.type = "file";
+	dialog.multiple = true;
 	dialog.click();
 
 	dialog.onchange = function() {
