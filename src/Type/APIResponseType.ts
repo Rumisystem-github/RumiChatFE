@@ -96,3 +96,8 @@ export type GetSettingResponse = {
 export type UpdateSettingResponse = {
 	STATUS: boolean
 };
+
+export type GetPublicKeyResponse = {
+	STATUS: boolean,
+	ARMOR: string
+};

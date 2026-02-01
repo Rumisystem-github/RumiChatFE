@@ -1,6 +1,7 @@
 import { create_dm, follow_user, get_dm_list, get_group_list, get_setting, get_user, get_user_raw, unfollow_user, update_setting } from "./API";
 import { compresser_init } from "./Compresser";
 import { LOGIN_PAGE_URL } from "./const";
+import { import_key, is_imported, key_manager_init } from "./ImportKeyManager";
 import { loading_end_progress, loading_message, loading_print_failed, loading_print_info, loading_print_progress, } from "./Loading";
 import { PREFIX_FAILED, PREFIX_OK } from "./Log";
 import { login } from "./Login";
@@ -9,9 +10,11 @@ import { change_url, replace_element } from "./SPA";
 import { connect } from "./StreamingAPI";
 import type { DM } from "./Type/DM";
 import type { Group } from "./Type/Group";
+import type { LoadSelfPGPKey, SelfPGPKey } from "./Type/SelfPGPKeyType";
 import type { User } from "./Type/User";
 import { refresh_dm_list, refresh_group_list } from "./UI";
 import { gen_user_renkei } from "./UIItem";
+import * as openpgp from "openpgp";
 
 export let token: string;
 export let self_user: User;
@@ -26,6 +29,10 @@ export let setting = {
 	message_nsfw_image_blur: true,
 	message_video_volume_all_sync: true,
 	message_video_volume_save: true
+};
+export let self_pgp_key: SelfPGPKey = {
+	public_key: null,
+	private_key: null
 };
 
 export let mel = {
@@ -100,7 +107,8 @@ export let mel = {
 			description: document.getElementById("USER_PROFILE_DESCRIPTION")!,
 			renkei_list: document.getElementById("USER_PROFILE_RENKEI_LIST")!,
 			dm: document.getElementById("USER_PROFILE_DM")! as HTMLButtonElement,
-			follow: document.getElementById("USER_PROFILE_FOLLOW")! as HTMLButtonElement
+			follow: document.getElementById("USER_PROFILE_FOLLOW")! as HTMLButtonElement,
+			key: document.getElementById("USER_PROFILE_KEY") as HTMLButtonElement
 		}
 	}
 };
@@ -191,6 +199,38 @@ async function main() {
 		l = loading_print_progress("WebSocketへ接続中...");
 		loading_message("サーバーへ接続しています");
 		await connect();
+		loading_end_progress(l, PREFIX_OK);
+
+		//自分の鍵をインポート
+		l = loading_print_progress("鍵を読み込んでいます...");
+		loading_message("鍵をロード中");
+		const self_key_json = localStorage.getItem("SELF_PGP_KEY");
+		if (self_key_json != null){
+			const self_key = JSON.parse(self_key_json) as LoadSelfPGPKey;
+
+			//パスフレーズ
+			let passphrase = self_key.PASSPHRASE;
+			if (passphrase == null) passphrase = window.prompt("パスフレーズをどうぞ");
+			if (passphrase == null) return;
+
+			//鍵をロード
+			const public_key = await openpgp.readKey({armoredKey: self_key.PUBLIC});
+			const private_key_encrypted = await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE});
+			const private_key = await openpgp.decryptKey({privateKey: private_key_encrypted, passphrase: passphrase});
+
+			self_pgp_key.public_key = public_key;
+			self_pgp_key.private_key = private_key;
+
+			console.log(self_pgp_key.public_key.getFingerprint());
+			console.log(self_pgp_key.private_key.getFingerprint());
+		} else {
+			loading_print_info("鍵はありません。");
+		}
+		loading_end_progress(l, PREFIX_OK);
+
+		//他人のインポートした鍵をロード
+		l = loading_print_progress("インポートした鍵を読み込んでいます...");
+		await key_manager_init();
 		loading_end_progress(l, PREFIX_OK);
 
 		page_detect();
@@ -295,6 +335,18 @@ export async function open_user_profile(user_id: string) {
 	} else {
 		//自分自身なら隠すよ
 		mel.dialog.user_profile.follow.style.opacity = "0";
+	}
+
+	//鍵交換
+	if (user.ID !== self_user.ID && !is_imported(user.ID)) {
+		mel.dialog.user_profile.key.style.opacity = "1";
+
+		mel.dialog.user_profile.key.onclick = async function() {
+			await import_key(user.ID);
+			mel.dialog.user_profile.key.style.opacity = "0";
+		}
+	} else {
+		mel.dialog.user_profile.key.style.opacity = "0";
 	}
 
 	//説明

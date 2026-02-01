@@ -1,4 +1,4 @@
-import { mel } from "../Main";
+import { dm_list, mel } from "../Main";
 import { init_event_listener } from "../StreamingAPI";
 import { refresh_dm_list } from "../UI";
 
@@ -44,15 +44,17 @@ export async function page_detect() {
 		const room_id = room_mtc[2];
 
 		const chatroom = await import("./ChatPage");
-		await chatroom.start(group_id, room_id);
+		await chatroom.start(group_id, room_id, null);
 	}
 
 	//DM
 	const dm_mtc = path.match(DM_REGEX);
 	if (dm_mtc) {
 		const room_id = dm_mtc[1];
+		const user_id = dm_list.find(d=>d.room.ID === room_id)!.user.ID;
 		const chatroom = await import("./ChatPage");
-		await chatroom.start(null, room_id);
+
+		await chatroom.start(null, room_id, user_id);
 	}
 
 	hide(path);

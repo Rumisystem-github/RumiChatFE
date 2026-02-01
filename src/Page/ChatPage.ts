@@ -1,6 +1,8 @@
 import { get_group, get_message_list, get_room, update_last_read_message } from "../API";
+import { encrypt_from_publickey } from "../Cipher";
 import { init_group_menu } from "../GroupMenu";
-import { mel, self_user, setting, token } from "../Main";
+import { get_imported_key, is_imported } from "../ImportKeyManager";
+import { mel, self_pgp_key, self_user, setting, token } from "../Main";
 import { replace_element } from "../SPA";
 import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";
@@ -13,11 +15,15 @@ let open_group_id: string | null;
 let open_room_id:string;
 let select_file_list:File[] = [];
 let is_dm = false;
+let open_dm_user_id: string | null;
 
-export async function start(group_id: string | null, room_id: string) {
+export async function start(group_id: string | null, room_id: string, user_id: string | null) {
 	open_room_id = room_id;
 	open_group_id = group_id;
 	is_dm = (group_id == null);
+	if (is_dm) {
+		open_dm_user_id = user_id;
+	}
 
 	mel.contents.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
 	mel.contents.chat.viewer.user.icon.src = "https://account.rumiserver.com/api/Icon?UID=" + self_user.UID;
@@ -195,7 +201,7 @@ mel.contents.chat.form.text.addEventListener("keypress", (e)=>{
 mel.contents.chat.form.send.addEventListener("click", send);
 
 async function send() {
-	const text = mel.contents.chat.form.text.value;
+	let text = mel.contents.chat.form.text.value;
 	if (text.trim().length === 0) {
 		if (select_file_list.length === 0) return;
 	}
@@ -203,6 +209,14 @@ async function send() {
 	//ロック
 	mel.contents.chat.form.menu.button.setAttribute("disabled", "");
 	mel.contents.chat.form.send.setAttribute("disabled", "");
+
+	//暗号化するか？
+	if (is_dm) {
+		if (is_imported(open_dm_user_id!) && self_pgp_key.public_key != null) {
+			const dm_aite_pk = await get_imported_key(open_dm_user_id!);
+			text = await encrypt_from_publickey(dm_aite_pk, text);
+		}
+	}
 
 	type file_queue_type = {
 		TYPE: string,

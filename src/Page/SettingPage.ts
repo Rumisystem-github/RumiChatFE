@@ -1,5 +1,6 @@
 import { update_setting } from "../API";
-import { mel, setting } from "../Main";
+import { mel, self_pgp_key, self_user, setting, token } from "../Main";
+import * as openpgp from "openpgp";
 
 type Field = {
 	name: string,
@@ -13,7 +14,8 @@ type Genre = {
 	id: string,
 	name: string,
 	description: string,
-	field: Field[]
+	field: Field[],
+	start_fn: ()=>void
 };
 
 const setting_table: Genre[] = [
@@ -43,7 +45,8 @@ const setting_table: Genre[] = [
 				key: "message_video_volume_save",
 				pro: false
 			}
-		]
+		],
+		start_fn: function(){}
 	},
 	{
 		id: "pro",
@@ -57,13 +60,85 @@ const setting_table: Genre[] = [
 				key: "promode",
 				pro: false
 			}
-		]
+		],
+		start_fn: function(){}
+	},
+	{
+		id: "encrypt",
+		name: "暗号通信",
+		description: "暗号通信に関する設定を行います",
+		field: [],
+		start_fn: function(){
+			if (localStorage.getItem("SELF_PGP_KEY") != null) return;
+
+			let create_key_button = document.createElement("BUTTON");
+			create_key_button.innerText = "暗号通信のセットアップ";
+			mel.contents.setting.field.append(create_key_button);
+			create_key_button.onclick = async function() {
+				let passphrase = window.prompt("パスフレーズをどうぞ");;
+				if (passphrase == null || passphrase == "") return;
+
+				//TODO:生成にクソ時間かかるのでロード画面でも出す方が良いと思う
+				const {privateKey, publicKey} = await openpgp.generateKey({
+					type: "rsa",
+					rsaBits: 4096,
+					passphrase: passphrase,
+					format: "armored",
+					userIDs: [
+						{
+							name: self_user.ID,
+							email: `${self_user.ID}@example.com`
+						}
+					]
+				});
+
+				//サーバーへ送信する前に署名を作る
+				const now_date = new Date();
+				const sign_message = `PublicKeySign!${self_user.ID}@rumiserver.com/${now_date.getFullYear()}-${now_date.getMonth() + 1}-${now_date.getDate()}`;
+				const sign_key = await openpgp.decryptKey({
+					privateKey: await openpgp.readPrivateKey({armoredKey: privateKey}),
+					passphrase: passphrase
+				});
+				const sign = await openpgp.sign({
+					message: await openpgp.createMessage({text: sign_message}),
+					signingKeys: sign_key,
+					detached: true
+				});
+
+				let ajax = await fetch("/api/Key/Public", {
+					method: "POST",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json",
+						"TOKEN": token
+					},
+					body: JSON.stringify({
+						"PUBLIC_KEY": publicKey,
+						"SIGN": sign
+					})
+				});
+
+				if ((await ajax.json())["STATUS"]) {
+					localStorage.setItem("SELF_PGP_KEY", JSON.stringify({
+						"PUBLIC": publicKey,
+						"PRIVATE": privateKey,
+						"PASSPHRASE": passphrase
+					}));
+
+					//TODO:成功時になんか出せ
+					window.location.reload();
+				} else {
+					alert("エラー");
+				}
+			};
+		}
 	},
 	{
 		id: "info",
 		name: "情報",
 		description: "るみチャットについて",
-		field: []
+		field: [],
+		start_fn: function(){}
 	}
 ];
 
@@ -123,6 +198,8 @@ export async function start(path: string) {
 						break;
 				}
 			}
+
+			genre.start_fn();
 		} else {
 			mel.contents.setting.title.innerText = "設定がありません。";
 		}

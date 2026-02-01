@@ -6,6 +6,7 @@ import type { Message, MessageFile } from "./Type/Message";
 import type { Room } from "./Type/Room";
 import type { RenkeiAccount, User } from "./Type/User";
 import delete_icon_img from "./Asset/MaterialSymbolsDeleteOutline.svg";
+import { decrypt_from_self_privatekey } from "./Cipher";
 
 export function uiitem_group_item(group: Group):HTMLElement {
 	let parent = document.createElement("A") as HTMLAnchorElement;
@@ -119,7 +120,17 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 
 	let text_el = document.createElement("DIV");
 	text_el.className = "TEXT";
-	text_el.innerText = message.TEXT;
+	if (message.TEXT.trim().startsWith("-----BEGIN PGP MESSAGE-----") && message.TEXT.trim().endsWith("-----END PGP MESSAGE-----")) {
+		try {
+			const decrypt_message = new TextDecoder().decode(await decrypt_from_self_privatekey(message.TEXT));
+			text_el.innerText = decrypt_message;
+		} catch(ex) {
+			//console.error(ex);
+			text_el.innerText = "¡復号化に失敗しました!\n" + ex;
+		}
+	} else {
+		text_el.innerText = message.TEXT;
+	}
 	item.appendChild(text_el);
 
 	let file_el = document.createElement("DIV");
