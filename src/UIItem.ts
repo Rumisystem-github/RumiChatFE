@@ -6,6 +6,7 @@ import type { Message, MessageFile } from "./Type/Message";
 import type { Room } from "./Type/Room";
 import type { RenkeiAccount, User } from "./Type/User";
 import delete_icon_img from "./Asset/MaterialSymbolsDeleteOutline.svg";
+import security_icon_img from "./Asset/MdiSecurity.svg";
 import { decrypt_from_self_privatekey } from "./Cipher";
 
 export function uiitem_group_item(group: Group):HTMLElement {
@@ -75,6 +76,8 @@ export function uiitem_dm_item(dm: DM): HTMLElement {
 }
 
 export async function uiitem_message_item(user: User, message: Message):Promise<HTMLElement> {
+	let is_encrypted = message.TEXT.trim().startsWith("-----BEGIN PGP MESSAGE-----") && message.TEXT.trim().endsWith("-----END PGP MESSAGE-----");
+
 	let item = document.createElement("DIV");
 	item.className = "MESSAGE_ITEM";
 	item.dataset["id"] = message.ID;
@@ -96,10 +99,12 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 		delete_button.append(delete_icon);
 	}
 
+	//ユーザー欄
 	let user_el = document.createElement("DIV");
 	user_el.className = "USER";
 	item.appendChild(user_el);
 
+	//ユーザーアイコン
 	let user_icon_el = document.createElement("IMG") as HTMLImageElement;
 	user_icon_el.className = "USER_ICON ICON_" + user.ICON;
 	user_icon_el.src = "https://account.rumiserver.com/api/Icon?UID=" + user.UID;
@@ -108,24 +113,34 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 		open_user_profile(user.ID);
 	});
 
+	//暗号化してるか
+	if (is_encrypted) {
+		let encrypt_icon = document.createElement("IMG") as HTMLImageElement;
+		encrypt_icon.className = "ENCRYPTED_ICON";
+		encrypt_icon.src = security_icon_img;
+		user_el.append(encrypt_icon);
+	}
+
+	//ユーザー名
 	let user_name_el = document.createElement("SPAN");
 	user_name_el.className = "USER_NAME";
 	user_name_el.innerText = user.NAME;
 	user_el.appendChild(user_name_el);
 
+	//日付
 	let date_el = document.createElement("SPAN");
 	date_el.className = "DATE";
 	date_el.innerHTML = message.CREATE_AT;
 	user_el.appendChild(date_el);
 
+	//本文
 	let text_el = document.createElement("DIV");
 	text_el.className = "TEXT";
-	if (message.TEXT.trim().startsWith("-----BEGIN PGP MESSAGE-----") && message.TEXT.trim().endsWith("-----END PGP MESSAGE-----")) {
+	if (is_encrypted) {
 		try {
 			const decrypt_message = new TextDecoder().decode(await decrypt_from_self_privatekey(message.TEXT));
 			text_el.innerText = decrypt_message;
 		} catch(ex) {
-			//console.error(ex);
 			text_el.innerText = "¡復号化に失敗しました!\n" + ex;
 		}
 	} else {
@@ -133,6 +148,7 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 	}
 	item.appendChild(text_el);
 
+	//ファイル
 	let file_el = document.createElement("DIV");
 	file_el.className = "FILE_LIST";
 	item.appendChild(file_el);

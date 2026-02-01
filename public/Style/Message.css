@@ -43,6 +43,11 @@
 	margin-right: 10px;
 }
 
+.MESSAGE_ITEM > .USER > .ENCRYPTED_ICON{
+	width: 1em;
+	height: 1lh;
+}
+
 .MESSAGE_ITEM > .USER > .DATE{
 	color: gray;
 

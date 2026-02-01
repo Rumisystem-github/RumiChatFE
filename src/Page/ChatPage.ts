@@ -23,6 +23,13 @@ export async function start(group_id: string | null, room_id: string, user_id: s
 	is_dm = (group_id == null);
 	if (is_dm) {
 		open_dm_user_id = user_id;
+
+		//メッセージ入力欄のやつ
+		if (is_imported(open_dm_user_id!) && self_pgp_key.public_key != null) {
+			mel.contents.chat.form.text.placeholder = "暗号化通信";
+		} else {
+			mel.contents.chat.form.text.placeholder = "メッセージ";
+		}
 	}
 
 	mel.contents.chat.viewer.user.icon.classList.add("ICON_" + self_user.ICON);
