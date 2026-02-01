@@ -167,6 +167,7 @@ async function refresh_file_list() {
 		delete_button.innerText = "X";
 		file_item.append(delete_button);
 		delete_button.onclick = function() {
+			select_file_list.splice(i, 1);
 			refresh_file_list();
 		};
 
