@@ -1,6 +1,8 @@
 import { update_setting } from "../API";
-import { mel, self_user, setting, token } from "../Main";
+import { console_print, PREFIX_INFO } from "../Log";
+import { mel, self_pgp_key, self_user, setting, token } from "../Main";
 import * as openpgp from "openpgp";
+import type { LoadSelfPGPKey } from "../Type/SelfPGPKeyType";
 
 type Field = {
 	name: string,
@@ -69,68 +71,146 @@ const setting_table: Genre[] = [
 		description: "暗号通信に関する設定を行います",
 		field: [],
 		start_fn: function(){
-			if (localStorage.getItem("SELF_PGP_KEY") != null) return;
+			if (localStorage.getItem("SELF_PGP_KEY") == null) {
+				let create_key_button = document.createElement("BUTTON");
+				create_key_button.innerText = "暗号通信のセットアップ";
+				mel.contents.setting.field.append(create_key_button);
+				create_key_button.onclick = async function() {
+					let passphrase = window.prompt("パスフレーズをどうぞ");;
+					if (passphrase == null || passphrase == "") return;
 
-			let create_key_button = document.createElement("BUTTON");
-			create_key_button.innerText = "暗号通信のセットアップ";
-			mel.contents.setting.field.append(create_key_button);
-			create_key_button.onclick = async function() {
-				let passphrase = window.prompt("パスフレーズをどうぞ");;
-				if (passphrase == null || passphrase == "") return;
+					//TODO:生成にクソ時間かかるのでロード画面でも出す方が良いと思う
+					const {privateKey, publicKey} = await openpgp.generateKey({
+						type: "rsa",
+						rsaBits: 4096,
+						passphrase: passphrase,
+						format: "armored",
+						userIDs: [
+							{
+								name: self_user.ID,
+								email: `${self_user.ID}@example.com`
+							}
+						]
+					});
 
-				//TODO:生成にクソ時間かかるのでロード画面でも出す方が良いと思う
-				const {privateKey, publicKey} = await openpgp.generateKey({
-					type: "rsa",
-					rsaBits: 4096,
-					passphrase: passphrase,
-					format: "armored",
-					userIDs: [
-						{
-							name: self_user.ID,
-							email: `${self_user.ID}@example.com`
+					//サーバーへ送信する前に署名を作る
+					const now_date = new Date();
+					const sign_message = `PublicKeySign!${self_user.ID}@rumiserver.com/${now_date.getFullYear()}-${now_date.getMonth() + 1}-${now_date.getDate()}`;
+					const sign_key = await openpgp.decryptKey({
+						privateKey: await openpgp.readPrivateKey({armoredKey: privateKey}),
+						passphrase: passphrase
+					});
+					const sign = await openpgp.sign({
+						message: await openpgp.createMessage({text: sign_message}),
+						signingKeys: sign_key,
+						detached: true
+					});
+
+					let ajax = await fetch("/api/Key/Public", {
+						method: "POST",
+						headers: {
+							"Accept": "application/json",
+							"Content-Type": "application/json",
+							"TOKEN": token
+						},
+						body: JSON.stringify({
+							"PUBLIC_KEY": publicKey,
+							"SIGN": sign
+						})
+					});
+
+					if ((await ajax.json())["STATUS"]) {
+						localStorage.setItem("SELF_PGP_KEY", JSON.stringify({
+							"PUBLIC": publicKey,
+							"PRIVATE": privateKey,
+							"PASSPHRASE": passphrase
+						}));
+
+						//TODO:成功時になんか出せ
+						window.location.reload();
+					} else {
+						alert("エラー");
+					}
+				};
+
+				//インポート
+				let import_button = document.createElement("BUTTON");
+				import_button.innerText = "インポート";
+				mel.contents.setting.field.append(import_button);
+				import_button.onclick = async function() {
+					let input = document.createElement("INPUT") as HTMLInputElement;
+					input.type = "file";
+					input.click();
+					input.onchange = async function() {
+						if (input.files!.length == 0) return;
+						const file = input.files![0]!;
+						const buffer = await file.arrayBuffer();
+						const binary = new Uint8Array(buffer);
+						const key_list = await openpgp.readKeys({
+							binaryKeys: binary
+						});
+
+						//鍵をインポート
+						let json: LoadSelfPGPKey = {PUBLIC: "", PRIVATE: "", PASSPHRASE: null};
+						for (const key of key_list) {
+							if (key.isPrivate()) {
+								//秘密鍵
+								let armor:string;
+								if (!key.isDecrypted()) {
+									const passphrase = prompt(key.getKeyID() + "のパスフレーズをどうぞ");
+									if (passphrase == null) return;
+									const decrypted = await openpgp.decryptKey({
+										privateKey: key,
+										passphrase: passphrase
+									});
+									armor = decrypted.armor();
+									json.PASSPHRASE = passphrase;
+								} else {
+									armor = key.armor();
+								}
+								json.PRIVATE = armor;
+							} else {
+								//公開鍵
+								json.PUBLIC = key.armor();
+							}
 						}
-					]
-				});
 
-				//サーバーへ送信する前に署名を作る
-				const now_date = new Date();
-				const sign_message = `PublicKeySign!${self_user.ID}@rumiserver.com/${now_date.getFullYear()}-${now_date.getMonth() + 1}-${now_date.getDate()}`;
-				const sign_key = await openpgp.decryptKey({
-					privateKey: await openpgp.readPrivateKey({armoredKey: privateKey}),
-					passphrase: passphrase
-				});
-				const sign = await openpgp.sign({
-					message: await openpgp.createMessage({text: sign_message}),
-					signingKeys: sign_key,
-					detached: true
-				});
+						//登録
+						localStorage.setItem("SELF_PGP_KEY", JSON.stringify(json));
 
-				let ajax = await fetch("/api/Key/Public", {
-					method: "POST",
-					headers: {
-						"Accept": "application/json",
-						"Content-Type": "application/json",
-						"TOKEN": token
-					},
-					body: JSON.stringify({
-						"PUBLIC_KEY": publicKey,
-						"SIGN": sign
-					})
-				});
+						//再起動
+						window.location.reload();
+					};
+				};
+			} else {
+				let export_button = document.createElement("BUTTON");
+				export_button.innerText = "エクスポート";
+				mel.contents.setting.field.append(export_button);
+				export_button.onclick = async function() {
+					//秘密鍵を暗号化
+					const passphrase = prompt("パスフレーズをどうぞ");
+					if (passphrase == null) return;
+					const encrypted_private_key = await openpgp.encryptKey({privateKey: self_pgp_key.private_key!, passphrase: passphrase});
 
-				if ((await ajax.json())["STATUS"]) {
-					localStorage.setItem("SELF_PGP_KEY", JSON.stringify({
-						"PUBLIC": publicKey,
-						"PRIVATE": privateKey,
-						"PASSPHRASE": passphrase
-					}));
+					//バイナリ化
+					const public_binary = self_pgp_key.public_key!.write();
+					const private_binary = encrypted_private_key.write();
 
-					//TODO:成功時になんか出せ
-					window.location.reload();
-				} else {
-					alert("エラー");
-				}
-			};
+					//gpg化
+					const gpg = new Uint8Array(public_binary.length + private_binary.length);
+					gpg.set(public_binary, 0);
+					gpg.set(private_binary, public_binary.length);
+
+					//ダウンロード
+					const blob = new Blob([gpg], {type: "application/octet-stream"});
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement("A") as HTMLAnchorElement;
+					a.href = url;
+					a.download = "rumichat-key-exported.gpg";
+					a.click();
+					URL.revokeObjectURL(url);
+				};
+			}
 		}
 	},
 	{

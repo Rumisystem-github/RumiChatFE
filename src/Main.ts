@@ -1,4 +1,4 @@
-import { create_dm, follow_user, get_dm_list, get_group_list, get_setting, get_user, get_user_raw, unfollow_user, update_setting } from "./API";
+import { create_dm, follow_user, get_dm_list, get_group_list, get_public_key, get_setting, get_user, get_user_raw, unfollow_user, update_setting } from "./API";
 import { compresser_init } from "./Compresser";
 import { LOGIN_PAGE_URL } from "./const";
 import { import_key, is_imported, key_manager_init } from "./ImportKeyManager";
@@ -208,15 +208,14 @@ async function main() {
 		if (self_key_json != null){
 			const self_key = JSON.parse(self_key_json) as LoadSelfPGPKey;
 
-			//パスフレーズ
-			let passphrase = self_key.PASSPHRASE;
-			if (passphrase == null) passphrase = window.prompt("パスフレーズをどうぞ");
-			if (passphrase == null) return;
-
-			//鍵をロード
+			//公開鍵をロード
 			const public_key = await openpgp.readKey({armoredKey: self_key.PUBLIC});
-			const private_key_encrypted = await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE});
-			const private_key = await openpgp.decryptKey({privateKey: private_key_encrypted, passphrase: passphrase});
+
+			//秘密鍵をロード
+			let private_key = await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE});
+			if (self_key.PASSPHRASE != null) {
+				private_key = await openpgp.decryptKey({privateKey: await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE}), passphrase: self_key.PASSPHRASE});
+			}
 
 			self_pgp_key.public_key = public_key;
 			self_pgp_key.private_key = private_key;
@@ -224,7 +223,12 @@ async function main() {
 			console.log(self_pgp_key.public_key.getFingerprint());
 			console.log(self_pgp_key.private_key.getFingerprint());
 		} else {
-			loading_print_info("鍵はありません。");
+			try {
+				await get_public_key(self_user.ID);
+				//TODO:鍵のインポートダイアログ
+			} catch {
+				loading_print_info("鍵はありません。");
+			}
 		}
 		loading_end_progress(l, PREFIX_OK);
 
