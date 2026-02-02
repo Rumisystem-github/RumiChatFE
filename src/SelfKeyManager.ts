@@ -19,8 +19,13 @@ export async function load_self_key() {
 
 		//秘密鍵をロード
 		let private_key = await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE});
-		if (self_key.PASSPHRASE != null) {
-			private_key = await openpgp.decryptKey({privateKey: await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE}), passphrase: self_key.PASSPHRASE});
+		if (!private_key.isDecrypted()) {
+			let passphrase;
+			if (self_key.PASSPHRASE == null) {
+				passphrase = prompt("パスフレーズ");
+			}
+
+			private_key = await openpgp.decryptKey({privateKey: await openpgp.readPrivateKey({armoredKey: self_key.PRIVATE}), passphrase: passphrase!});
 		}
 
 		self_pgp_key.public_key = public_key;
