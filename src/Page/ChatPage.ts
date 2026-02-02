@@ -2,7 +2,8 @@ import { get_group, get_message_list, get_room, update_last_read_message } from 
 import { encrypt_from_publickey } from "../Cipher";
 import { init_group_menu } from "../GroupMenu";
 import { get_imported_key, is_imported } from "../ImportKeyManager";
-import { mel, self_pgp_key, self_user, setting, token } from "../Main";
+import { mel, self_user, setting, token } from "../Main";
+import { self_pgp_key } from "../SelfKeyManager";
 import { replace_element } from "../SPA";
 import { set_delete_message_event, set_receive_message_event } from "../StreamingAPI";
 import type { SendMessageResponse } from "../Type/APIResponseType";

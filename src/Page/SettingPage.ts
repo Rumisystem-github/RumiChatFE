@@ -1,6 +1,6 @@
 import { update_setting } from "../API";
-import { console_print, PREFIX_INFO } from "../Log";
-import { mel, self_pgp_key, self_user, setting, token } from "../Main";
+import { mel, self_user, setting, token } from "../Main";
+import { self_pgp_key } from "../SelfKeyManager";
 import * as openpgp from "openpgp";
 import type { LoadSelfPGPKey } from "../Type/SelfPGPKeyType";
 
