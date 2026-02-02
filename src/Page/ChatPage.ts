@@ -1,5 +1,5 @@
 import { get_group, get_message_list, get_room, update_last_read_message } from "../API";
-import { encrypt_from_publickey } from "../Cipher";
+import { binary_encrypt_from_publickey, encrypt_from_publickey } from "../Cipher";
 import { init_group_menu } from "../GroupMenu";
 import { get_imported_key, is_imported } from "../ImportKeyManager";
 import { mel, self_user, setting, token } from "../Main";
@@ -265,7 +265,22 @@ async function send() {
 			const queue_id = result.FILE[i];
 			const total_size = file.size;
 			let end = 0;
-			const stream = file.stream();
+
+			let data = new Uint8Array((await file.arrayBuffer()).slice(0));
+
+			//DMで、自分の鍵と相手の鍵が有るなら暗号化
+			if (is_dm) {
+				if (self_pgp_key.public_key != null && is_imported(open_dm_user_id!)) {
+					data = new Uint8Array(await binary_encrypt_from_publickey(await get_imported_key(open_dm_user_id!), data));
+				}
+			}
+
+			const stream = new ReadableStream({
+				start(c) {
+					c.enqueue(data);
+					c.close();
+				}
+			});
 			const reader = stream.getReader();
 			let buffer = new Uint8Array(0);
 

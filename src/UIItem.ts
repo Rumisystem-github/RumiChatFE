@@ -7,7 +7,8 @@ import type { Room } from "./Type/Room";
 import type { RenkeiAccount, User } from "./Type/User";
 import delete_icon_img from "./Asset/MaterialSymbolsDeleteOutline.svg";
 import security_icon_img from "./Asset/MdiSecurity.svg";
-import { decrypt_from_self_privatekey } from "./Cipher";
+import { binary_decrypt_from_self_privatekey, decrypt_from_self_privatekey } from "./Cipher";
+import { self_pgp_key } from "./SelfKeyManager";
 
 export function uiitem_group_item(group: Group):HTMLElement {
 	let parent = document.createElement("A") as HTMLAnchorElement;
@@ -155,13 +156,13 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 
 	for (let i = 0; i < message.FILE_LIST.length; i++) {
 		const file = message.FILE_LIST[i];
-		file_el.appendChild(await uiitem_message_file(file));
+		file_el.appendChild(await uiitem_message_file(file, is_encrypted));
 	}
 
 	return item;
 }
 
-export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivElement> {
+export async function uiitem_message_file(file:MessageFile, is_encrypted: boolean):Promise<HTMLDivElement> {
 	let file_item = document.createElement("DIV")as HTMLDivElement;
 
 	if (!setting.message_image_preview) {
@@ -169,6 +170,21 @@ export async function uiitem_message_file(file:MessageFile):Promise<HTMLDivEleme
 		a.href = file.URL;
 		a.innerText = "添付ファイル";
 		file_item.append(a);
+		return file_item;
+	}
+
+	if (is_encrypted) {
+		let btn = document.createElement("BUTTON") as HTMLButtonElement;
+		btn.innerText = `暗号化されたファイル(${file.TYPE})(${file.NSFW})`;
+		file_item.append(btn);
+
+		btn.onclick = async function() {
+			let ajax = await fetch(file.URL);
+			const encrypted = new Uint8Array(await ajax.arrayBuffer());
+			const decrypted = await binary_decrypt_from_self_privatekey(encrypted);
+			const decrypted_url = URL.createObjectURL(new Blob([decrypted], {type: file.TYPE}));
+			window.open(decrypted_url);
+		};
 		return file_item;
 	}
 
