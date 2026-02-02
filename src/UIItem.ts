@@ -8,7 +8,6 @@ import type { RenkeiAccount, User } from "./Type/User";
 import delete_icon_img from "./Asset/MaterialSymbolsDeleteOutline.svg";
 import security_icon_img from "./Asset/MdiSecurity.svg";
 import { binary_decrypt_from_self_privatekey, decrypt_from_self_privatekey } from "./Cipher";
-import { self_pgp_key } from "./SelfKeyManager";
 
 export function uiitem_group_item(group: Group):HTMLElement {
 	let parent = document.createElement("A") as HTMLAnchorElement;
