@@ -21,6 +21,8 @@ export type User = {
 	NAME: string,
 	DESCRIPTION: string,
 	ICON: string,
+	ICON_URL: string,
+	ICON_RAW_URL: string,
 	BADGE: Badge[],
 	REGIST_DATE: string,
 	OFFICIAL: boolean,

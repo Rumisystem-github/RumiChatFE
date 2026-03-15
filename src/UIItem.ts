@@ -64,7 +64,7 @@ export function uiitem_dm_item(dm: DM): HTMLElement {
 
 	let icon = document.createElement("IMG") as HTMLImageElement;
 	icon.className = "ICON_" + dm.user.ICON;
-	icon.src = "https://account.rumiserver.com/api/Icon?UID=" + dm.user.UID;
+	icon.src = dm.user.ICON_RAW_URL;
 	item.append(icon);
 
 	let name = document.createElement("SPAN");
@@ -107,7 +107,7 @@ export async function uiitem_message_item(user: User, message: Message):Promise<
 	//ユーザーアイコン
 	let user_icon_el = document.createElement("IMG") as HTMLImageElement;
 	user_icon_el.className = "USER_ICON ICON_" + user.ICON;
-	user_icon_el.src = "https://account.rumiserver.com/api/Icon?UID=" + user.UID;
+	user_icon_el.src = user.ICON_RAW_URL;
 	user_el.appendChild(user_icon_el);
 	user_icon_el.addEventListener("click", ()=>{
 		open_user_profile(user.ID);
