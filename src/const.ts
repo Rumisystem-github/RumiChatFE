@@ -1,1 +1,0 @@
-export const LOGIN_PAGE_URL = "https://account.rumiserver.com/Login/";
