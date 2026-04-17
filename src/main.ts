@@ -64,6 +64,6 @@ window.addEventListener("load", async ()=>{
 			alert("エラー");
 		}
 
-		window.location.href = "";
+		window.location.href = "index.html?a";
 	}
 });
