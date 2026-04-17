@@ -12,7 +12,7 @@ window.addEventListener("load", async ()=>{
 			btn.innerText = "秘密鍵を移行する";
 			btn.onclick = function() {
 				localStorage.setItem("KEY_MIG_PRIVATE", "OK");
-				window.location.href = `https://encrypt.rumiserver.com/regist.html?SESSION=${crypto.randomUUID()}&TYPE=PRIVATE&CALLBACK=` + encodeURIComponent("https://chat.beta.rumiserver.com/");
+				window.location.href = `https://encrypt.rumiserver.com/regist.html?SESSION=${crypto.randomUUID()}&TYPE=PRIVATE&CALLBACK=` + encodeURIComponent("https://chat.rumiserver.com/");
 			};
 			document.body.append(btn);
 		} else if (localStorage.getItem("KEY_MIG_PUBLIC") == null) {
@@ -20,7 +20,7 @@ window.addEventListener("load", async ()=>{
 			btn.innerText = "公開鍵を移行する";
 			btn.onclick = function() {
 				localStorage.setItem("KEY_MIG_PUBLIC", "OK");
-				window.location.href = `https://encrypt.rumiserver.com/regist.html?SESSION=${crypto.randomUUID()}&TYPE=PUBLIC&CALLBACK=` + encodeURIComponent("https://chat.beta.rumiserver.com/");
+				window.location.href = `https://encrypt.rumiserver.com/regist.html?SESSION=${crypto.randomUUID()}&TYPE=PUBLIC&CALLBACK=` + encodeURIComponent("https://chat.rumiserver.com/");
 			};
 			document.body.append(btn);
 		} else {
