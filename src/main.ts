@@ -39,12 +39,12 @@ window.addEventListener("load", async ()=>{
 			url = "https://encrypt.rumiserver.com/api/Key/Private";
 			const private_key = await pgp.readPrivateKey({ armoredKey: private_armored });
 			key_data = btoa(String.fromCharCode(...private_key.write()));
-			key_name = "CHAT_PUBLIC";
+			key_name = "CHAT_PRIVATE";
 		} else {
 			url = "https://encrypt.rumiserver.com/api/Key/Public";
 			const public_key = await pgp.readKey({ armoredKey: public_armored });
 			key_data = btoa(String.fromCharCode(...public_key.write()));
-			key_name = "CHAT_PRIVATE";
+			key_name = "CHAT_PUBLIC";
 		}
 
 		let ajax = await fetch(url, {
