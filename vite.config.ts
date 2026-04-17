@@ -10,7 +10,6 @@ export default defineConfig({
 		rollupOptions: {
 			input: {
 				index: resolve(__dirname, "index.html"),
-				invite: resolve(__dirname, "invite.html"),
 			},
 		},
 	},
